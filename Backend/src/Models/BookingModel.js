@@ -8,10 +8,10 @@ userId: {
     ref: "users"
   },
 
-  serviceId: {
+  serviceId: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "services"
-  },
+  }],
 
   providerId: {
     type: mongoose.Schema.Types.ObjectId,

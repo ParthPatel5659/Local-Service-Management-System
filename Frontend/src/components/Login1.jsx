@@ -193,8 +193,8 @@ const Login1 = () => {
             navigate("/admin");
             console.log("admin");
             break;
-          case "ServiceProvider":
-            navigate("/service provider");
+          case "Service Provider":
+            navigate("/service-provider");
             break;
           case "user":
             navigate("/user");

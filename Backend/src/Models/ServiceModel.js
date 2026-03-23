@@ -22,19 +22,18 @@ const ServiceSchema = new Schema({
   description: {
     type: String
   },
+  price: {
+    type: Number
+  },
 
-  // price: {
-  //   type: Number
-  // },
+  location: {
+    type: String
+  },
 
-  // location: {
-  //   type: String
-  // },
-
-  // availability: {
-  //   type: Boolean,
-  //   default: true
-  // },
+  availability: {
+    type: Boolean,
+    default: true
+  },
 
   // status: {
   //   type: String,

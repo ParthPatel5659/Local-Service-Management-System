@@ -35,8 +35,12 @@ const getUserBookings=async(req,res)=>{
     }
 }
 
+//Get Booking by id
 const getbookingbyid= async(req,res)=>{
+    //   console.log(req.user)
+    //   console.log(req.user._id)
     try {
+      
         const findBooking= await bookingSchema.findById(req.params.id).populate("userId");
         res.status(200).json({
             message:"Booking Found",
@@ -49,8 +53,24 @@ const getbookingbyid= async(req,res)=>{
     }
 }
 
+//all Bookings Get
+const getAllBookings= async(req,res)=>{
+    try {
+        const findBooking= await bookingSchema.find().populate("userId").populate("serviceId");
+        res.status(200).json({
+            message:"All Bookings",
+            data:findBooking
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports={
     CreateBooking,
     getUserBookings,
-    getbookingbyid
+    getbookingbyid,
+    getAllBookings
 }

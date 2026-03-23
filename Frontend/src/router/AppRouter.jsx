@@ -1,27 +1,30 @@
 import {  createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import { AdminSidebar } from "../components/admin/AdminSidebar";
-
 import Login1 from "../components/Login1";
 import SignUp1 from "../components/SignUp1";
 import { VerificationCode } from "../components/VerificationCode";
-import { UserNavbar } from "../components/user/UserNavbar";
-import Services from "../components/user/Services";
+import {UserNavbar} from "../components/user/UserNavbar";
 import { HomePage } from "../components/user/HomePage";
-
 import Bookings from "../components/user/Bookings";
 import { Profile } from "../components/Profile";
 import Servicesidebar from "../components/ServiceProvider/ServiceSidebar";
 import { ServiceHome } from "../components/ServiceProvider/ServiceHome";
+
+import ProtectedRoutes from "../components/ProtectedRoutes";
+import { Services } from "../components/user/Services";
 import BookServices from "../components/user/BookServices";
-import ShowBookings from "../components/ServiceProvider/ShowBookings";
+import { AddService } from "../components/ServiceProvider/AddService";
+
 
 const router=createBrowserRouter([
        {path:"/",element:<HomePage/>},
        {path:"/login",element:<Login1/>},
        {path:"/signup",element:<SignUp1/>},
        {path:"/verification",element:<VerificationCode/>},
-       {path:"/user",element:<UserNavbar/>,
+
+       {path:"/user",element: <ProtectedRoutes userRoles={["user"]}>
+            <UserNavbar/>,
+        </ProtectedRoutes>,
         children:[
             {path:"deshbord",element:<HomePage/>},
             {path:"profile",element:<Profile/>},
@@ -32,14 +35,18 @@ const router=createBrowserRouter([
             {path:"settings",element:<div>Settings</div>}, 
         ]
        },
+
        {path:"/service-provider",element:<Servicesidebar/>,
         children:[
             {path:"home",element:<ServiceHome/>},
-            {path:"profile",element:<Profile/>},
-            {path:"booking",element:<ShowBookings/>}
+            {path:"add-service",element:<AddService/>}
+            // {path:"profile",element:<Profile/>},
+            // {path:"booking",element:<ShowBookings/>}
         ]
        },
-       {path:"/admin",element:<AdminSidebar/>}
+       {path:"/admin",element:<AdminSidebar/>,
+        children:[]
+       }
 ])
 
 const AppRouter=()=>{

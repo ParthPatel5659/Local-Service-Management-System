@@ -1,13 +1,12 @@
 const router=require("express").Router()
 
 const serviceController= require("../Controllers/ServiceController")
+const validateToken = require("../Middleware/AuthMiddelwear")
+
 router.post("/add",serviceController.addService)
 router.get("/all",serviceController.getAllService)
-
-
-// const ServicesController = require("../Controllers/ServicesController");
-
-// router.post("/add", ServicesController.addService);
-// router.get("/all", ServicesController.getAllService);
+router.get("/service/:id",serviceController.getserviceById)
+router.put("/update/:id",serviceController.updateServiceById)
+router.delete("/delete/:id",serviceController.deleteServiceById)
 
 module.exports=router

@@ -26,7 +26,7 @@ const loginUser= async(req,res)=>{
             const ispasswordmatched= await bcrypt.compare(password,foundUserFromMail.password)
             if(ispasswordmatched){
 
-                const token=jwt.sign(foundUserFromMail.toObject(),jwtSecret)
+                const token=jwt.sign(foundUserFromMail.toObject(),jwtSecret,{expiresIn:60*24*7})
                 // const token=jwt.sign({id:foundUserFromMail._id},jwtSecret)
                 res.status(201).json({
                     message:"login sucssfully",
@@ -52,7 +52,66 @@ const loginUser= async(req,res)=>{
         })
     }
 }
+
+//update user by id
+
+const updateUserById=async(req,res)=>{
+    try{
+        const updateUser= await userSchema.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        res.json({
+            message:"user update successfully",
+            data:updateUser
+        })
+    }catch(error){
+        res.status(500).json({
+            message:"error while updating user",
+            err:error
+        })
+    }
+}
+
+//delete user by id
+
+const deleteUserById= async(req,res)=>{
+    try {
+        const deleteUser= await userSchema.findByIdAndDelete(req.params.id)
+        res.json({
+            message:"user delete successfully",
+            data:deleteUser
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"error while deleting user",
+            err:error
+        })
+    }
+}
+
+//get all user
+
+const getallUser=async(req,res)=>{
+    try {
+       const allUser= await userSchema.find() 
+         res.json({
+            message:"all user get successfully",
+            data:allUser
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message:"error while getting all user",
+            err:error
+        })
+    }
+}
+
+
+
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    updateUserById,
+    deleteUserById,
+    getallUser
 }
