@@ -10,12 +10,12 @@ const PaymentSchema= new Schema({
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "user"
   },
 
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "user"
   },
 
   amount: {

@@ -186,6 +186,7 @@ const Login1 = () => {
         console.log(res.data.token);
         localStorage.setItem("token",res.data.token)
         localStorage.setItem("role",res.data.role)
+        localStorage.setItem("userId",res.data.userId)
         
         
         switch (res.data.role) {
@@ -193,8 +194,8 @@ const Login1 = () => {
             navigate("/admin");
             console.log("admin");
             break;
-          case "Service Provider":
-            navigate("/service-provider");
+          case "provider":
+            navigate("/provider");
             break;
           case "user":
             navigate("/user");

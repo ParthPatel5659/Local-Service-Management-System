@@ -6,12 +6,12 @@ const reviewSchema = new mongoose.Schema({
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "user"
   },
 
   serviceId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Service"
+    ref: "services"
   },
 
   rating: {

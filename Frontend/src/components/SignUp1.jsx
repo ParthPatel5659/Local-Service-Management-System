@@ -372,7 +372,7 @@ const SignUp1 = () => {
                 -- Select a Role --
               </option>
               <option value="user">User</option>
-              <option value="Service Provider">Service Provider</option>
+              <option value="provider">Service Provider</option>
             </select>
             {errors.role && (
               <p className={errorClass}>{errors.role.message}</p>

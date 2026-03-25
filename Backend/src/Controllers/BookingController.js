@@ -41,7 +41,14 @@ const getbookingbyid= async(req,res)=>{
     //   console.log(req.user._id)
     try {
       
-        const findBooking= await bookingSchema.findById(req.params.id).populate("userId");
+        const findBooking= await bookingSchema.findById(req.params.id).populate([
+  {
+    path: "serviceId",
+    populate: {
+      path: "providerId"
+    }
+  }
+])
         res.status(200).json({
             message:"Booking Found",
             data:findBooking

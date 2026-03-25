@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ServiceSchema = new Schema({
-  // providerId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "users",
-  //   required: true
-  // },
+  providerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true
+  },
 
   // categoryId: {
   //   type: mongoose.Schema.Types.ObjectId,

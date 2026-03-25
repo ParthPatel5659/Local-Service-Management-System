@@ -5,7 +5,7 @@ const Schema= mongoose.Schema;
 const BookingSchema= new Schema({
 userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "users"
+    ref: "user"
   },
 
   serviceId: [{
@@ -13,14 +13,19 @@ userId: {
     ref: "services"
   }],
 
-  providerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "users"
-  },
+  // providerId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "user"
+  // },
 
   bookingDate: {
-    type: Date
+    type: String
   },
+
+  bookingTime:{
+     type:String
+  },
+
 
   status: {
     type: String,

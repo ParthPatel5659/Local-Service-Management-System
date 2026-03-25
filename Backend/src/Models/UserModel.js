@@ -23,7 +23,7 @@ const userSchema = new Schema({
     role:{
         type:String,
         default:'user',
-        enum:['user','Service Provider','Admin']
+        enum:['user','provider','admin']
     },
     phone:{
         type:String,
@@ -43,4 +43,4 @@ const userSchema = new Schema({
     timestamps:true
 })
 
-module.exports = mongoose.model('User',userSchema)
+module.exports = mongoose.model('user',userSchema)

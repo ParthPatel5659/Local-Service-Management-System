@@ -19,7 +19,9 @@ const addService= async(req,res)=>{
 //Get All Service
 const getAllService=async(req,res)=>{
     try {
-        const findService = await ServiceSchema.find()
+        const findService = await ServiceSchema.find().populate([
+            {path: "providerId"}
+        ])
       res.json({
         message : "All Service Get Success Fully",
         data : findService
@@ -34,9 +36,21 @@ const getAllService=async(req,res)=>{
 //Get Service By Id
 
 const getserviceById= async(req,res)=>{
+
     try{
-        const findServiceById= await ServiceSchema.findById(req.params.id)
-        res.json({
+        if(!req.params.id){
+            res.status(400).json({
+                message:"Id Is Requird"
+            })
+        }
+        const findServiceById= await ServiceSchema.find({ providerId: req.params.providerId }).populate("providerId")
+
+        if(!findServiceById){
+            res.status(404).json({
+                message:"service not found"
+            })
+        }
+        res.status(200).json({
             message:"Service get successfully",
             data:findServiceById
         })
