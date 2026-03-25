@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom'
 import { FiSearch, FiUserPlus, FiMail, FiUsers } from 'react-icons/fi'
 import { FaCircle } from 'react-icons/fa'
 
-export const AllUser = () => {
+export const AllProvider = () => {
   const [users, setUsers] = useState([])
   const [search, setSearch] = useState("")
 
-  const getAllUser = async () => {
+  const getAllProvider = async () => {
     try {
-      const res = await axios.get(`/user/users`)
+      const res = await axios.get(`/user/providers`)
       setUsers(res.data.data)
     } catch (error) {
       console.log(error)
@@ -18,7 +18,7 @@ export const AllUser = () => {
   }
 
   useEffect(() => {
-    getAllUser()
+    getAllProvider()
   }, [])
 
   const filtered = users.filter((u) =>
@@ -64,7 +64,7 @@ export const AllUser = () => {
               <FiUsers className="text-white" size={15} />
             </div>
             <h1 className="text-xl font-bold tracking-tight" style={{ color: "#1e293b" }}>
-              All Users
+              All Providers
             </h1>
           </div>
           <p className="text-sm text-slate-400 ml-10">
@@ -82,7 +82,7 @@ export const AllUser = () => {
           }}
         >
           <FiUserPlus size={15} />
-          Add User
+          Add Provider
         </Link>
       </div>
 
@@ -116,7 +116,7 @@ export const AllUser = () => {
           >
             <FiUsers className="text-indigo-300" size={26} />
           </div>
-          <p className="text-slate-500 font-medium text-sm">No users found</p>
+          <p className="text-slate-500 font-medium text-sm">No providers found</p>
           <p className="text-slate-400 text-xs mt-1">Try a different search term</p>
         </div>
       )}
@@ -176,11 +176,6 @@ export const AllUser = () => {
               {/* Divider */}
               <div className="my-3 h-px" style={{ background: "#f1f5f9" }} />
 
-              <div>
-                <Link to="update" >Edit</Link>
-                <Link to="Detail" >Details</Link>
-              </div>
-
             </div>
           )
         })}
@@ -189,4 +184,4 @@ export const AllUser = () => {
   )
 }
 
-export default AllUser
+export default AllProvider

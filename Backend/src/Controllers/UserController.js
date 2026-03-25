@@ -29,7 +29,7 @@ const loginUser= async(req,res)=>{
             if(ispasswordmatched){
 
                 // const token=jwt.sign(foundUserFromMail.toObject(),jwtSecret,{expiresIn:60*24*7})
-                const token=jwt.sign({id:foundUserFromMail._id},jwtSecret)
+                const token=jwt.sign({id:foundUserFromMail._id},jwtSecret,)
                 res.status(201).json({
                     message:"login sucssfully",
                 //    data:foundUserFromMail,
@@ -108,6 +108,38 @@ const getallUser=async(req,res)=>{
     }
 }
 
+//get user
+const getByUser=async(req,res)=>{
+    try {
+        const getByUser=await userSchema.find({role:"user"})
+          res.json({
+            message:" user get successfully",
+            data:getByUser
+        })
+    } catch (error) {
+          res.status(500).json({
+            message:"error while getting user",
+            err:error
+        })
+    }
+}
+
+// get provider
+const getByProvider=async(req,res)=>{
+    try {
+        const getByProvider=await userSchema.find({role:"provider"})
+          res.json({
+            message:" provider get successfully",
+            data:getByProvider
+        })
+    } catch (error) {
+          res.status(500).json({
+            message:"error while getting provider",
+            err:error
+        })
+    }
+}
+
 
 
 
@@ -116,5 +148,7 @@ module.exports = {
     loginUser,
     updateUserById,
     deleteUserById,
-    getallUser
+    getallUser,
+    getByUser,
+    getByProvider
 }

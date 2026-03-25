@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -38,8 +38,9 @@ const AdminSidebar = () => {
   );
 
   return (
+    <div className="flex h-screen">
     <div
-      className="h-screen w-64 flex flex-col"
+      className=" w-64  flex-col"
       style={{
         background: "linear-gradient(180deg, #f0f4ff 0%, #ffffff 100%)",
         fontFamily: "'Plus Jakarta Sans', 'Nunito', sans-serif",
@@ -165,6 +166,12 @@ const AdminSidebar = () => {
           <FaSignOutAlt className="text-sm" />
         </button>
       </div>
+      
+    </div>
+    {/* Main Content */}
+    <div className="flex-1 bg-gray-100 overflow-y-auto p-6">
+      <Outlet />
+    </div>
     </div>
   );
 };

@@ -10,13 +10,11 @@ export const AllServicesofprovider = () => {
     // console.log(providerId)
     // const{id}= localStorage.setItem('id',res.data.data._id)
     
-    
+
 
     const token=localStorage.getItem("token")
     const decode=jwtDecode(token)
     console.log(decode);
-    console.log(decode._id)
-    const id = decode._id
     
 
     const fetchServicebyId=async()=>{

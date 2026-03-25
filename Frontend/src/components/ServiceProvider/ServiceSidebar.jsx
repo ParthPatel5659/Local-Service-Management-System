@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode'
 import React, { useState } from 'react'
 import { Link, useLocation, Outlet } from 'react-router-dom'
 
@@ -5,7 +6,10 @@ const ServiceSidebar = () => {
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const id = localStorage.getItem('userId')
+  const token = localStorage.getItem("token")
+  const decode = jwtDecode(token)
+  console.log(decode)
+  const id=decode._id
 
   const navItems = [
     {

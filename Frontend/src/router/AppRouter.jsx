@@ -11,6 +11,9 @@ import { Profile } from "../components/Profile";
 import AllServices from "../components/user/AllServices";
 import BookService from "../components/user/BookService";
 import { AllServicesofprovider } from "../components/ServiceProvider/AllServicesofprovider";
+import { AllUser } from "../components/admin/AllUser";
+import { AddUser } from "../components/user/AddUser";
+import { AllProvider } from "../components/admin/AllProvider";
 
 
 
@@ -40,7 +43,11 @@ const router=createBrowserRouter([
         ]
        },
        {path:"/admin",element:<AdminSidebar/>,
-        children:[]
+        children:[
+            {path:"users",element:<AllUser/>},
+            {path:"providers",element:<AllProvider/>},
+            {path:"addUser",element:<AddUser/>}
+        ]
        }
 ])
 
