@@ -24,7 +24,7 @@ const menu = [
   { name: "Bookings",   path: "/admin/bookings",    icon: <FaCalendarCheck /> },
   { name: "Payments",   path: "/admin/payments",    icon: <FaMoneyBill /> },
   { name: "Reviews",    path: "/admin/reviews",     icon: <FaStar /> },
-  { name: "Categories", path: "/admin/categories",  icon: <FaList /> },
+  { name: "Categories", path: "/admin/category",  icon: <FaList /> },
   { name: "Reports",    path: "/admin/reports",     icon: <FaChartBar /> },
   { name: "Admin Logs", path: "/admin/logs",        icon: <FaClipboardList /> },
 ];
@@ -54,10 +54,10 @@ const AdminSidebar = () => {
             className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold"
             style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
           >
-            C
+            L
           </div>
           <span className="font-bold text-base tracking-tight" style={{ color: "#1e293b" }}>
-            CodingLab
+            Local Service
           </span>
         </div>
         <button className="text-slate-400 hover:text-indigo-500 transition-colors duration-150">

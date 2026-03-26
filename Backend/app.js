@@ -24,6 +24,9 @@ app.use('/reviews',reviewRoutes)
 const paymentRoutes= require("./src/Routes/PaymentRoutes");
 app.use('/payments',paymentRoutes)
 
+const categoryRoutes= require("./src/Routes/CategoryRoutes")
+app.use('/category',categoryRoutes)
+
 const PORT = process.env.PORT
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
