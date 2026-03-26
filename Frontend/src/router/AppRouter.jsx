@@ -17,6 +17,9 @@ import { AllProvider } from "../components/admin/AllProvider";
 import AllBookings from "../components/admin/AllBookings";
 import { AllCategory } from "../components/admin/AllCategory";
 import { AddCategory } from "../components/admin/AddCategory";
+import AllReview from "../components/admin/AllReview";
+import { ForgotPassword } from "../components/ForgotPassword";
+import ResetPassword from "../components/ResetPassword";
 
 
 
@@ -25,6 +28,8 @@ const router=createBrowserRouter([
        {path:"/login",element:<Login1/>},
        {path:"/signup",element:<SignUp1/>},
        {path:"/verification",element:<VerificationCode/>},
+       {path:"/forgot-password",element:<ForgotPassword/>},
+       {path:"/resetpassword/:token",element:<ResetPassword/>},
 
        {path:"/user",element: <ProtectedRoutes userRoles={["user"]}>
             <UserNavbar/>,
@@ -52,7 +57,8 @@ const router=createBrowserRouter([
             {path:"addUser",element:<AddUser/>},
             {path:"bookings",element:<AllBookings/>},
             {path:"category",element:<AllCategory/>},
-            {path:"addcategory",element:<AddCategory/>}
+            {path:"addcategory",element:<AddCategory/>},
+            {path:"reviews",element:<AllReview/>}
         ]
        }
 ])

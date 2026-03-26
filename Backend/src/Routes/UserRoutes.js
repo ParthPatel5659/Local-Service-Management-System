@@ -8,5 +8,7 @@ router.delete('/delete/:id',userController.deleteUserById)
 router.get('/all',userController.getallUser)
 router.get('/users',userController.getByUser)
 router.get('/providers',userController.getByProvider)
+router.post('/forgotpassword',userController.forgotPassword)
+router.put("/resetpassword",userController.resetPassword)
 
 module.exports = router;

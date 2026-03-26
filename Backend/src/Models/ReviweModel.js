@@ -2,7 +2,7 @@ const mongoose= require("mongoose");
 
 const Schema=mongoose.Schema;
 
-const reviewSchema = new mongoose.Schema({
+const reviewSchema = new Schema({
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,8 @@ const reviewSchema = new mongoose.Schema({
   rating: {
     type: Number,
     min: 1,
-    max: 5
+    max: 5,
+    require:true
   },
 
   comment: {

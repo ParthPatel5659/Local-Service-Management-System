@@ -9,10 +9,10 @@ const ServiceSchema = new Schema({
     required: true
   },
 
-  // categoryId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "Category"
-  // },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Category"
+  },
 
   serviceName: {
     type: String,

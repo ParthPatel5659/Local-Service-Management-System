@@ -1,5 +1,6 @@
 const { response } = require("express");
 const bookingSchema= require("../Models/BookingModel");
+const { populate } = require("../Models/CatrogrieModel");
 
 //create Booking
 
@@ -63,7 +64,10 @@ const getbookingbyid= async(req,res)=>{
 //all Bookings Get
 const getAllBookings= async(req,res)=>{
     try {
-        const findBooking= await bookingSchema.find().populate("userId").populate("serviceId");
+        const findBooking= await bookingSchema.find().populate([
+            {path:"userId"},
+            {path:"serviceId",populate:{path: "providerId"}}
+        ])
         res.status(200).json({
             message:"All Bookings",
             data:findBooking

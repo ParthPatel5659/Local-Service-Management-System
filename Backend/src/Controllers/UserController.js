@@ -141,6 +141,62 @@ const getByProvider=async(req,res)=>{
 }
 
 
+const forgotPassword=async(req,res)=>{
+    const{email}=req.body;
+    if(!email){
+        return res.status(400).json({
+            message:"email is not provide"
+        })
+    }
+
+    const foundUserFromEmail= await userSchema.findOne({email:email})
+    if(foundUserFromEmail){
+        //token genrate
+        const token=jwt.sign(foundUserFromEmail.toObject(),jwtSecret,{expiresIn:60*10})
+        //reset link
+        const url=`http://localhost:5173/resetpassword/${token}`
+        //send mail
+         const mailtext = `<html>
+            <a href ='${url}'>RESET PASSWORD</a>
+        </html>`
+         await mailSend(foundUserFromEmail.email,"Reset Password Link",mailtext)
+        res.status(200).json({
+            message:"reset link has been sent to your email"
+        })
+        
+
+    }
+    else{
+        res.status(404).json({
+            message:"user not found.."
+        })
+    }
+    }
+
+
+const resetPassword=async(req,res)=>{
+    const{newPassword,token}=req.body;
+
+    try {
+        const decodedUser=jwt.verify(token,jwtSecret)
+        const hashedPassword= await bcrypt.hash(newPassword,10)
+        const updatedUser=await userSchema.findByIdAndUpdate(decodedUser._id,{password:hashedPassword})
+
+        res.status(200).json({
+            message:"Password reset succesfully",
+            // data:updatedUser
+        })
+    } catch (error) {
+        console.log(error);
+        
+        res.status(500).json({
+            message:"Server error",
+            err:error
+        })
+    }
+}
+
+
 
 
 module.exports = {
@@ -150,5 +206,7 @@ module.exports = {
     deleteUserById,
     getallUser,
     getByUser,
-    getByProvider
+    getByProvider,
+    forgotPassword,
+    resetPassword
 }
