@@ -13,10 +13,10 @@ userId: {
     ref: "services"
   }],
 
-  // providerId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "user"
-  // },
+  providerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
 
   bookingDate: {
     type: String

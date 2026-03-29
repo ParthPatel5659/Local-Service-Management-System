@@ -20,7 +20,7 @@ const addCategory=async(req,res)=>{
 
 const getAllCategory=async(req,res)=>{
     try {
-        const fetchCategory= await CategorySchema.find()
+        const fetchCategory= await CategorySchema.find({ isActive: true })
          res.json({
             message:"Category Fetch Succesfully",
             data:fetchCategory
@@ -32,6 +32,8 @@ const getAllCategory=async(req,res)=>{
         })
     }
 }
+
+
 
 
 module.exports={

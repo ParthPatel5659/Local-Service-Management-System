@@ -225,6 +225,8 @@ const SignUp1 = () => {
   const navigate = useNavigate();
 
   const submitHandler = async (data) => {
+    console.log(data);
+    
     try {
       const res = await axios.post("/user/register", data);
       if (res.status === 201) {

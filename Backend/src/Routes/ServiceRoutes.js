@@ -1,12 +1,28 @@
-const router=require("express").Router()
+// const router=require("express").Router()
 
-const serviceController= require("../Controllers/ServiceController")
-const validateToken = require("../Middleware/AuthMiddelwear")
+// const serviceController= require("../Controllers/ServiceController")
+// const validateToken = require("../Middleware/AuthMiddelwear")
 
-router.post("/add",serviceController.addService)
-router.get("/all",serviceController.getAllService)
-router.get("/service/:id",validateToken,serviceController.getserviceById)
-router.put("/update/:id",serviceController.updateServiceById)
-router.delete("/delete/:id",serviceController.deleteServiceById)
+// router.post("/add",serviceController.addService)
+// router.get("/all",serviceController.getAllService)
+// router.get("/service/:id",serviceController.getserviceById)
+// router.put("/update/:id",serviceController.updateServiceById)
+// router.delete("/delete/:id",serviceController.deleteServiceById)
 
-module.exports=router
+// module.exports=router
+const router = require("express").Router();
+
+const serviceController = require("../Controllers/ServiceController");
+const validateToken = require("../Middleware/AuthMiddelwear");
+
+router.post("/add",validateToken,  serviceController.addService);
+router.get("/all", serviceController.getAllService);
+
+// ✅ FIXED
+router.get("/my-services/:id", validateToken,serviceController.getMyServices);
+
+router.put("/update/:id",  serviceController.updateServiceById);
+router.delete("/delete/:id",  serviceController.deleteServiceById);
+router.get("/provider/:id",serviceController.getProviderService)
+
+module.exports = router;

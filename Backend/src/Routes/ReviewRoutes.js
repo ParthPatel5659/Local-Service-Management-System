@@ -3,5 +3,7 @@ const reviewController=require("../Controllers/ReviewController")
 
 router.post("/add",reviewController.addReview)
 router.get("/all",reviewController.getAllreview)
+router.get("/service/:id", reviewController.getServiceReviews);
+router.get("/provider/:id", reviewController.getProviderReviews);
 
 module.exports=router

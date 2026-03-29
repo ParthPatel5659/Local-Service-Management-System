@@ -9,7 +9,7 @@ const registerUser = async (req,res)=>{
     try{
          const hashedPassword = await bcrypt.hash(req.body.password,10);
         const savedUser = await userSchema.create({...req.body,password:hashedPassword});
-        await mailSend(savedUser.email,"Welcome to our localservice","thank you for join our app")
+        await mailSend(savedUser.email,"Welcome to our app","welcome.html")
         res.status(201).json({message:'user created successfully',data:savedUser})
 
     }catch(error){
@@ -154,7 +154,7 @@ const forgotPassword=async(req,res)=>{
         //token genrate
         const token=jwt.sign(foundUserFromEmail.toObject(),jwtSecret,{expiresIn:60*10})
         //reset link
-        const url=`http://localhost:5173/resetpassword/${token}`
+        const url=`${process.env.FRONTEND_URL}/resetpassword/${token}`
         //send mail
          const mailtext = `<html>
             <a href ='${url}'>RESET PASSWORD</a>
@@ -163,8 +163,6 @@ const forgotPassword=async(req,res)=>{
         res.status(200).json({
             message:"reset link has been sent to your email"
         })
-        
-
     }
     else{
         res.status(404).json({

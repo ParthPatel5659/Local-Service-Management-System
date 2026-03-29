@@ -40,6 +40,8 @@ const AllBookings = () => {
   const getAllBooking = async () => {
     try {
       const res = await axios.get("/bookings/all");
+      console.log(res.data.data);
+      
       setBookings(res.data.data);
     } catch (error) {
       console.log(error);

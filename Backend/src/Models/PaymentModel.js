@@ -34,13 +34,15 @@ const PaymentSchema= new Schema({
 
   paymentStatus: {
     type: String,
-    enum: ["Pending", "Success", "Failed"]
+    enum: ["Pending", "Success", "Failed"],
+    default:"Pending"
   },
 
   paymentDate: {
-    type: Date
+    type: Date,
+    default: Date.now
   }
 
-});
+},{timestamps:true});
 
 module.exports=mongoose.model("Payment", PaymentSchema);

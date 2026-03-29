@@ -32,9 +32,52 @@ const getAllreview=async(req,res)=>{
     }
 }
 
+//get review by service
+const getServiceReviews = async (req, res) => {
+  try {
+    const serviceId = req.params.id;
 
+    const reviews = await reviewSchema.find({ serviceId })
+      .populate("userId", "Firstname");
+
+    res.status(200).json({
+      message: "Service reviews fetched",
+      data: reviews,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching reviews",
+      error: error.message,
+    });
+  }
+};
+
+//get provider review
+const getProviderReviews = async (req, res) => {
+  try {
+    const providerId = req.params.id;
+
+    const reviews = await reviewSchema.find({ providerId })
+      .populate("userId", "Firstname")
+      .populate("serviceId", "serviceName");
+
+    res.status(200).json({
+      message: "Provider reviews fetched",
+      data: reviews,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching reviews",
+      error: error.message,
+    });
+  }
+};
 
 module.exports={
     addReview,
-    getAllreview
+    getAllreview,
+    getServiceReviews,
+    getProviderReviews
 }

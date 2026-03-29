@@ -14,6 +14,11 @@ const reviewSchema = new Schema({
     ref: "services"
   },
 
+  providerId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
+
   rating: {
     type: Number,
     min: 1,
