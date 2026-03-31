@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import Footer from '../Footer'
+import { AuthContext } from '../../AuthProvider'
 
 
 export const UserNavbar = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const { userId } = useContext(AuthContext)
+  console.log(userId)
 
+  
+
+  
+//  try {
+//     const token = localStorage.getItem("token");
+//     if (token) {
+//       const decoded = jwtDecode(token);
+//       console.log("Decoded Token:", decoded);
+
+//      const  id = decoded.id || "Not found"; // ✅ FIXED
+//       console.log(id)
+//     }
+//   } catch (error) {
+//     console.log("Token decode error:", error);
+//   }
+ 
   const navLinks = [
-    { to: '/user/profile', label: 'Profile' },
-    { to: '/user/services', label: 'Services' },
+    { to: `/user/services/${userId}`, label: 'Services' },
     { to: '/user/bookings', label: 'Bookings' },
     { to: '/user/support', label: 'Support' },
     { to: '/user/settings', label: 'Settings' },

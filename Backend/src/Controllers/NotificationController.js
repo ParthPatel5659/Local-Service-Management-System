@@ -20,7 +20,7 @@ const getUserNotifications = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const notifications = await Notification.find({ userId })
+    const notifications = await NotificationSchema.find({ userId })
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -39,7 +39,7 @@ const getUserNotifications = async (req, res) => {
 //make as read
 const markAsRead = async (req, res) => {
   try {
-    const notification = await Notification.findByIdAndUpdate(
+    const notification = await NotificationSchema.findByIdAndUpdate(
       req.params.id,
       { isRead: true },
       { new: true }

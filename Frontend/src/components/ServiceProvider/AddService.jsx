@@ -44,53 +44,48 @@
 // }
 
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../AuthProvider";
 
 export const AddService = () => {
-  
+  const { userId } = useContext(AuthContext);
   const { register, handleSubmit, setValue } = useForm();
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const token = localStorage.getItem("token");
-
-  // ✅ Fetch categories from backend
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get("/category/all");
-      setCategories(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
+    const loadCategories = async () => {
+      try {
+        const res = await axios.get("/category/all");
+        setCategories(res.data.data || []);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadCategories();
   }, []);
 
-  // ✅ Handle checkbox change (only one selection)
   const handleCategoryChange = (id) => {
     setSelectedCategory(id);
-    setValue("categoryId", id); // send to form
+    setValue("categoryId", id);
   };
 
   const submitHandler = async (data) => {
-    console.log(data);
-    
+    if (!userId) {
+      toast.error("Provider information is not loaded yet.");
+      return;
+    }
+
     try {
-      const res = await axios.post("/services/add",data,{
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if(res.status==201){
-      toast.success("Service added successfully");
-      navigate(-1)
+      const res = await axios.post(`/services/add`, data);
+      if (res.status === 201) {
+        toast.success("Service added successfully");
+        navigate(-1);
       }
     } catch (error) {
       console.log(error);
@@ -103,12 +98,13 @@ export const AddService = () => {
       <h2>Add Service</h2>
 
       <form onSubmit={handleSubmit(submitHandler)}>
-
         <input
           type="text"
           placeholder="Service Name"
           {...register("serviceName")}
         />
+
+        <input type="hidden" {...register('providerId')} defaultValue={userId} />
 
         <input
           type="text"
@@ -128,27 +124,25 @@ export const AddService = () => {
           {...register("location")}
         />
 
-        {/* ✅ CATEGORY CHECKBOX */}
         <h3>Select Category</h3>
+        {categories.map((cat) => (
+          <div key={cat._id}>
+            <input
+              type="checkbox"
+              checked={selectedCategory === cat._id}
+              onChange={() => handleCategoryChange(cat._id)}
+            />
+            <label>{cat.categoryName}</label>
+          </div>
+        ))}
 
-        {
-          categories.map((cat) => (
-            <div key={cat._id}>
-              <input
-                type="checkbox"
-                checked={selectedCategory === cat._id}
-                onChange={() => handleCategoryChange(cat._id)}
-              />
-              <label>{cat.categoryName}</label>
-            </div>
-          ))
-        }
-
-        {/* hidden input to send categoryId */}
-        <input type="hidden" {...register("categoryId")} />
+        <input
+          type="hidden"
+          value={selectedCategory}
+          {...register("categoryId")}
+        />
 
         <button type="submit">Add Service</button>
-
       </form>
     </div>
   );

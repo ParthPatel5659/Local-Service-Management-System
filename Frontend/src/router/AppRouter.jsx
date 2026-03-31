@@ -131,7 +131,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "dashboard", element: <HomePage /> },
-      { path: "profile", element: <Profile /> },
+      { path: "profile/:id", element: <Profile /> },
       { path: "services", element: <AllServices /> },
       { path: "bookings", element: <div>Bookings</div> },
       { path: "bookservices/:id", element: <BookService /> },
@@ -146,12 +146,12 @@ const router = createBrowserRouter([
     element: <Servicesidebar />,
     children: [
       // ✅ NO :id here
-      {path: "services", element: <AllServicesofprovider/> },
+      {path: "services/:id", element: <AllServicesofprovider/> },
       {path:"addservice",element:<AddService/>},
       {path:"bookings",element:<ProviderBookings/>},
       {path:"payment",element:<ProviderPayments/>},
-      {path:"reviwes",element:<ProviderReviews/>},
-      { path: "profile", element: <Profile /> },
+      {path:"reviwes/:id",element:<ProviderReviews/>},
+      { path: "profile/:id", element: <Profile /> },
     ],
   },
 

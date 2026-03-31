@@ -1,6 +1,4 @@
-const { response } = require("express");
-const bookingSchema= require("../Models/BookingModel");
-const { populate } = require("../Models/CatrogrieModel");
+const bookingSchema = require("../Models/BookingModel");
 
 //create Booking
 

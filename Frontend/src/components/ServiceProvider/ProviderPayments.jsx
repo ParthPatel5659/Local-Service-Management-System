@@ -1,28 +1,20 @@
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../AuthProvider";
 
 const ProviderPayments = () => {
+  const { userId } = useContext(AuthContext)
   const [payments, setPayments] = useState([]);
 
-//   const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
-  const decode = jwtDecode(token)
-        console.log("Decoded user:", decode)
 
-  const providerId = decode.id;
+//   const user = JSON.parse(localStorage.getItem("user"));
+  
 
   // 🔹 Fetch payments
   const getPayments = async () => {
     try {
       const res = await axios.get(
-        `/payments/provider/${providerId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        `/payments/provider/${userId}`);
 
       setPayments(res.data.data);
 
@@ -33,7 +25,7 @@ const ProviderPayments = () => {
 
   useEffect(() => {
     getPayments();
-  }, []);
+  }, [userId]);
 
   // 🔹 Update status
   const updateStatus = async (id) => {
@@ -41,11 +33,6 @@ const ProviderPayments = () => {
       await axios.put(
         `/payments/update/${id}`,
         { paymentStatus: "Completed" },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
       );
 
       getPayments();

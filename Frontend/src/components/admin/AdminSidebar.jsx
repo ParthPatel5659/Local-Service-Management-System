@@ -25,8 +25,8 @@ const menu = [
   { name: "Payments",   path: "/admin/payments",    icon: <FaMoneyBill /> },
   { name: "Reviews",    path: "/admin/reviews",     icon: <FaStar /> },
   { name: "Categories", path: "/admin/category",  icon: <FaList /> },
-  { name: "Reports",    path: "/admin/reports",     icon: <FaChartBar /> },
-  { name: "Admin Logs", path: "/admin/logs",        icon: <FaClipboardList /> },
+  // { name: "Reports",    path: "/admin/reports",     icon: <FaChartBar /> },
+  // { name: "Admin Logs", path: "/admin/logs",        icon: <FaClipboardList /> },
 ];
 
 const AdminSidebar = () => {

@@ -230,7 +230,7 @@ const SignUp1 = () => {
     try {
       const res = await axios.post("/user/register", data);
       if (res.status === 201) {
-        toast.success("User Registered Successfully");
+        toast.success("Mail Send Successfully");
         navigate("/");
       }
     } catch (err) {

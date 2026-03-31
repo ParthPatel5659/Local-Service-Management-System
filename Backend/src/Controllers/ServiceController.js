@@ -121,20 +121,17 @@ const ServiceSchema = require("../Models/ServiceModel");
 
 const addService = async (req, res) => {
     try {
-        console.log("USER:", req.user); // debug
+        // console.log("USER:", req.user); // debug
 
-        if (!req.user) {
-            return res.status(401).json({
-                message: "Unauthorized"
-            });
-        }
+        // if (!req.user) {
+        //     return res.status(401).json({
+        //         message: "Unauthorized"
+        //     });
+        // }
 
-        const providerId = req.user.id; // ✅ from token
+        // const providerId = req.user.id; // ✅ from token
 
-        const saveService = await ServiceSchema.create({
-            ...req.body,
-            providerId
-        });
+        const saveService = await ServiceSchema.create(req.body);
 
         res.status(201).json({
             message: "Service added successfully",
@@ -172,7 +169,7 @@ const getAllService = async (req, res) => {
 // ✅ Get Services of Logged-in Provider (🔥 MAIN FIX)
 const getMyServices = async (req, res) => {
     try {
-        const providerId = req.user.id; // from token
+        const providerId = req.params.id; // from token
 
         const services = await ServiceSchema.find({ providerId })
             .populate("providerId")
@@ -190,6 +187,7 @@ const getMyServices = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: error.message
         });
@@ -236,20 +234,20 @@ const deleteServiceById = async (req, res) => {
 
 // GET /services/provider/:id
 
-const getProviderService=async(req,res)=>{
+const getProviderService = async (req, res) => {
     try {
-        const services = await Service.find({
-    providerId: req.params.id,
-  });
+        const services = await ServiceSchema.find({
+            providerId: req.params.id,
+        });
 
-  res.status(200).json({
-    message:"provider service fetch succesfully",
-    data: services,
-  });
+        res.status(200).json({
+            message: "Provider service fetched successfully",
+            data: services,
+        });
     } catch (error) {
-      res.status(500).json({
+        res.status(500).json({
             message: error.message
-        });  
+        });
     }
 }
 

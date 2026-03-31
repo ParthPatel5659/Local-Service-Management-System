@@ -170,33 +170,20 @@
 
 // export default ServiceSidebar
 
-import { jwtDecode } from "jwt-decode";
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
+import { AuthContext } from "../../AuthProvider";
 
 const ServiceSidebar = () => {
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  // ✅ SAFE TOKEN DECODE
-  let providerId = "Not set";
-
-  try {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const decoded = jwtDecode(token);
-      console.log("Decoded Token:", decoded);
-
-      providerId = decoded.id || "Not found"; // ✅ FIXED
-    }
-  } catch (error) {
-    console.log("Token decode error:", error);
-  }
+  const { userId } = useContext(AuthContext)
+  console.log(userId)
+ 
 
   // ✅ NAVIGATION ITEMS (NO ID USED ❗)
   const navItems = [
     {
-      to: "/provider/services",
+      to: `/provider/services/${userId}`,
       label: "Services",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -225,7 +212,7 @@ const ServiceSidebar = () => {
       ),
     },
      {
-      to: "/provider/reviwes",
+      to: `/provider/reviwes/${userId}`,
       label: "Reviwes",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -235,7 +222,7 @@ const ServiceSidebar = () => {
       ),
     },
      {
-      to: "/provider/profile",
+      to: `/provider/profile/${userId}`,
       label: "Profile",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -253,7 +240,6 @@ const ServiceSidebar = () => {
     return (
       <Link
         to={item.to}
-        onClick={() => setMobileOpen(false)}
         className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
         ${
           isActive
@@ -283,7 +269,7 @@ const ServiceSidebar = () => {
         {/* Provider Info */}
         <div className="mt-10 text-sm text-gray-400">
           <p>Provider ID:</p>
-          <p className="text-white break-all">{providerId}</p>
+          <p className="text-white break-all">{userId}</p>
         </div>
       </aside>
 

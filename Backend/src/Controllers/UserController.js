@@ -28,13 +28,12 @@ const loginUser= async(req,res)=>{
             const ispasswordmatched= await bcrypt.compare(password,foundUserFromMail.password)
             if(ispasswordmatched){
 
-                // const token=jwt.sign(foundUserFromMail.toObject(),jwtSecret,{expiresIn:60*24*7})
-                const token=jwt.sign({id:foundUserFromMail._id},jwtSecret,)
+                const token=jwt.sign(foundUserFromMail.toObject(),jwtSecret,{expiresIn:60*24*7})
+                // const token=jwt.sign({id:foundUserFromMail._id},jwtSecret,)
                 res.status(201).json({
                     message:"login sucssfully",
                 //    data:foundUserFromMail,
                     token:token,
-                    userId : foundUserFromMail._id,
                     role:foundUserFromMail.role
                 })
             }
@@ -183,7 +182,7 @@ const forgotPassword=async(req,res)=>{
          const mailtext = `<html>
             <a href ='${url}'>RESET PASSWORD</a>
         </html>`
-         await mailSend(foundUserFromEmail.email,"Reset Password Link",mailtext)
+         await mailSend(foundUserFromEmail.email,"Reset Password Link","forgotPassword.html", token)
         res.status(200).json({
             message:"reset link has been sent to your email"
         })

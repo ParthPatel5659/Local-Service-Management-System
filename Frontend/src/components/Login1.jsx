@@ -132,12 +132,14 @@
 
 
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AuthContext } from "../AuthProvider"
 
 const Login1 = () => {
+  const { login } = useContext(AuthContext)
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -179,15 +181,8 @@ const Login1 = () => {
       const res = await axios.post("/user/login", data);
 
       if (res.status === 201) {
+        login(res.data.token)
         toast.success("Login successful");
-        console.log(res.data);
-        console.log(res.data.data);
-
-        console.log(res.data.token);
-        localStorage.setItem("token",res.data.token)
-        localStorage.setItem("role",res.data.role)
-        
-        
         switch (res.data.role) {
           case "admin":
             navigate("/admin");
@@ -206,6 +201,7 @@ const Login1 = () => {
         }
       }
     } catch (err) {
+      console.log(err)
       toast.error(err.response?.data?.message || "Login Failed");
     }
   };
