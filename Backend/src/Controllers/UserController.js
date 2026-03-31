@@ -56,22 +56,46 @@ const loginUser= async(req,res)=>{
     }
 }
 
-//update user by id
+//get profile
+const getProfile = async (req, res) => {
+  try {
+    const user = await userSchema.findById(req.params.id).select("-password");
 
-const updateUserById=async(req,res)=>{
-    try{
-        const updateUser= await userSchema.findByIdAndUpdate(req.params.id,req.body,{new:true})
-        res.json({
-            message:"user update successfully",
-            data:updateUser
-        })
-    }catch(error){
-        res.status(500).json({
-            message:"error while updating user",
-            err:error
-        })
-    }
-}
+    res.status(200).json({
+      message: "Profile fetched",
+      data: user,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching profile",
+      error: error.message,
+    });
+  }
+};
+
+//update profile by id
+
+const updateProfile = async (req, res) => {
+  try {
+    const updatedUser = await userSchema.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      message: "Profile updated",
+      data: updatedUser,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error updating profile",
+      error: error.message,
+    });
+  }
+};
 
 //delete user by id
 
@@ -200,11 +224,12 @@ const resetPassword=async(req,res)=>{
 module.exports = {
     registerUser,
     loginUser,
-    updateUserById,
+    updateProfile,
     deleteUserById,
     getallUser,
     getByUser,
     getByProvider,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getProfile
 }

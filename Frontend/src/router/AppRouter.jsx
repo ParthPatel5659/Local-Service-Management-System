@@ -109,6 +109,7 @@ import { AllServicesofprovider } from "../components/ServiceProvider/AllServices
 import { AddService } from "../components/ServiceProvider/AddService";
 import ProviderBookings from "../components/ServiceProvider/ProviderBookings";
 import ProviderPayments from "../components/ServiceProvider/ProviderPayments";
+import ProviderReviews from "../components/ServiceProvider/ProviderReviews";
 
 const router = createBrowserRouter([
 
@@ -145,10 +146,12 @@ const router = createBrowserRouter([
     element: <Servicesidebar />,
     children: [
       // ✅ NO :id here
-      { path: "services", element: <AllServicesofprovider/> },
+      {path: "services", element: <AllServicesofprovider/> },
       {path:"addservice",element:<AddService/>},
       {path:"bookings",element:<ProviderBookings/>},
-      {path:"payment",element:<ProviderPayments/>}
+      {path:"payment",element:<ProviderPayments/>},
+      {path:"reviwes",element:<ProviderReviews/>},
+      { path: "profile", element: <Profile /> },
     ],
   },
 
