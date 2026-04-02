@@ -3,11 +3,15 @@ const mongoose=require("mongoose")
 const Schema=mongoose.Schema;
 
 const NotificationSchema=new Schema({
-     userId: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: true,
   },
+  providerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
 
   title: {
     type: String,

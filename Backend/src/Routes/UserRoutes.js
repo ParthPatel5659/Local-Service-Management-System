@@ -1,9 +1,11 @@
 const router = require('express').Router();
 const userController = require('../Controllers/UserController');
 
+const upload=require("../Middleware/UploadMiddleware")
+
 router.post('/register',userController.registerUser);
 router.post('/login',userController.loginUser);
-router.put('/profile/:id',userController.updateProfile)
+router.put('/profile/:id',upload.single("profilePicture"),userController.updateProfile)
 router.get("/profile/:id",userController.getProfile)
 router.delete('/delete/:id',userController.deleteUserById)
 router.get('/all',userController.getallUser)

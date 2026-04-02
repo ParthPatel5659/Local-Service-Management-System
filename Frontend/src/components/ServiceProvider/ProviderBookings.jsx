@@ -1,34 +1,25 @@
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
+
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../AuthProvider";
 
 const ProviderBookings = () => {
   const [bookings, setBookings] = useState([]);
+const {userId,token}=useContext(AuthContext)
 
-  // ✅ Get user + token
-//   const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
-  const decode = jwtDecode(token)
-      console.log("Decoded user:", decode)
 
-  const providerId = decode.id;
 
   // 🔹 Fetch provider bookings
   const getBookings = async () => {
     try {
       // ✅ safety check
-      if (!providerId) {
+      if (!userId) {
         console.log("Provider ID not found");
         return;
       }
 
       const res = await axios.get(
-        `/bookings/provider/${providerId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ FIX
-          },
-        }
+        `/bookings/provider/${userId}`,
       );
 
       console.log(res.data.data);

@@ -28,7 +28,7 @@ import { jwtDecode } from "jwt-decode";
     // 🔥 Login function
     const login = (newToken) => {
         localStorage.setItem("token", newToken);
-
+         console.log(newToken)
         const decoded = jwtDecode(newToken);
 
         localStorage.setItem("userId", decoded._id); // ✅ FIXED

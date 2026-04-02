@@ -2,9 +2,53 @@ const bookingSchema = require("../Models/BookingModel");
 
 //create Booking
 
+// const CreateBooking = async (req, res) => {
+//   try {
+//     const booking = await bookingSchema.create(req.body);
+
+//     res.status(201).json({
+//       message: "Booking created successfully",
+//       data: booking,
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error creating booking",
+//       error: error.message,
+//     });
+//   }
+// };
+
+const Service = require("../Models/ServiceModel");
+
 const CreateBooking = async (req, res) => {
   try {
-    const booking = await bookingSchema.create(req.body);
+    const { serviceId, bookingDate, bookingTime,} = req.body;
+
+    // ✅ 1. Validate input
+    if (!serviceId || !bookingDate || !bookingTime) {
+      return res.status(400).json({
+        message: "All fields are required"
+      });
+    }
+
+    // ✅ 2. Check service exists
+    const service = await Service.findById(serviceId);
+    if (!service) {
+      return res.status(404).json({
+        message: "Service not found"
+      });
+    }
+
+    // ✅ 3. Create booking safely
+    const booking = await bookingSchema.create({
+      userId: req.params.id,            // 🔥 from token
+      providerId: service.providerId, // 🔥 auto set
+      serviceId,
+      bookingDate,
+      bookingTime,
+     
+    });
 
     res.status(201).json({
       message: "Booking created successfully",
@@ -26,9 +70,29 @@ const getUserBookings = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    const bookings = await bookingSchema.find({ userId })
-      .populate("serviceId", "serviceName")
-      .populate("providerId", "Firstname");
+    // ✅ validation
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is required"
+      });
+    }
+
+    const bookings = await bookingSchema
+      .find({ userId })
+      .populate("userId") // ✅ user data
+      .populate({
+        path: "serviceId",
+        populate: {
+          path: "providerId"
+        }
+      });
+
+    // ✅ optional empty check
+    if (!bookings.length) {
+      return res.status(404).json({
+        message: "No bookings found"
+      });
+    }
 
     res.status(200).json({
       message: "User bookings fetched",

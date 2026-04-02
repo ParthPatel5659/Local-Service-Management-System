@@ -36,6 +36,27 @@ const getUserNotifications = async (req, res) => {
   }
 };
 
+//get provider notification
+const getProviderNotification=async(req,res)=>{
+  try {
+    const providerId = req.params.id;
+
+    const notifications = await NotificationSchema.find({ providerId })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Notifications fetched",
+      data: notifications,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching notifications",
+      error: error.message,
+    });
+  }
+}
+
 //make as read
 const markAsRead = async (req, res) => {
   try {
@@ -62,5 +83,6 @@ const markAsRead = async (req, res) => {
 module.exports={
     createNotification,
     getUserNotifications,
+    getProviderNotification,
     markAsRead
 }

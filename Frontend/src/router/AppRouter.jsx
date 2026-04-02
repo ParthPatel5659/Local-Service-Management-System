@@ -110,6 +110,8 @@ import { AddService } from "../components/ServiceProvider/AddService";
 import ProviderBookings from "../components/ServiceProvider/ProviderBookings";
 import ProviderPayments from "../components/ServiceProvider/ProviderPayments";
 import ProviderReviews from "../components/ServiceProvider/ProviderReviews";
+import MyBookings from "../components/user/MyBooking";
+import { AddReview } from "../components/user/AddReview";
 
 const router = createBrowserRouter([
 
@@ -133,7 +135,8 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <HomePage /> },
       { path: "profile/:id", element: <Profile /> },
       { path: "services", element: <AllServices /> },
-      { path: "bookings", element: <div>Bookings</div> },
+      { path: "bookings", element: <MyBookings/> },
+      { path: "add-review/:serviceId/:providerId",element:<AddReview/>},
       { path: "bookservices/:id", element: <BookService /> },
       { path: "support", element: <div>Support</div> },
       { path: "settings", element: <div>Settings</div> },

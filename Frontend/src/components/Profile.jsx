@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export const Profile = () => {
   const {
@@ -37,6 +38,10 @@ export const Profile = () => {
   const submitHandler = async (data) => {
     try {
       console.log(data)
+      const res= await axios.put(`/user/profile/${id}`,data)
+      if(res.status==200){
+        toast.success("profile update successfully")
+      }
     } catch (error) {
       console.log(error)
     }

@@ -3,6 +3,7 @@ const NotificationController=require("../Controllers/NotificationController")
 
 router.post("/add",NotificationController.createNotification)
 router.get("/user/:id",NotificationController.getUserNotifications)
+router.get("/provider/:id",NotificationController.getProviderNotification)
 router.put("/read/:id",NotificationController.markAsRead)
 
 module.exports=router

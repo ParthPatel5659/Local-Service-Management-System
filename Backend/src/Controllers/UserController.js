@@ -4,6 +4,7 @@ const mailSend = require('../Utils/MaliUtils');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const jwtSecret = process.env.JWT_SECRET;
+const uploadToCloudinary=require("../Utils/CloudinaryUtils")
 
 const registerUser = async (req,res)=>{
     try{
@@ -77,10 +78,11 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
+    const cloudinaryResponse = await uploadToCloudinary(req.file.path)
+    console.log("cloudinaryResponse",cloudinaryResponse) //secure_url
     const updatedUser = await userSchema.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true }
+      { ...req.body , profilePicture : cloudinaryResponse.secure_url, },{new : true}
     ).select("-password");
 
     res.status(200).json({

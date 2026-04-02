@@ -2,8 +2,8 @@ const router=require("express").Router()
 const BookingController=require("../Controllers/BookingController")
 const validateToken = require("../Middleware/AuthMiddelwear")
 
-router.post("/create",BookingController.CreateBooking)
-router.get("/user/:userId",BookingController.getUserBookings)
+router.post("/create/:id",BookingController.CreateBooking)
+router.get("/user/:id",BookingController.getUserBookings)
 router.get("/booking/:id",BookingController.getbookingbyid)
 router.get("/all",BookingController.getAllBookings)
 router.get("/provider/:id",validateToken ,BookingController.getProviderBookings);
