@@ -10,5 +10,6 @@ router.get("/provider/:id",validateToken ,BookingController.getProviderBookings)
 router.put("/update/:id",validateToken, BookingController.updateBookingStatus);
 // router.put("/payment/:id", BookingController.updatePaymentStatus);
 router.delete("/delete/:id", BookingController.deleteBooking);
+router.put("/cancel/:id",BookingController.cancelBookingbyId)
 
 module.exports=router

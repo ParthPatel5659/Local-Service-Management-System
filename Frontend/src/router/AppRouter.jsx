@@ -112,6 +112,10 @@ import ProviderPayments from "../components/ServiceProvider/ProviderPayments";
 import ProviderReviews from "../components/ServiceProvider/ProviderReviews";
 import MyBookings from "../components/user/MyBooking";
 import { AddReview } from "../components/user/AddReview";
+import UserNotifications from "../components/user/UserNotifications";
+import ProviderNotifications from "../components/ServiceProvider/ProviderNotifications";
+import ServiceDetails from "../components/ServiceDetails";
+import EditService from "../components/ServiceProvider/EditService";
 
 const router = createBrowserRouter([
 
@@ -140,6 +144,8 @@ const router = createBrowserRouter([
       { path: "bookservices/:id", element: <BookService /> },
       { path: "support", element: <div>Support</div> },
       { path: "settings", element: <div>Settings</div> },
+      {path:"notifications",element:<UserNotifications/>},
+      {path:"servicedetail/:id",element:<ServiceDetails/>}
     ],
   },
 
@@ -151,10 +157,12 @@ const router = createBrowserRouter([
       // ✅ NO :id here
       {path: "services/:id", element: <AllServicesofprovider/> },
       {path:"addservice",element:<AddService/>},
+      {path:"edit-service/:id",element:<EditService/>},
       {path:"bookings",element:<ProviderBookings/>},
       {path:"payment",element:<ProviderPayments/>},
       {path:"reviwes/:id",element:<ProviderReviews/>},
       { path: "profile/:id", element: <Profile /> },
+      {path:"notifications",element:<ProviderNotifications/>}
     ],
   },
 

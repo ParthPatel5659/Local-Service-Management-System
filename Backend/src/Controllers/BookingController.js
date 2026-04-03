@@ -244,6 +244,46 @@ const deleteBooking = async (req, res) => {
   }
 };
 
+//cancel booking by id
+const cancelBookingbyId=async(req,res)=>{
+  try { 
+     const bookingId = req.params.id;
+
+    const booking = await bookingSchema.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking not found",
+      });
+    }
+
+    // ❌ prevent cancel if completed
+    if (booking.status === "Completed") {
+      return res.status(400).json({
+        message: "Cannot cancel completed booking",
+      });
+    }
+
+    // ✅ update status
+    booking.status = "Cancelled";
+    await booking.save();
+
+    res.status(200).json({
+      message: "Booking cancelled successfully",
+      data: booking,
+    });
+    
+  } catch (error) {
+     res.status(500).json({
+      message: "Error cancelling booking",
+      error: error.message,
+    });
+  }
+}
+
+
+
+
 module.exports={
     CreateBooking,
     getUserBookings,
@@ -251,5 +291,6 @@ module.exports={
     getAllBookings,
     getProviderBookings,
     updateBookingStatus,
-    deleteBooking
+    deleteBooking,
+    cancelBookingbyId
 }

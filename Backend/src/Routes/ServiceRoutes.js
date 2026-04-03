@@ -23,5 +23,6 @@ router.get("/my-services/:id",serviceController.getMyServices);
 router.put("/update/:id",  serviceController.updateServiceById);
 router.delete("/delete/:id",  serviceController.deleteServiceById);
 router.get("/provider/:id",serviceController.getProviderService)
-
+router.get("/service/:id",serviceController.getServicebyId)
+router.put("/avalbility/:id",serviceController.updateAvaliblestaues)
 module.exports = router;

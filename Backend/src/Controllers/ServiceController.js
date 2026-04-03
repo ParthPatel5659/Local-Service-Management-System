@@ -251,11 +251,61 @@ const getProviderService = async (req, res) => {
     }
 }
 
+//get service by id
+
+const getServicebyId=async(req,res)=>{
+    try {
+        const service=await ServiceSchema.findById(req.params.id)
+        .populate("providerId", "Firstname Lastname email phone")
+        .populate("categoryId", "categoryName");
+
+        if (!service) {
+      return res.status(404).json({
+        message: "Service not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Service fetched",
+      data: service
+    });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
+//update avaliable status
+
+const updateAvaliblestaues=async(req,res)=>{
+    try {
+        const service= await ServiceSchema.findById(req.params.id)
+        if(!service){
+            return res.status(404).json({ message: "Service not found" });
+        }
+
+        service.availability = !service.availability;
+    await service.save();
+
+    res.status(200).json({
+      message: "Availability updated",
+      data: service,
+    });
+    } catch (error) {
+          res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     addService,
     getAllService,
     getMyServices,
     updateServiceById,
     deleteServiceById,
-    getProviderService
+    getProviderService,
+    getServicebyId,
+    updateAvaliblestaues
 };

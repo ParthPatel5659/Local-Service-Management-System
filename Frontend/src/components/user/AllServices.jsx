@@ -35,6 +35,8 @@ const AllServices = () => {
   const allService = async () => {
     try {
       const res = await axios.get('/services/all')
+      console.log(res.data.data);
+      
       setservices(res.data.data)
     } catch (err) {
       console.log(err)
@@ -234,6 +236,16 @@ const AllServices = () => {
                     </span>
                     <span className="text-xs text-slate-400 ml-0.5">/hr</span>
                   </div>
+                     <Link
+                    to={`/user/servicedetail/${service._id}`}
+                    className="px-4 py-1.5 rounded-xl text-xs font-semibold text-white transition-all duration-150 hover:opacity-90 active:scale-95"
+                    style={{
+                      background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                      boxShadow: "0 3px 10px rgba(99,102,241,0.30)",
+                    }}
+                  >
+                   View Detail
+                  </Link>
 
                   <Link
                     to={`/user/bookservices/${service._id}`}
@@ -242,8 +254,9 @@ const AllServices = () => {
                       background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
                       boxShadow: "0 3px 10px rgba(99,102,241,0.30)",
                     }}
-                  >
-                    Book Now
+                  ><button  disabled={!service.availability}>
+                    {service.availability ? "Book Now" : "Unavailable"}
+                  </button>
                   </Link>
                 </div>
               </div>

@@ -4,17 +4,33 @@ import { AuthContext } from "../../AuthProvider";
 import { Link } from "react-router-dom";
 
 const MyBookings = () => {
-  const { userId } = useContext(AuthContext); // ✅ FIX
+  const { userId } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
 
+  // ✅ Fetch bookings
   const getBookings = async () => {
     try {
       const res = await axios.get(`/bookings/user/${userId}`);
-      console.log(res.data.data);
-
       setBookings(res.data.data || []);
     } catch (error) {
       console.log("Error fetching bookings:", error);
+    }
+  };
+
+  // ✅ Cancel booking
+  const cancelBooking = async (bookingId) => {
+    try {
+      if (!window.confirm("Are you sure you want to cancel?")) return;
+
+      const res = await axios.put(`/bookings/cancel/${bookingId}`);
+
+      if (res.status === 200) {
+        alert("Booking cancelled successfully");
+        getBookings(); // refresh
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Cancel failed");
     }
   };
 
@@ -31,13 +47,10 @@ const MyBookings = () => {
       <div className="grid grid-cols-3 gap-4">
         {bookings.length > 0 ? (
           bookings.map((booking) => {
-            const service = booking.serviceId?.[0]; // ✅ FIX ARRAY
+            const service = booking.serviceId?.[0];
 
             return (
-              <div
-                key={booking._id}
-                className="border p-4 rounded shadow"
-              >
+              <div key={booking._id} className="border p-4 rounded shadow">
                 {/* Service */}
                 <p>
                   <b>Service:</b> {service?.serviceName || "N/A"}
@@ -45,8 +58,7 @@ const MyBookings = () => {
 
                 {/* Provider */}
                 <p>
-                  <b>Provider:</b>{" "}
-                  {service?.providerId?.Firstname || ""}{" "}
+                  <b>Provider:</b> {service?.providerId?.Firstname || ""}{" "}
                   {service?.providerId?.Lastname || ""}
                 </p>
 
@@ -62,13 +74,13 @@ const MyBookings = () => {
                       booking.status === "pending"
                         ? "text-yellow-500"
                         : booking.status === "accepted"
-                        ? "text-blue-500"
-                        : "text-green-500"
+                          ? "text-blue-500"
+                          : booking.status === "Completed"
+                            ? "text-green-500"
+                            : "text-red-500"
                     }`}
                   >
-                    {booking.status === "Completed" && (
-                        <Link to={`/user/add-review/${service._id}/${service.providerId._id}`}>Add Review</Link>
-                    )}
+                    {booking.status}
                   </span>
                 </p>
 
@@ -85,6 +97,29 @@ const MyBookings = () => {
                     {booking.paymentStatus}
                   </span>
                 </p>
+
+                {/* ✅ Cancel Button */}
+                {booking.status !== "Cancelled" &&
+                  booking.status !== "Completed" && (
+                    <button
+                      onClick={() => cancelBooking(booking._id)}
+                      className="mt-2 bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                      Cancel Booking
+                    </button>
+                  )}
+
+                {/* ✅ Add Review (SAFE FIX) */}
+                {booking.status === "Completed" &&
+                  service?._id &&
+                  service?.providerId?._id && (
+                    <Link
+                      to={`/user/add-review/${service._id}/${service.providerId._id}`}
+                      className="block mt-2 text-blue-500 underline"
+                    >
+                      Add Review
+                    </Link>
+                  )}
               </div>
             );
           })

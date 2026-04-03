@@ -38,7 +38,7 @@ const getServiceReviews = async (req, res) => {
     const serviceId = req.params.id;
 
     const reviews = await reviewSchema.find({ serviceId })
-      .populate("userId", "Firstname");
+      .populate("userId", "Firstname Lastname");
 
     res.status(200).json({
       message: "Service reviews fetched",
@@ -59,7 +59,7 @@ const getProviderReviews = async (req, res) => {
     const providerId = req.params.id;
 
     const reviews = await reviewSchema.find({ providerId })
-      .populate("userId", "Firstname")
+      .populate("userId", "Firstname Lastname")
       .populate("serviceId", "serviceName");
 
     res.status(200).json({
