@@ -176,12 +176,22 @@ import { AuthContext } from "../../AuthProvider";
 
 const ServiceSidebar = () => {
   const location = useLocation();
-  const { userId } = useContext(AuthContext)
+  const { userId,logout } = useContext(AuthContext)
   console.log(userId)
  
 
   // ✅ NAVIGATION ITEMS (NO ID USED ❗)
   const navItems = [
+     {
+      to: "/provider/dashboard",
+      label: "Deshbord",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      ),
+    },
     {
       to: `/provider/services/${userId}`,
       label: "Services",
@@ -263,6 +273,8 @@ const ServiceSidebar = () => {
         <nav className="space-y-2">
           {navItems.map((item) => (
             <NavLink key={item.to} item={item} />
+
+            
           ))}
         </nav>
 
@@ -271,7 +283,19 @@ const ServiceSidebar = () => {
           <p>Provider ID:</p>
           <p className="text-white break-all">{userId}</p>
         </div>
+                        <Link
+                       to="/"
+                       className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200"
+                       onChange={logout}
+                     >
+                       Logout
+                     </Link>
+                   
       </aside>
+      
+
+    
+      
 
       {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100">

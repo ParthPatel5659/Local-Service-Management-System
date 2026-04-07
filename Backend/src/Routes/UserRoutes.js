@@ -13,5 +13,7 @@ router.get('/users',userController.getByUser)
 router.get('/providers',userController.getByProvider)
 router.post('/forgotpassword',userController.forgotPassword)
 router.put("/resetpassword",userController.resetPassword)
+router.get("/detail/:id",userController.getUserById)
+router.put("/update/:id",userController.updateUser)
 
 module.exports = router;

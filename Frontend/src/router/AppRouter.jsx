@@ -73,7 +73,7 @@
 
 // export default AppRouter
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 // Auth & Common
 import Login1 from "../components/Login1";
@@ -116,6 +116,12 @@ import UserNotifications from "../components/user/UserNotifications";
 import ProviderNotifications from "../components/ServiceProvider/ProviderNotifications";
 import ServiceDetails from "../components/ServiceDetails";
 import EditService from "../components/ServiceProvider/EditService";
+import UserDetail from "../components/user/UserDetail";
+import UpdateUser from "../components/user/UpdateUser";
+import AdminDashboard from "../components/admin/AdminDashboard";
+import ProviderDashboard from "../components/ServiceProvider/ProviderDashboard";
+import UserDashboard from "../components/user/UserDashboard";
+import ServiceByCategory from "../components/user/ServiceByCategory";
 
 const router = createBrowserRouter([
 
@@ -136,7 +142,9 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      { path: "dashboard", element: <HomePage /> },
+      {index:true,element:<Navigate to="dashboard" replace />},
+      { path: "dashboard", element: <UserDashboard/> },
+      { path: "services/:categoryId",element: <ServiceByCategory/>},
       { path: "profile/:id", element: <Profile /> },
       { path: "services", element: <AllServices /> },
       { path: "bookings", element: <MyBookings/> },
@@ -155,6 +163,8 @@ const router = createBrowserRouter([
     element: <Servicesidebar />,
     children: [
       // ✅ NO :id here
+       {index:true,element:<Navigate to="dashboard" replace />},
+      { path: "dashboard",element:<ProviderDashboard/>},
       {path: "services/:id", element: <AllServicesofprovider/> },
       {path:"addservice",element:<AddService/>},
       {path:"edit-service/:id",element:<EditService/>},
@@ -171,8 +181,12 @@ const router = createBrowserRouter([
     path: "/admin",
     element: <AdminSidebar />,
     children: [
+      {index:true,element:<Navigate to="dashboard" replace />},
+      {path:"dashboard",element:<AdminDashboard/>},
       { path: "users", element: <AllUser /> },
       { path: "providers", element: <AllProvider /> },
+      { path:"users/detail/:id",element:<UserDetail/>},
+      { path:"users/update/:id",element:<UpdateUser/>},
       { path: "addUser", element: <AddUser /> },
       { path: "bookings", element: <AllBookings /> },
       { path: "category", element: <AllCategory /> },

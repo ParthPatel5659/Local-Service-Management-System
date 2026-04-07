@@ -24,12 +24,15 @@ const PaymentSchema= new Schema({
 
   paymentMethod: {
     type: String,
-    enum: ["UPI", "Card", "Wallet", "COD"],
-    default: "COD"
+    enum: ["UPI", "Card", "Wallet", "COD"]
   },
 
   transactionId: {
     type: String
+  },
+
+  orderId: {
+    type:String
   },
 
   paymentStatus: {

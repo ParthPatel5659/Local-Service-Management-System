@@ -2,8 +2,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiSearch, FiMapPin, FiTag, FiUser, FiPackage, FiDollarSign } from 'react-icons/fi'
-import { FaStar } from 'react-icons/fa'
+import { FiSearch, FiMapPin, FiTag, FiUser, FiPackage,  } from 'react-icons/fi'
+import { FaStar ,FaRupeeSign} from 'react-icons/fa'
 
 const avatarColors = [
   "linear-gradient(135deg, #6366f1, #8b5cf6)",
@@ -230,7 +230,7 @@ const AllServices = () => {
                 {/* Price + Book Button */}
                 <div className="flex items-center justify-between mt-auto pt-1">
                   <div className="flex items-center gap-0.5">
-                    <FiDollarSign size={13} className="text-emerald-500" />
+                    <FaRupeeSign size={13} className="text-emerald-500" />
                     <span className="text-base font-bold" style={{ color: "#1e293b" }}>
                       {service.price?.toLocaleString() || "—"}
                     </span>
@@ -249,6 +249,7 @@ const AllServices = () => {
 
                   <Link
                     to={`/user/bookservices/${service._id}`}
+
                     className="px-4 py-1.5 rounded-xl text-xs font-semibold text-white transition-all duration-150 hover:opacity-90 active:scale-95"
                     style={{
                       background: "linear-gradient(135deg, #6366f1, #8b5cf6)",

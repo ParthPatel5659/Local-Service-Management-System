@@ -1,10 +1,36 @@
 const bookingSchema = require("../Models/BookingModel");
-
-//create Booking
+const Service = require("../Models/ServiceModel");
 
 // const CreateBooking = async (req, res) => {
 //   try {
-//     const booking = await bookingSchema.create(req.body);
+//     const { serviceId, bookingDate, bookingTime,} = req.body;
+
+//     // ✅ 1. Validate input
+//     if (!serviceId || !bookingDate || !bookingTime) {
+//       return res.status(400).json({
+//         message: "All fields are required"
+//       });
+//     }
+
+//     // ✅ 2. Check service exists
+//     const service = await Service.findById(serviceId);
+//     if (!service) {
+//       return res.status(404).json({
+//         message: "Service not found"
+//       });
+//     }
+
+//     // ✅ 3. Create booking safely
+//     const booking = await bookingSchema.create({
+//       userId: req.params.id,            // 🔥 from token
+//       providerId: service.providerId, // 🔥 auto set
+//       serviceId,
+//       bookingDate,
+//       bookingTime,
+//      amount: service.price
+//     });
+
+    
 
 //     res.status(201).json({
 //       message: "Booking created successfully",
@@ -12,6 +38,7 @@ const bookingSchema = require("../Models/BookingModel");
 //     });
 
 //   } catch (error) {
+//      console.log(error);
 //     res.status(500).json({
 //       message: "Error creating booking",
 //       error: error.message,
@@ -19,11 +46,9 @@ const bookingSchema = require("../Models/BookingModel");
 //   }
 // };
 
-const Service = require("../Models/ServiceModel");
-
 const CreateBooking = async (req, res) => {
   try {
-    const { serviceId, bookingDate, bookingTime,} = req.body;
+    const { serviceId, bookingDate, bookingTime } = req.body;
 
     // ✅ 1. Validate input
     if (!serviceId || !bookingDate || !bookingTime) {
@@ -32,7 +57,7 @@ const CreateBooking = async (req, res) => {
       });
     }
 
-    // ✅ 2. Check service exists
+    // ✅ 2. Find service
     const service = await Service.findById(serviceId);
     if (!service) {
       return res.status(404).json({
@@ -40,14 +65,21 @@ const CreateBooking = async (req, res) => {
       });
     }
 
-    // ✅ 3. Create booking safely
+    // ✅ 3. Calculate pricing
+    const totalAmount = service.price;
+    const commission = totalAmount * 0.1; // 10%
+    const providerEarning = totalAmount - commission;
+
+    // ✅ 4. Create booking
     const booking = await bookingSchema.create({
-      userId: req.params.id,            // 🔥 from token
-      providerId: service.providerId, // 🔥 auto set
-      serviceId,
+      userId: req.user.id,   // 🔥 from JWT middleware
+      providerId: service.providerId,
+      serviceId: [serviceId], // 🔥 array format
       bookingDate,
       bookingTime,
-     
+      totalAmount,
+      commission,
+      providerEarning
     });
 
     res.status(201).json({
@@ -56,14 +88,13 @@ const CreateBooking = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "Error creating booking",
       error: error.message,
     });
   }
 };
-
-
 
 //UserBookings Get
 const getUserBookings = async (req, res) => {
@@ -156,7 +187,7 @@ const getProviderBookings = async (req, res) => {
     const providerId = req.params.id;
 
     const bookings = await bookingSchema.find({ providerId })
-      .populate("userId", "Firstname email")
+      .populate("userId", "Firstname Lastname email")
       .populate("serviceId", "serviceName");
 
     if (!bookings.length) {
@@ -282,6 +313,30 @@ const cancelBookingbyId=async(req,res)=>{
 }
 
 
+const getRevenu=async(req,res)=>{
+   try {
+
+    const revenueData = await Booking.aggregate([
+      {
+        $match: { status: "Completed" } // ✅ only completed
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$commission" } // ✅ commission only
+        }
+      }
+    ]);
+
+    res.json({
+      totalRevenue: revenueData[0]?.totalRevenue || 0
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 
 
 module.exports={
@@ -292,5 +347,6 @@ module.exports={
     getProviderBookings,
     updateBookingStatus,
     deleteBooking,
-    cancelBookingbyId
+    cancelBookingbyId,
+    getRevenu
 }

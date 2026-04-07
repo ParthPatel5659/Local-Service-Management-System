@@ -299,6 +299,20 @@ const updateAvaliblestaues=async(req,res)=>{
     }
 }
 
+const getServiceByCategory = async (req, res) => {
+  try {
+    const services = await ServiceSchema.find({
+      categoryId: req.params.id,
+    }).populate("providerId");
+
+    res.json({
+      data: services,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
     addService,
     getAllService,
@@ -307,5 +321,6 @@ module.exports = {
     deleteServiceById,
     getProviderService,
     getServicebyId,
-    updateAvaliblestaues
+    updateAvaliblestaues,
+    getServiceByCategory
 };

@@ -176,9 +176,20 @@ export const AllUser = () => {
               {/* Divider */}
               <div className="my-3 h-px" style={{ background: "#f1f5f9" }} />
 
-              <div>
-                <Link to="update" >Edit</Link>
-                <Link to="Detail" >Details</Link>
+               <div className="flex gap-3 mt-3 text-xs font-semibold">
+                <Link
+                  to={`/admin/users/update/${user._id}`}
+                  className="text-indigo-600"
+                >
+                  Edit
+                </Link>
+
+                <Link
+                  to={`/admin/users/detail/${user._id}`}
+                  className="text-green-600"
+                >
+                  Details
+                </Link>
               </div>
 
             </div>
