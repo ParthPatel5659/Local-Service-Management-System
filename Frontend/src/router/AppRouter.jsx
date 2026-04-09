@@ -122,6 +122,8 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import ProviderDashboard from "../components/ServiceProvider/ProviderDashboard";
 import UserDashboard from "../components/user/UserDashboard";
 import ServiceByCategory from "../components/user/ServiceByCategory";
+import Settings from "../components/pages/Settings";
+import Support from "../components/pages/Support";
 
 const router = createBrowserRouter([
 
@@ -150,8 +152,8 @@ const router = createBrowserRouter([
       { path: "bookings", element: <MyBookings/> },
       { path: "add-review/:serviceId/:providerId",element:<AddReview/>},
       { path: "bookservices/:id", element: <BookService /> },
-      { path: "support", element: <div>Support</div> },
-      { path: "settings", element: <div>Settings</div> },
+      { path: "support", element: <Support/>},
+      { path: "settings", element: <Settings/> },
       {path:"notifications",element:<UserNotifications/>},
       {path:"servicedetail/:id",element:<ServiceDetails/>}
     ],
@@ -171,7 +173,7 @@ const router = createBrowserRouter([
       {path:"bookings",element:<ProviderBookings/>},
       {path:"payment",element:<ProviderPayments/>},
       {path:"reviwes/:id",element:<ProviderReviews/>},
-      { path: "profile/:id", element: <Profile /> },
+      {path:"profile/:id", element: <Profile /> },
       {path:"notifications",element:<ProviderNotifications/>}
     ],
   },
@@ -191,6 +193,7 @@ const router = createBrowserRouter([
       { path: "bookings", element: <AllBookings /> },
       { path: "category", element: <AllCategory /> },
       { path: "addcategory", element: <AddCategory /> },
+      {path:"editcategory/:id",element:<AddCategory/>},
       { path: "reviews", element: <AllReview /> },
       { path: "payments", element: <AllPayment /> },
       { path: "services", element: <AllServicesshow /> },

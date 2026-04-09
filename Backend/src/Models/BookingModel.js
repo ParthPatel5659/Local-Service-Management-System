@@ -24,7 +24,7 @@ const BookingSchema= new Schema({
   },
 
   bookingTime:{
-     type:String
+     type:String,
   },
   // ✅ IMPORTANT FOR REVENUE
   totalAmount: {

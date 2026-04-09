@@ -12,4 +12,5 @@ router.put("/update/:id",validateToken, BookingController.updateBookingStatus);
 router.delete("/delete/:id", BookingController.deleteBooking);
 router.put("/cancel/:id",BookingController.cancelBookingbyId)
 router.get("/revenue",BookingController.getRevenu)
+
 module.exports=router

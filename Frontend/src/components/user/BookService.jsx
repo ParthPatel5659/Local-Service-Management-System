@@ -1,103 +1,25 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../AuthProvider";
 
 const BookService = () => {
-  const { id } = useParams(); // serviceId
+  const { id } = useParams(); // Using the ID from URL
   const { userId } = useContext(AuthContext);
   const navigate = useNavigate();
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [serviceData, setServiceData] = useState(null); // Store full service object
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const fetchService = async () => {
-    try {
-      const res = await axios.get(`/services/service/${id}`);
-      setServiceData(res.data.data); // Assuming data includes price and providerId
-    } catch (err) {
-      toast.error("Failed to load service");
-    }
-  };
-
-  useEffect(() => {
-    fetchService();
-  }, [id]);
-
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const openRazorpay = async (bookingId) => {
-    const res = await loadRazorpayScript();
-    if (!res) {
-      toast.error("Razorpay failed to load");
-      return;
-    }
-
-    try {
-      // 1. Create Order - Send price in RUPEES (backend handles * 100)
-      const orderRes = await axios.post("/payments/create-order", {
-        amount: serviceData.price 
-      });
-
-      const { order } = orderRes.data;
-
-      const options = {
-        key: "rzp_test_SaWFv36h2JVnYU", 
-        amount: order.amount,
-        currency: order.currency,
-        name: "Service Booking",
-        description: "Payment for " + serviceData.serviceName,
-        order_id: order.id,
-        handler: async function (response) {
-          try {
-            // 2. Verify Payment - Match your backend verifyPayment expectations
-            const verifyRes = await axios.post("/payments/verify", {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              bookingId: bookingId,
-              userId: userId,
-              providerId: serviceData.providerId, // Ensure your service object has this
-              amount: serviceData.price,
-              paymentMethod: "Razorpay Online"
-            });
-
-            if (verifyRes.data.success) {
-              toast.success("Payment Successful 🎉");
-              navigate("/user/my-bookings");
-            }
-          } catch (err) {
-            toast.error("Payment verification failed ❌");
-          }
-        },
-        theme: { color: "#6366f1" }
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-
-    } catch (err) {
-      toast.error("Payment initialization failed ❌");
-    }
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
 
   const submitHandler = async (data) => {
     try {
       setIsSubmitting(true);
-
-      // 1. Create Booking
       const res = await axios.post(`/bookings/create/${userId}`, {
         serviceId: id,
         bookingDate: data.date,
@@ -105,36 +27,108 @@ const BookService = () => {
       });
 
       if (res.status === 201) {
-        toast.success("Booking Created! Redirecting to payment...");
-        // 2. Start Razorpay flow with the new booking ID
-        await openRazorpay(res.data.data._id);
+        toast.success("Booking confirmed successfully!");
+        navigate("/user/bookings"); // Redirect to history
       }
     } catch (error) {
-      toast.error("Booking failed ❌");
+      toast.error("Booking failed. Please try again.");
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50">
-      <form onSubmit={handleSubmit(submitHandler)} className="bg-white p-6 rounded-xl shadow w-96 space-y-4">
-        <h2 className="text-xl font-bold text-center">Book Service</h2>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+      <div className="max-w-md w-full">
         
-        <div className="text-center text-lg font-bold text-green-600">
-          ₹ {serviceData?.price || 0}
+        {/* Progress Indicator (Optional visual) */}
+        <div className="flex items-center justify-center mb-8 gap-4">
+          <div className="h-2 w-12 bg-blue-600 rounded-full"></div>
+          <div className="h-2 w-12 bg-blue-600 rounded-full"></div>
+          <div className="h-2 w-12 bg-gray-200 rounded-full"></div>
         </div>
 
-        <input type="date" {...register("date", { required: "Date required" })} className="w-full border p-2 rounded" />
-        {errors.date && <p className="text-red-500 text-xs">{errors.date.message}</p>}
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          
+          {/* Header */}
+          <div className="bg-blue-600 p-8 text-center text-white">
+            <div className="bg-blue-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
+               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </div>
+            <h1 className="text-2xl font-black tracking-tight">Confirm Your Slot</h1>
+            <p className="text-blue-100 text-sm mt-1">Please select your preferred date and time</p>
+          </div>
 
-        <input type="time" {...register("time", { required: "Time required" })} className="w-full border p-2 rounded" />
-        {errors.time && <p className="text-red-500 text-xs">{errors.time.message}</p>}
+          {/* Form */}
+          <form onSubmit={handleSubmit(submitHandler)} className="p-8 space-y-6">
+            
+            {/* Date Input */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">
+                Select Date
+              </label>
+              <div className="relative">
+                <input
+                  type="date"
+                  {...register("date", { required: "Please select a date" })}
+                  className={`w-full px-4 py-3 bg-gray-50 border ${errors.date ? 'border-red-300 ring-1 ring-red-100' : 'border-gray-200'} rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all`}
+                />
+              </div>
+              {errors.date && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.date.message}</p>}
+            </div>
 
-        <button type="submit" disabled={isSubmitting || !serviceData} className="w-full bg-indigo-600 text-white py-2 rounded">
-          {isSubmitting ? "Processing..." : "Pay Now"}
-        </button>
-      </form>
+            {/* Time Input */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">
+                Select Time
+              </label>
+              <input
+                type="time"
+                {...register("time", { required: "Please select a time" })}
+                className={`w-full px-4 py-3 bg-gray-50 border ${errors.time ? 'border-red-300 ring-1 ring-red-100' : 'border-gray-200'} rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all`}
+              />
+              {errors.time && <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{errors.time.message}</p>}
+            </div>
+
+            {/* Information Note */}
+            <div className="bg-blue-50 p-4 rounded-2xl flex gap-3 items-start">
+              <svg className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" /></svg>
+              <p className="text-[12px] text-blue-700 leading-relaxed">
+                The provider will receive your request immediately. You can cancel or reschedule from your dashboard later.
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4 space-y-3">
+              <button
+                disabled={isSubmitting}
+                className={`w-full py-4 rounded-2xl text-white font-black text-lg shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${
+                  isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+                type="submit"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 mr-3 border-b-2 border-white rounded-full" viewBox="0 0 24 24"></svg>
+                    Booking...
+                  </span>
+                ) : (
+                  "Confirm Booking"
+                )}
+              </button>
+              
+              <button 
+                type="button"
+                onClick={() => navigate(-1)}
+                className="w-full py-3 text-gray-500 font-bold hover:text-gray-700 transition-colors"
+              >
+                Go Back
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

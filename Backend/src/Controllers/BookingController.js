@@ -1,5 +1,6 @@
 const bookingSchema = require("../Models/BookingModel");
 const Service = require("../Models/ServiceModel");
+const Notification=require("../Models/NotificationModel");
 
 // const CreateBooking = async (req, res) => {
 //   try {
@@ -50,14 +51,14 @@ const CreateBooking = async (req, res) => {
   try {
     const { serviceId, bookingDate, bookingTime } = req.body;
 
-    // ✅ 1. Validate input
+    // ✅ 1. Validation
     if (!serviceId || !bookingDate || !bookingTime) {
       return res.status(400).json({
         message: "All fields are required"
       });
     }
 
-    // ✅ 2. Find service
+    // ✅ 2. Check service
     const service = await Service.findById(serviceId);
     if (!service) {
       return res.status(404).json({
@@ -65,33 +66,54 @@ const CreateBooking = async (req, res) => {
       });
     }
 
-    // ✅ 3. Calculate pricing
+    // =====================================
+    // ✅ CREATE BOOKING
+    // =====================================
+
     const totalAmount = service.price;
-    const commission = totalAmount * 0.1; // 10%
+    const commission = totalAmount * 0.1;
     const providerEarning = totalAmount - commission;
 
-    // ✅ 4. Create booking
     const booking = await bookingSchema.create({
-      userId: req.user.id,   // 🔥 from JWT middleware
+      userId: req.params.id,
       providerId: service.providerId,
-      serviceId: [serviceId], // 🔥 array format
+      serviceId: serviceId, // keep consistent with schema
       bookingDate,
       bookingTime,
       totalAmount,
       commission,
       providerEarning
     });
+    
+    // 🔔 Notification for USER
+      await Notification.create({
+        userId: booking.userId,
+        providerId: booking.providerId,
+        title: "Booking Created",
+        message: `Your booking request has been sent successfully.`,
+        type: "booking"
+      });
+
+      // 🔔 Notification for PROVIDER
+      await Notification.create({
+        userId: booking.providerId, // 👈 IMPORTANT (receiver)
+        title: "New Booking Request",
+        message: `You have received a new booking request.`,
+        type: "booking"
+      });
+
 
     res.status(201).json({
-      message: "Booking created successfully",
-      data: booking,
+      message: "Booking successful",
+      data: booking
     });
 
   } catch (error) {
     console.log(error);
+    
     res.status(500).json({
       message: "Error creating booking",
-      error: error.message,
+      error: error.message
     });
   }
 };
@@ -221,6 +243,26 @@ const updateBookingStatus = async (req, res) => {
       { new: true }
     );
 
+    // 🔔 Notification based on status
+    let message = "";
+
+    if (status === "Accepted") {
+      message = "Your booking has been accepted by provider";
+    } 
+    else if (status === "Completed") {
+      message = "Your service has been completed successfully";
+    }
+
+    if (message) {
+      await Notification.create({
+        userId: booking.userId,
+        providerId: booking.providerId,
+        title: "Booking Update",
+        message,
+        type: "booking"
+      });
+    }
+
     res.status(200).json({
       message: "Booking status updated",
       data: booking,
@@ -299,18 +341,64 @@ const cancelBookingbyId=async(req,res)=>{
     booking.status = "Cancelled";
     await booking.save();
 
+    // 👉 Notification for USER
+    await Notification.create({
+      userId: booking.userId,
+      title: "Booking Cancelled",
+      message: `Your booking has been cancelled successfully.`,
+      type: "booking",   // ✅ MUST match enum
+    });
+
+    // 👉 Notification for PROVIDER
+    await Notification.create({
+      userId: booking.providerId,
+      title: "Booking Cancelled",
+      message: `A booking has been cancelled by the user.`,
+      type: "booking",   // ✅ MUST match enum
+    });
+
     res.status(200).json({
       message: "Booking cancelled successfully",
       data: booking,
     });
     
   } catch (error) {
+    console.log(error);
      res.status(500).json({
       message: "Error cancelling booking",
       error: error.message,
     });
   }
 }
+
+// const cancelBookingbyId = async (req, res) => {
+//   try {
+//     const booking = await bookingSchema.findById(req.params.id);
+
+//     if (!booking) {
+//       return res.status(404).json({ message: "Booking not found" });
+//     }
+
+//     booking.status = "Cancelled";
+//     await booking.save();
+
+//     // ✅ FREE SLOT AGAIN
+//     await Slot.findOneAndUpdate({
+//       serviceId: booking.serviceId[0],
+//       date: booking.bookingDate,
+//       time: booking.bookingTime
+//     }, {
+//       isBooked: false
+//     });
+
+//     res.status(200).json({
+//       message: "Booking cancelled"
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 
 const getRevenu=async(req,res)=>{
@@ -339,6 +427,9 @@ const getRevenu=async(req,res)=>{
 
 
 
+
+
+
 module.exports={
     CreateBooking,
     getUserBookings,
@@ -348,5 +439,5 @@ module.exports={
     updateBookingStatus,
     deleteBooking,
     cancelBookingbyId,
-    getRevenu
+    getRevenu,
 }

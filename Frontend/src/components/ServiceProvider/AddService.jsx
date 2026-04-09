@@ -1,52 +1,7 @@
-// import axios from 'axios'
-// import React from 'react'
-// import { useForm } from 'react-hook-form'
-// import { toast } from 'react-toastify'
-
-// export const AddService = () => {
-//     const {register,handleSubmit}=useForm()
-
-//     const submitHandler=async(data)=>{
-//         try {
-//             const res= await axios.post("/services/add",data)
-//             if(res.status == 201){
-//                 console.log(res.data)
-//                 console.log(res.data.data)
-//                 toast.success("Service added successfully")
-//             }
-//         } catch (error) {
-//             console.log(error)
-//              toast.error("Failed to add service")
-//         }
-//     }
-
-//   return (
-//     <div>
-//         <h1>AddService</h1>
-//         <form onSubmit={handleSubmit(submitHandler)}>
-//             <div>
-//                 <label>Service Name</label>
-//                 <input  type='serviceName' {...register("serviceName")}/>
-//             </div>
-//             <div>
-//                 <label>Service Description</label>
-//                 <input  type='description' {...register("description")}/>
-//             </div>
-//             <div>
-//                 <label>Service Price</label>
-//                 <input  type='price' {...register("price")}/>
-//             </div>
-//             <button type='submit'>Add Service</button>
-//         </form>
-
-//     </div>
-//   )
-// }
-
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../AuthProvider";
 
@@ -54,9 +9,11 @@ export const AddService = () => {
   const { userId } = useContext(AuthContext);
   const { register, handleSubmit, setValue } = useForm();
   const navigate = useNavigate();
+
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  // ✅ Load categories
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -70,23 +27,32 @@ export const AddService = () => {
     loadCategories();
   }, []);
 
+  // ✅ Category select
   const handleCategoryChange = (id) => {
     setSelectedCategory(id);
     setValue("categoryId", id);
   };
 
+  // ✅ Submit Handler
   const submitHandler = async (data) => {
     if (!userId) {
-      toast.error("Provider information is not loaded yet.");
+      toast.error("Provider not loaded");
       return;
     }
 
     try {
-      const res = await axios.post(`/services/add`, data);
+      // 1️⃣ Create Service
+      const res = await axios.post("/services/add", {
+        ...data,
+        providerId: userId
+      });
+
       if (res.status === 201) {
-        toast.success("Service added successfully");
+        
+        toast.success("Service + Slots created successfully");
         navigate(-1);
       }
+
     } catch (error) {
       console.log(error);
       toast.error("Error adding service");
@@ -98,32 +64,37 @@ export const AddService = () => {
       <h2>Add Service</h2>
 
       <form onSubmit={handleSubmit(submitHandler)}>
+
+        {/* Service Name */}
         <input
           type="text"
           placeholder="Service Name"
-          {...register("serviceName")}
+          {...register("serviceName", { required: true })}
         />
 
-        <input type="hidden" {...register('providerId')} defaultValue={userId} />
-
+        {/* Description */}
         <input
           type="text"
           placeholder="Description"
           {...register("description")}
         />
 
+        {/* Price */}
         <input
           type="number"
           placeholder="Price"
           {...register("price")}
         />
 
+        {/* Location */}
         <input
           type="text"
           placeholder="Location"
           {...register("location")}
         />
 
+
+        {/* Category */}
         <h3>Select Category</h3>
         {categories.map((cat) => (
           <div key={cat._id}>
@@ -136,6 +107,9 @@ export const AddService = () => {
           </div>
         ))}
 
+
+    
+        {/* Hidden Category */}
         <input
           type="hidden"
           value={selectedCategory}

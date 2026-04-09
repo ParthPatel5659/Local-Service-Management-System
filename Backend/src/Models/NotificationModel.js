@@ -23,10 +23,10 @@ const NotificationSchema=new Schema({
     required: true,
   },
 
-  type: {
+ type: {
     type: String,
-    enum: ["Booking", "Payment", "Review"],
-    default: "Booking",
+    enum: ["booking", "payment", "support", "system"], // ✅ FIX
+    default: "system"
   },
 
   isRead: {

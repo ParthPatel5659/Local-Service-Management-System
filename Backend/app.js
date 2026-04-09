@@ -31,6 +31,13 @@ app.use('/category',categoryRoutes)
 const NotificationRoutes=require("./src/Routes/NotificationRoutes")
 app.use('/notification',NotificationRoutes)
 
+const SupportRoutes=require("./src/Routes/SupportRoutes")
+app.use('/support',SupportRoutes)
+
+const DeshbordRoutes=require("./src/Routes/DashboardRoutes")
+app.use('/deshbord',DeshbordRoutes)
+
+
 const PORT = process.env.PORT
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);

@@ -36,26 +36,27 @@ const getUserNotifications = async (req, res) => {
   }
 };
 
+
 //get provider notification
-const getProviderNotification=async(req,res)=>{
+const getProviderNotification = async (req, res) => {
   try {
     const providerId = req.params.id;
 
-    const notifications = await NotificationSchema.find({ providerId })
-      .sort({ createdAt: -1 });
+    const notifications = await NotificationSchema.find({
+      userId: providerId   // ✅ provider receives notification
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({
       message: "Notifications fetched",
-      data: notifications,
+      data: notifications
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Error fetching notifications",
-      error: error.message,
+      message: error.message
     });
   }
-}
+};
 
 //make as read
 const markAsRead = async (req, res) => {

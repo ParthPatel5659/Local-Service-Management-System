@@ -1,13 +1,17 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FiGrid, FiTag, FiAlignLeft } from 'react-icons/fi'
 
 export const AddCategory = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm()
   const navigate = useNavigate()
+  const { id } = useParams()   // 🔥 get id for edit
+
+  const isEdit = !!id   // 🔥 check edit mode
 
   const validationSchema = {
     categorynameValidator: {
@@ -18,13 +22,46 @@ export const AddCategory = () => {
     },
   }
 
+  // ✅ FETCH CATEGORY (Edit Mode)
+  const getSingleCategory = async () => {
+    try {
+      const res = await axios.get(`/category/${id}`)
+      const data = res.data.data
+
+      setValue("categoryName", data.categoryName)
+      setValue("description", data.description)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (isEdit) {
+      getSingleCategory()
+    }
+  }, [id])
+
+  // ✅ SUBMIT (ADD + EDIT)
   const submitHandler = async (data) => {
     try {
-      const res = await axios.post("/category/add", data)
-      if (res.status === 201) {
+
+      let res;
+
+      if (isEdit) {
+        // 🔥 UPDATE
+        res = await axios.put(`/category/update/${id}`, data)
+        toast.success("Category updated successfully")
+      } else {
+        // 🔥 CREATE
+        res = await axios.post("/category/create", data)
         toast.success("Category added successfully")
+      }
+
+      if (res.status === 200 || res.status === 201) {
         navigate(-1)
       }
+
     } catch (error) {
       console.log(error)
     }
@@ -41,10 +78,8 @@ export const AddCategory = () => {
       <div className="w-full max-w-md">
 
         {/* Card */}
-        <div
-          className="bg-white rounded-2xl shadow-xl shadow-indigo-100/60 overflow-hidden"
-          style={{ border: "1px solid #e8edf5" }}
-        >
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+
           {/* Header */}
           <div
             className="px-8 py-6 flex items-center gap-4"
@@ -54,8 +89,12 @@ export const AddCategory = () => {
               <FiGrid className="text-white" size={22} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">Add Category</h1>
-              <p className="text-indigo-200 text-sm mt-0.5">Create a new service category</p>
+              <h1 className="text-xl font-bold text-white">
+                {isEdit ? "Edit Category" : "Add Category"}
+              </h1>
+              <p className="text-indigo-200 text-sm">
+                {isEdit ? "Update category details" : "Create a new category"}
+              </p>
             </div>
           </div>
 
@@ -63,75 +102,58 @@ export const AddCategory = () => {
           <form onSubmit={handleSubmit(submitHandler)} className="px-8 py-7 space-y-5">
 
             {/* Category Name */}
-            <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
-                <FiTag className="text-indigo-400" size={13} />
-                Category Name
+            <div>
+              <label className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <FiTag size={13} /> Category Name
               </label>
+
               <input
                 type="text"
-                placeholder="e.g. Cleaning, Plumbing..."
                 {...register("categoryName", validationSchema.categorynameValidator)}
-                className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                  errors.categoryName
-                    ? "ring-2 ring-red-300 bg-red-50"
-                    : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                }`}
-                style={{ border: "1px solid #dde3f0" }}
+                className="w-full px-4 py-2.5 rounded-xl border mt-1"
               />
+
               {errors.categoryName && (
-                <p className="text-xs text-red-400 flex items-center gap-1">
-                  <span className="inline-block w-1 h-1 rounded-full bg-red-400" />
-                  {errors.categoryName.message}
-                </p>
+                <p className="text-xs text-red-400">{errors.categoryName.message}</p>
               )}
             </div>
 
             {/* Description */}
-            <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
-                <FiAlignLeft className="text-indigo-400" size={13} />
-                Description
-                <span className="normal-case tracking-normal font-normal text-slate-400 ml-1">(optional)</span>
+            <div>
+              <label className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                <FiAlignLeft size={13} /> Description
               </label>
+
               <textarea
                 rows={3}
-                placeholder="Briefly describe this category..."
                 {...register("description")}
-                className="w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 bg-slate-50 hover:bg-slate-100 focus:bg-white resize-none"
-                style={{ border: "1px solid #dde3f0" }}
+                className="w-full px-4 py-2.5 rounded-xl border mt-1"
               />
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-slate-100" />
-
-            {/* Actions */}
-            <div className="flex items-center gap-3 pt-1">
+            {/* Buttons */}
+            <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all duration-150"
-                style={{ border: "1px solid #dde3f0" }}
+                className="flex-1 border py-2 rounded-xl"
               >
                 Cancel
               </button>
+
               <button
                 type="submit"
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 text-white py-2 rounded-xl"
                 style={{
-                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                  boxShadow: "0 4px 15px rgba(99,102,241,0.35)",
+                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)"
                 }}
               >
-                <FiGrid size={15} />
-                Add Category
+                {isEdit ? "Update" : "Add"}
               </button>
             </div>
 
           </form>
         </div>
-
       </div>
     </div>
   )

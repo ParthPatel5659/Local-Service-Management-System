@@ -1,31 +1,54 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { AuthContext } from "../../AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const ProviderDashboard = () => {
   const [bookings, setBookings] = useState([]);
-  const {userId}=useContext(AuthContext)
+  const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
+  const { userId } = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  // ================= BOOKINGS =================
   const fetchBookings = async () => {
     try {
       const res = await axios.get(`/bookings/provider/${userId}`);
       setBookings(res.data?.data || []);
-      console.log(res.data.data);
-      
     } catch (error) {
       console.log(error);
     }
   };
 
-  const completed = bookings.filter(b => b.status === "completed").length;
-  const pending = bookings.filter(b => b.status === "pending").length;
+  // ================= NOTIFICATIONS =================
+  const getNotifications = async () => {
+    try {
+      const res = await axios.get(`/notifications/provider/${userId}`);
+      setNotifications(res.data?.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const notifications = bookings.filter(b => b.status === "pending");
+  useEffect(() => {
+    if (userId) {
+      fetchBookings();
+      getNotifications();
+    }
+  }, [userId]);
+
+  const completed = bookings.filter(b => b.status === "Completed").length;
+  const pending = bookings.filter(b => b.status === "Pending").length;
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const chartData = [
     { name: "Pending", value: pending },
@@ -34,6 +57,22 @@ const ProviderDashboard = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+
+      {/* 🔔 ONLY BELL */}
+      <div className="flex justify-end mb-4">
+        <div
+          className="cursor-pointer relative text-2xl"
+          onClick={() => navigate("/provider/notifications")}
+        >
+          🔔
+
+          {unreadCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 rounded-full">
+              {unreadCount}
+            </span>
+          )}
+        </div>
+      </div>
 
       {/* CARDS */}
       <div className="grid grid-cols-3 gap-4 mb-6">
@@ -53,27 +92,6 @@ const ProviderDashboard = () => {
         </div>
       </div>
 
-      {/* 🔔 NOTIFICATIONS */}
-      <div className="bg-white p-4 rounded-xl shadow mb-6">
-        <h2 className="font-bold mb-3">🔔 New Bookings</h2>
-
-        {notifications.length === 0 ? (
-          <p>No new bookings</p>
-        ) : (
-          notifications.map((b) => (
-            <div key={b._id} className="border-b py-2 flex justify-between">
-              <div>
-                <p>{b.serviceName}</p>
-                <p className="text-sm">{b.date}</p>
-              </div>
-              <span className="bg-yellow-200 px-2 py-1 rounded text-xs">
-                New
-              </span>
-            </div>
-          ))
-        )}
-      </div>
-
       {/* CHART */}
       <div className="bg-white p-4 rounded-xl shadow">
         <ResponsiveContainer width="100%" height={300}>
@@ -81,11 +99,10 @@ const ProviderDashboard = () => {
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="value" fill="#6366f1" />
+            <Bar dataKey="value" />
           </BarChart>
         </ResponsiveContainer>
       </div>
-
     </div>
   );
 };

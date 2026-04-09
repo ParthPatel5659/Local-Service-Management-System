@@ -1,11 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
-import { FiSearch, FiPlus, FiGrid, FiCheckCircle, FiXCircle } from 'react-icons/fi'
+import { Link, useNavigate } from 'react-router-dom';
+import { FiSearch, FiPlus, FiGrid, FiCheckCircle, FiXCircle, FiEdit2, FiTrash2 } from 'react-icons/fi'
 
 export const AllCategory = () => {
+  const navigate = useNavigate()
   const [search, setSearch] = useState("")
   const [categorys, setCategorys] = useState([])
+  const [deletingId, setDeletingId] = useState(null)
 
   const getAll = async () => {
     try {
@@ -16,11 +18,23 @@ export const AllCategory = () => {
     }
   }
 
-  useEffect(() => {
-    getAll()
-  }, [])
+  useEffect(() => { getAll() }, [])
 
-  const filtered = categorys.filter((c) =>
+  const handleDelete = async (id) => {
+    setDeletingId(id)
+    try {
+      await axios.delete(`/category/delete/${id}`)
+      getAll()
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const handleEdit = (id) => navigate(`/admin/editcategory/${id}`)
+
+  const filtered = (categorys || []).filter((c) =>
     c.categoryName?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -42,7 +56,7 @@ export const AllCategory = () => {
         fontFamily: "'Plus Jakarta Sans', 'Nunito', sans-serif",
       }}
     >
-      {/* Page Header */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -109,15 +123,16 @@ export const AllCategory = () => {
         </div>
       )}
 
-      {/* Category Cards */}
+      {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map((category) => {
           const isActive = category.isActive !== false
+          const isDeleting = deletingId === category._id
 
           return (
             <div
               key={category._id}
-              className="bg-white rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+              className="bg-white rounded-2xl p-5 flex flex-col transition-all duration-200 hover:-translate-y-0.5"
               style={{
                 border: "1px solid #e8edf5",
                 boxShadow: "0 2px 8px rgba(99,102,241,0.06)",
@@ -131,7 +146,7 @@ export const AllCategory = () => {
                 e.currentTarget.style.borderColor = "#e8edf5"
               }}
             >
-              {/* Top Row: Icon + Active Badge */}
+              {/* Top Row */}
               <div className="flex items-start justify-between mb-4">
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-base font-bold flex-shrink-0"
@@ -140,7 +155,7 @@ export const AllCategory = () => {
                   {category.categoryName?.charAt(0)?.toUpperCase()}
                 </div>
 
-                {/* Active / Inactive Badge */}
+                {/* Active Badge */}
                 <div
                   className="flex items-center gap-1.5 px-2 py-1 rounded-full"
                   style={{ background: isActive ? "#f0fdf4" : "#fef2f2" }}
@@ -158,14 +173,14 @@ export const AllCategory = () => {
                 </div>
               </div>
 
-              {/* Category Name */}
+              {/* Name */}
               <h2 className="font-semibold text-sm truncate" style={{ color: "#1e293b" }}>
                 {category.categoryName}
               </h2>
 
               {/* Description */}
               <p
-                className="text-xs mt-1.5 leading-relaxed"
+                className="text-xs mt-1.5 leading-relaxed flex-1"
                 style={{
                   color: "#94a3b8",
                   display: "-webkit-box",
@@ -176,6 +191,39 @@ export const AllCategory = () => {
               >
                 {category.description || "No description provided."}
               </p>
+
+              {/* Divider */}
+              <div className="my-3 h-px" style={{ background: "#f1f5f9" }} />
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(category._id)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
+                  style={{
+                    background: "#eef1f8",
+                    color: "#6366f1",
+                    border: "1px solid #dde3f0",
+                  }}
+                >
+                  <FiEdit2 size={12} />
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => handleDelete(category._id)}
+                  disabled={isDeleting}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 hover:opacity-90 active:scale-95 disabled:opacity-50"
+                  style={{
+                    background: "#fef2f2",
+                    color: "#dc2626",
+                    border: "1px solid #fecaca",
+                  }}
+                >
+                  <FiTrash2 size={12} />
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
             </div>
           )
         })}

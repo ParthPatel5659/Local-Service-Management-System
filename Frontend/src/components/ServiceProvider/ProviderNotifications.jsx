@@ -11,7 +11,7 @@ const ProviderNotifications = () => {
 
   const getNotifications = async () => {
     try {
-      const res = await axios.get(`/notifications/provider/${userId}`);
+      const res = await axios.get(`/notification/provider/${userId}`);
       setNotifications(res.data.data);
     } catch (error) {
       console.log(error);

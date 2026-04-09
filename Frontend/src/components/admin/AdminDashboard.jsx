@@ -10,6 +10,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [providers, setProviders] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const[revenues,setRevenus]=useState([])
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,15 +20,17 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [resUsers, resProviders, resBookings] = await Promise.all([
+      const [resUsers, resProviders, resBookings,resRevenues] = await Promise.all([
         axios.get("/user/users"),
         axios.get("/user/providers"),
-        axios.get("/bookings/all")
+        axios.get("/bookings/all"),
+        axios.get("/bookings/revenue")
       ]);
 
       setUsers(resUsers.data?.data || []);
       setProviders(resProviders.data?.data || []);
       setBookings(resBookings.data?.data || []);
+      setRevenus(resRevenues.data?.data ||[])
     } catch (error) {
       console.error("Dashboard Error:", error);
     } finally {
@@ -39,11 +42,13 @@ const AdminDashboard = () => {
   const totalUsers = users.length;
   const totalProviders = providers.length;
   const totalBookings = bookings.length;
+  const totalRevenues= revenues.length;
 
   const chartData = [
     { name: "Users", value: totalUsers, color: "#6366f1" },
     { name: "Providers", value: totalProviders, color: "#10b981" },
     { name: "Bookings", value: totalBookings, color: "#f59e0b" },
+    {name:"Revenues", value:totalRevenues}
   ];
 
   if (loading) {
