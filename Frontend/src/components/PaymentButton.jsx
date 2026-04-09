@@ -6,23 +6,17 @@ const loadRazorpay = () => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
 
-    script.onload = () => {
-      resolve(true);
-    };
-
-    script.onerror = () => {
-      resolve(false);
-    };
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
 
     document.body.appendChild(script);
   });
 };
 
-const PaymentButton = ({ booking }) => {
+const PaymentButton = ({ booking, onSuccess }) => {
 
   const handlePayment = async () => {
 
-    // ✅ Load Razorpay SDK
     const res = await loadRazorpay();
 
     if (!res) {
@@ -31,13 +25,13 @@ const PaymentButton = ({ booking }) => {
     }
 
     try {
-      // ✅ Create order from backend
-      const { data } = await axios.post("/payment/create-order", {
-        amount: booking.amount
+      // ✅ FIXED
+      const { data } = await axios.post("/payments/create-order", {
+        amount: booking.totalAmount
       });
 
       const options = {
-        key: "YOUR_KEY_ID",
+        key: "rzp_test_SaWFv36h2JVnYU",
         amount: data.order.amount,
         currency: "INR",
         name: "Service Booking",
@@ -46,8 +40,7 @@ const PaymentButton = ({ booking }) => {
 
         handler: async function (response) {
 
-          // ✅ Verify Payment
-          await axios.post("/payment/verify", {
+          await axios.post("/payments/verify", {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
@@ -55,11 +48,16 @@ const PaymentButton = ({ booking }) => {
             bookingId: booking._id,
             userId: booking.userId,
             providerId: booking.providerId,
-            amount: booking.amount,
+            amount: booking.totalAmount, // ✅ FIXED
             paymentMethod: "UPI"
           });
 
           toast.success("Payment Successful ✅");
+          console.log("Payment data:", response);
+          
+
+          // ✅ IMPORTANT (refresh UI)
+          if (onSuccess) onSuccess();
         },
 
         prefill: {
@@ -86,7 +84,7 @@ const PaymentButton = ({ booking }) => {
       onClick={handlePayment}
       className="bg-indigo-600 text-white px-4 py-2 rounded"
     >
-      Pay Now
+      Pay Now 💳
     </button>
   );
 };

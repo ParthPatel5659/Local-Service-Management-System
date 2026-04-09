@@ -24,7 +24,7 @@ const PaymentSchema= new Schema({
 
   paymentMethod: {
     type: String,
-    enum: ["UPI", "Card", "Wallet", "COD"]
+    // enum: ["UPI", "Card", "Wallet", "COD"]
   },
 
   transactionId: {
@@ -44,7 +44,17 @@ const PaymentSchema= new Schema({
   paymentDate: {
     type: Date,
     default: Date.now
+  },
+
+  razorpay_order_id : {
+    type : String
+  },
+
+  razorpay_signature : {
+    type : String
   }
+
+
 
 },{timestamps:true});
 
