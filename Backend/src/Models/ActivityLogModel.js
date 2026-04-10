@@ -7,6 +7,14 @@ const ActivityLogSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
+   providerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user"
+    },
+     bookingId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Booking"
+      },
 
   role: {
     type: String,

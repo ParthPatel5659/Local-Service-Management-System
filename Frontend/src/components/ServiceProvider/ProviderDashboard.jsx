@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const ProviderDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [notifications, setNotifications] = useState([]);
-
+  const [earning, setEarnings] = useState(0)
   const { userId } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -27,6 +27,18 @@ const ProviderDashboard = () => {
       console.log(error);
     }
   };
+
+  //==================PROVIDER RVENUE=======================
+  const getRevenue=async()=>{
+    try {
+      const res=await axios.get(`/bookings/provider-earnings/${userId}`)
+      console.log(res.data.data);
+      setEarnings(res.data.totalEarnings || 0);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
 
   // ================= NOTIFICATIONS =================
   const getNotifications = async () => {
@@ -42,6 +54,7 @@ const ProviderDashboard = () => {
     if (userId) {
       fetchBookings();
       getNotifications();
+      getRevenue()
     }
   }, [userId]);
 
@@ -89,6 +102,10 @@ const ProviderDashboard = () => {
         <div className="bg-yellow-500 text-white p-4 rounded-xl">
           <p>Pending</p>
           <h2>{pending}</h2>
+        </div>
+        <div className="bg-purple-500 text-white p-4 rounded-xl">
+          <p>Earnings</p>
+          <h2>₹{earning}</h2>
         </div>
       </div>
 

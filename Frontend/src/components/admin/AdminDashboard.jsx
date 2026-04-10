@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [providers, setProviders] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const[revenues,setRevenus]=useState([])
+  const [revenues,setRevenus]=useState([])
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +30,9 @@ const AdminDashboard = () => {
       setUsers(resUsers.data?.data || []);
       setProviders(resProviders.data?.data || []);
       setBookings(resBookings.data?.data || []);
-      setRevenus(resRevenues.data?.data ||[])
+      setRevenus(resRevenues.data?.totalRevenue ||[])
+      console.log(resRevenues.data?.totalRevenue );
+      
     } catch (error) {
       console.error("Dashboard Error:", error);
     } finally {
@@ -48,7 +50,7 @@ const AdminDashboard = () => {
     { name: "Users", value: totalUsers, color: "#6366f1" },
     { name: "Providers", value: totalProviders, color: "#10b981" },
     { name: "Bookings", value: totalBookings, color: "#f59e0b" },
-    {name:"Revenues", value:totalRevenues}
+    { name:"Revenues", value:totalRevenues,color: "#109cb8" }
   ];
 
   if (loading) {
@@ -90,6 +92,14 @@ const AdminDashboard = () => {
           <div className="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg shadow-amber-200 transition-transform hover:scale-[1.02]">
             <p className="text-amber-100 font-semibold uppercase text-xs tracking-wider">Bookings</p>
             <h2 className="text-4xl font-black text-white mt-2">{totalBookings}</h2>
+            <div className="absolute -right-4 -bottom-4 opacity-20 text-white transform rotate-12">
+               <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" /></svg>
+            </div>
+          </div>
+
+           <div className="relative overflow-hidden bg-gradient-to-br from-amber-500 to-amber-700 p-6 rounded-2xl shadow-lg shadow-amber-200 transition-transform hover:scale-[1.02]">
+            <p className="text-amber-100 font-semibold uppercase text-xs tracking-wider">Revenues</p>
+            <h2 className="text-4xl font-black text-white mt-2">{totalRevenues}</h2>
             <div className="absolute -right-4 -bottom-4 opacity-20 text-white transform rotate-12">
                <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" /></svg>
             </div>

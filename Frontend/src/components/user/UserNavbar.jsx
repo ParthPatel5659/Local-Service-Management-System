@@ -113,7 +113,7 @@
 
 
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import Footer from '../Footer'
 import { AuthContext } from '../../AuthProvider'
 import axios from 'axios'
@@ -123,6 +123,7 @@ export const UserNavbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [notificationOpen, setNotificationOpen] = useState(false)
+   const navigate = useNavigate();
 
   const { userId } = useContext(AuthContext)
 
@@ -224,7 +225,8 @@ export const UserNavbar = () => {
               <div className="relative" ref={notificationRef}>
 
                 <div
-                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  // onClick={() => setNotificationOpen(!notificationOpen)}
+                   onClick={() => navigate("/user/notifications")}
                   className="relative cursor-pointer p-2 rounded-full hover:bg-gray-700"
                 >
                   🔔
@@ -314,10 +316,14 @@ export const UserNavbar = () => {
                       >
                         Settings
                       </Link>
-
-                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
-                        Upgrade Plan
-                      </button>
+                      
+                        <Link
+                        to="/user/activity-log"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Activity
+                      </Link>
+                      
                     </div>
 
                     <div className="border-t">

@@ -5,6 +5,8 @@ const getAllLogs = async (req, res) => {
   try {
     const logs = await ActivityLog.find()
       .populate("userId", "Firstname Lastname email role")
+      .populate("providerId","Firstname Lastname email role")
+      .populate("bookingId")
       .sort({ createdAt: -1 });
 
     res.json({
