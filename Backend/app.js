@@ -37,6 +37,9 @@ app.use('/support',SupportRoutes)
 const DeshbordRoutes=require("./src/Routes/DashboardRoutes")
 app.use('/deshbord',DeshbordRoutes)
 
+const ActivityRoutes=require("./src/Routes/ActivityLogRoutes")
+app.use('/activity',ActivityRoutes)
+
 
 const PORT = process.env.PORT
 app.listen(PORT,()=>{

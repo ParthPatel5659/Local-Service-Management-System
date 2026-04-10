@@ -101,7 +101,7 @@
 // }
 
 const ServiceSchema = require("../Models/ServiceModel");
-
+const logActivity = require("../utils/activityLogger");
 // ✅ Add Service
 // const addService = async (req, res) => {
 //     try {
@@ -132,8 +132,14 @@ const addService = async (req, res) => {
         // const providerId = req.user.id; // ✅ from token
 
         const saveService = await ServiceSchema.create(req.body);
+           await logActivity({
+            userId: req.user._id,
+            role: "provider",
+            action: "SERVICE_ADDED",
+            message: "Provider added new service"
+            });
 
-        res.status(201).json({
+             res.status(201).json({
             message: "Service added successfully",
             data: saveService
         });

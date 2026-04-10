@@ -1,29 +1,30 @@
-const razorpay=require("razorpay")
-const crypto=require("crypto")
-require('dotenv').config();
-const paymentSchema=require("../Models/PaymentModel");
-// const Razorpay = require("razorpay");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+require("dotenv").config();
+const Payment = require("../Models/PaymentModel");
+const Booking = require("../Models/BookingModel");
 
-const RAZORPAY_KEY=process.env.RAZORPAY_KEY
-const RAZORPAY_SECRET=process.env.RAZORPAY_SECRET
-
-const RazorPay=new razorpay({
-  key_id:RAZORPAY_KEY,
-  key_secret:RAZORPAY_SECRET
-})
+const razorpayClient = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY,
+  key_secret: process.env.RAZORPAY_SECRET
+});
 
 // ✅ CREATE ORDER
 const CreateRazorPayOrder = async (req, res) => {
   try {
     const { amount } = req.body;
 
-    const options = {
+    if (!amount) {
+      return res.status(400).json({
+        message: "Amount is required"
+      });
+    }
+
+    const order = await razorpayClient.orders.create({
       amount: amount * 100,
       currency: "INR",
-      receipt: "receipt_" + Date.now()
-    };
-
-    const order = await RazorPay.orders.create(options);
+      receipt: `receipt_${Date.now()}`
+    });
 
     res.status(200).json({
       success: true,
@@ -50,33 +51,41 @@ const verifyPayment = async (req, res) => {
       paymentMethod
     } = req.body;
 
-    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+    const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET)
       .update(sign.toString())
       .digest("hex");
 
-    if (expectedSign === razorpay_signature) {
+    if (expectedSign !== razorpay_signature) {
+      return res.status(400).json({ message: "Invalid signature" });
+    }
 
-      const payment = await paymentSchema.create({
-        bookingId,
-        userId,
-        providerId,
-        amount,
-        paymentMethod,
-        transactionId: razorpay_payment_id,
-        paymentStatus: "Success"
-      });
+    const payment = await Payment.create({
+      bookingId,
+      userId,
+      providerId,
+      amount,
+      paymentMethod,
+      orderId: razorpay_order_id,
+      transactionId: razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+      paymentStatus: "Success"
+    });
 
-      return res.json({
-        success: true,
-        message: "Payment successful",
-        data: payment
+    if (bookingId) {
+      await Booking.findByIdAndUpdate(bookingId, {
+        paymentStatus: "Paid"
       });
     }
 
-    res.status(400).json({ message: "Invalid signature" });
+    return res.json({
+      success: true,
+      message: "Payment successful",
+      data: payment
+    });
 
   } catch (err) {
     console.log(err);
@@ -88,7 +97,7 @@ const verifyPayment = async (req, res) => {
 
 const getallPayment=async(req,res)=>{
     try {
-        const fetchPayment=await paymentSchema.find().populate([
+        const fetchPayment=await Payment.find().populate([
             {path:"userId"},
             {path: "providerId"},
             {path:"bookingId"}
@@ -110,7 +119,7 @@ const getProviderPayments = async (req, res) => {
   try {
     const providerId = req.params.id;
 
-    const payments = await paymentSchema.find({ providerId })
+    const payments = await Payment.find({ providerId })
       .populate("userId", "Firstname")
       .populate("bookingId");
 
@@ -128,18 +137,69 @@ const getProviderPayments = async (req, res) => {
 };
 
 //update payment status
+// const updatePaymentStatus = async (req, res) => {
+//   try {
+//     const { paymentStatus } = req.body;
+
+//     const payment = await paymentSchema.findByIdAndUpdate(
+//       req.params.id,
+//       { paymentStatus },
+//       { new: true }
+//     );
+
+//     res.status(200).json({
+//       message: "Payment updated",
+//       data: payment,
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error updating payment",
+//       error: error.message,
+//     });
+//   }
+// };
+
+// controllers/paymentController.js
+
+
 const updatePaymentStatus = async (req, res) => {
   try {
+
     const { paymentStatus } = req.body;
 
-    const payment = await paymentSchema.findByIdAndUpdate(
+    // ✅ Validate input
+    const validStatus = ["Pending", "Success", "Failed"];
+
+    if (!validStatus.includes(paymentStatus)) {
+      return res.status(400).json({
+        message: "Invalid payment status"
+      });
+    }
+
+    // ✅ Update payment
+    const payment = await Payment.findByIdAndUpdate(
       req.params.id,
       { paymentStatus },
       { new: true }
     );
 
+    // ❌ If not found
+    if (!payment) {
+      return res.status(404).json({
+        message: "Payment not found"
+      });
+    }
+
+    // ✅ If payment success → update booking
+    if (paymentStatus === "Success" && payment.bookingId) {
+      await Booking.findByIdAndUpdate(payment.bookingId, {
+        paymentStatus: "Paid"
+      });
+    }
+
     res.status(200).json({
-      message: "Payment updated",
+      message: "Payment updated successfully",
       data: payment,
     });
 

@@ -1,7 +1,7 @@
 const bookingSchema = require("../Models/BookingModel");
 const Service = require("../Models/ServiceModel");
 const Notification=require("../Models/NotificationModel");
-
+const logActivity = require("../utils/activityLogger");
 // const CreateBooking = async (req, res) => {
 //   try {
 //     const { serviceId, bookingDate, bookingTime,} = req.body;
@@ -102,7 +102,13 @@ const CreateBooking = async (req, res) => {
         type: "booking"
       });
 
-
+      await logActivity({
+  userId: req.params.id,
+  role: "user",
+  action: "BOOKING_CREATED",
+  message: "User created a booking",
+  meta: { bookingId: booking._id }
+});
     res.status(201).json({
       message: "Booking successful",
       data: booking
@@ -225,6 +231,8 @@ const getProviderBookings = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({
       message: "Error fetching provider bookings",
       error: error.message,
@@ -357,6 +365,14 @@ const cancelBookingbyId=async(req,res)=>{
       type: "booking",   // ✅ MUST match enum
     });
 
+     await logActivity({
+  userId: booking.userId,
+  role: "user",
+  action: "BOOKING_CANCELLED",
+  message: "User cancelled booking",
+  meta: { bookingId: booking._id }
+  });
+  
     res.status(200).json({
       message: "Booking cancelled successfully",
       data: booking,
@@ -404,7 +420,7 @@ const cancelBookingbyId=async(req,res)=>{
 const getRevenu=async(req,res)=>{
    try {
 
-    const revenueData = await Booking.aggregate([
+    const revenueData = await bookingSchema.aggregate([
       {
         $match: { status: "Completed" } // ✅ only completed
       },

@@ -124,6 +124,7 @@ import UserDashboard from "../components/user/UserDashboard";
 import ServiceByCategory from "../components/user/ServiceByCategory";
 import Settings from "../components/pages/Settings";
 import Support from "../components/pages/Support";
+import UserActivity from "../components/pages/UserActivity";
 
 const router = createBrowserRouter([
 
@@ -155,7 +156,8 @@ const router = createBrowserRouter([
       { path: "support", element: <Support/>},
       { path: "settings", element: <Settings/> },
       {path:"notifications",element:<UserNotifications/>},
-      {path:"servicedetail/:id",element:<ServiceDetails/>}
+      {path:"servicedetail/:id",element:<ServiceDetails/>},
+      {path:"activity-log",element:<UserActivity/>}
     ],
   },
 
