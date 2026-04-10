@@ -1,8 +1,10 @@
-const Razorpay = require("razorpay");
+const Razorpay = require('razorpay')
 const crypto = require("crypto");
 require("dotenv").config();
 const Payment = require("../Models/PaymentModel");
 const Booking = require("../Models/BookingModel");
+const logActivity = require("../Utils/activityLogger");
+const Notification = require("../Models/NotificationModel");
 
 const razorpayClient = new Razorpay({
   key_id: process.env.RAZORPAY_KEY,
@@ -81,7 +83,42 @@ const verifyPayment = async (req, res) => {
       });
     }
 
-    return res.json({
+     await logActivity({
+      userId,
+      role: "user",
+      action: "PAYMENT_SUCCESS",
+      message: "User completed payment successfully",
+      meta: {
+        bookingId,
+        amount,
+        paymentId: razorpay_payment_id
+      }
+    });
+
+    // ===============================
+    // 🔔 NOTIFICATION FOR USER
+    // ===============================
+    await Notification.create({
+      userId: userId,
+      providerId: providerId,
+      title: "Payment Successful",
+      message: "Your payment has been completed successfully.",
+      type: "payment"
+    });
+
+    // ===============================
+    // 🔔 NOTIFICATION FOR PROVIDER
+    // ===============================
+    await Notification.create({
+      userId: userId, // ⚠️ REQUIRED FIELD
+      providerId: providerId,
+      title: "New Payment Received",
+      message: "You have received a payment for a booking.",
+      type: "payment"
+    });
+
+
+    return res.status(200).json({
       success: true,
       message: "Payment successful",
       data: payment
@@ -163,13 +200,13 @@ const getProviderPayments = async (req, res) => {
 // controllers/paymentController.js
 
 
-const updatePaymentStatus = async (req, res) => {
+ const updatePaymentStatus = async (req, res) => {
   try {
 
     const { paymentStatus } = req.body;
 
     // ✅ Validate input
-    const validStatus = ["Pending", "Success", "Failed"];
+    const validStatus = ["pending", "success", "failed"];
 
     if (!validStatus.includes(paymentStatus)) {
       return res.status(400).json({
@@ -180,7 +217,7 @@ const updatePaymentStatus = async (req, res) => {
     // ✅ Update payment
     const payment = await Payment.findByIdAndUpdate(
       req.params.id,
-      { paymentStatus },
+      { status: paymentStatus },   // ⚠️ your model uses "status"
       { new: true }
     );
 
@@ -192,9 +229,9 @@ const updatePaymentStatus = async (req, res) => {
     }
 
     // ✅ If payment success → update booking
-    if (paymentStatus === "Success" && payment.bookingId) {
-      await Booking.findByIdAndUpdate(payment.bookingId, {
-        paymentStatus: "Paid"
+    if (paymentStatus === "success") {
+      await Booking.findByIdAndUpdate(payment.booking, {
+        paymentStatus: "paid"
       });
     }
 

@@ -74,7 +74,7 @@ const UserNotifications = () => {
 
               <div className="mt-3 flex items-center justify-between">
                 <span className="text-xs text-gray-400">
-                  Just now {/* Replace with actual date formatting if available */}
+                     {new Date(n.createdAt).toLocaleString()}
                 </span>
                 
                 {!n.isRead && (

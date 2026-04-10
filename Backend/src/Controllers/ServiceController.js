@@ -133,7 +133,7 @@ const addService = async (req, res) => {
 
         const saveService = await ServiceSchema.create(req.body);
            await logActivity({
-            userId: req.user._id,
+            userId: req.params.id,
             role: "provider",
             action: "SERVICE_ADDED",
             message: "Provider added new service"
@@ -251,6 +251,7 @@ const getProviderService = async (req, res) => {
             data: services,
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message: error.message
         });

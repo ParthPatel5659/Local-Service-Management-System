@@ -146,7 +146,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {index:true,element:<Navigate to="dashboard" replace />},
-      { path: "dashboard", element: <UserDashboard/> },
+      { path: "home", element: <UserDashboard/> },
       { path: "services/:categoryId",element: <ServiceByCategory/>},
       { path: "profile/:id", element: <Profile /> },
       { path: "services", element: <AllServices /> },
@@ -155,9 +155,9 @@ const router = createBrowserRouter([
       { path: "bookservices/:id", element: <BookService /> },
       { path: "support", element: <Support/>},
       { path: "settings", element: <Settings/> },
-      {path:"notifications",element:<UserNotifications/>},
-      {path:"servicedetail/:id",element:<ServiceDetails/>},
-      {path:"activity-log",element:<UserActivity/>}
+      { path: "notifications",element:<UserNotifications/>},
+      { path: "servicedetail/:id",element:<ServiceDetails/>},
+      { path: "activity-log",element:<UserActivity/>}
     ],
   },
 
@@ -167,16 +167,17 @@ const router = createBrowserRouter([
     element: <Servicesidebar />,
     children: [
       // ✅ NO :id here
-       {index:true,element:<Navigate to="dashboard" replace />},
-      { path: "dashboard",element:<ProviderDashboard/>},
-      {path: "services/:id", element: <AllServicesofprovider/> },
+      {index:true,element:<Navigate to="dashboard" replace />},
+      {path:"dashboard",element:<ProviderDashboard/>},
+      {path:"services/:id", element: <AllServicesofprovider/> },
       {path:"addservice",element:<AddService/>},
       {path:"edit-service/:id",element:<EditService/>},
       {path:"bookings",element:<ProviderBookings/>},
       {path:"payment",element:<ProviderPayments/>},
       {path:"reviwes/:id",element:<ProviderReviews/>},
       {path:"profile/:id", element: <Profile /> },
-      {path:"notifications",element:<ProviderNotifications/>}
+      {path:"notifications",element:<ProviderNotifications/>},
+      {path:"activity-log",element:<UserActivity/>}
     ],
   },
 

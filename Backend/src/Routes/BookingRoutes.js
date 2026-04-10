@@ -12,5 +12,8 @@ router.put("/update/:id",validateToken, BookingController.updateBookingStatus);
 router.delete("/delete/:id", BookingController.deleteBooking);
 router.put("/cancel/:id",BookingController.cancelBookingbyId)
 router.get("/revenue",BookingController.getRevenu)
+router.get("/provider-earnings/:id",BookingController.getProviderEarnings);
+router.get("/provider-pending/:id", BookingController.getProviderPending);
+router.get("/provider-commission/:id", BookingController.getProviderCommission);
 
 module.exports=router

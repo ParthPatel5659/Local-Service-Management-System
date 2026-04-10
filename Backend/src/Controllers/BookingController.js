@@ -1,3 +1,4 @@
+const mongoose=require("mongoose")
 const bookingSchema = require("../Models/BookingModel");
 const Service = require("../Models/ServiceModel");
 const Notification=require("../Models/NotificationModel");
@@ -440,8 +441,96 @@ const getRevenu=async(req,res)=>{
     res.status(500).json({ error: err.message });
   }
 }
+const getProviderEarnings = async (req, res) => {
+  try {
+    const providerId = req.params.id;
 
+    const earningsData = await bookingSchema.aggregate([
+      {
+        $match: {
+          providerId: new mongoose.Types.ObjectId(providerId),
+          status: "Completed",
+          paymentStatus: "Paid" // ✅ only paid bookings
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalEarnings: { $sum: "$providerEarning" } // ✅ provider earning
+        }
+      }
+    ]);
 
+    res.status(200).json({
+      totalEarnings: earningsData[0]?.totalEarnings || 0
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+const getProviderPending = async (req, res) => {
+  try {
+    const providerId = req.params.id;
+
+    const pendingData = await bookingSchema.aggregate([
+      {
+        $match: {
+          providerId: new mongoose.Types.ObjectId(providerId),
+          paymentStatus: "Unpaid" // ✅ ONLY THIS REQUIRED
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalPending: { $sum: "$providerEarning" }
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      totalPending: pendingData[0]?.totalPending || 0
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};const getProviderCommission = async (req, res) => {
+  try {
+    const providerId = req.params.id;
+
+    const commissionData = await bookingSchema.aggregate([
+      {
+        $match: {
+          providerId: new mongoose.Types.ObjectId(providerId),
+          status: "Completed"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalCommission: { $sum: "$commission" }
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      totalCommission: commissionData[0]?.totalCommission || 0
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
 
 
 
@@ -456,4 +545,7 @@ module.exports={
     deleteBooking,
     cancelBookingbyId,
     getRevenu,
+    getProviderEarnings,
+    getProviderPending,
+    getProviderCommission
 }

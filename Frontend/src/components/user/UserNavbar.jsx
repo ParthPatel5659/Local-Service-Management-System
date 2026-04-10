@@ -186,6 +186,7 @@ export const UserNavbar = () => {
   }, [])
 
   const navLinks = [
+    { to: `/user/home`, label: 'Home' },
     { to: `/user/services`, label: 'Services' },
     { to: `/user/bookings`, label: 'Bookings' },
     { to: `/user/profile/${userId}`, label: 'Profile' },

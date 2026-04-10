@@ -107,6 +107,12 @@ const ProviderBookings = () => {
                       <p className="text-sm font-semibold text-gray-700">
                         {booking.userId?.Firstname} {booking.userId?.Lastname}
                       </p>
+                      <p className="text-sm font-semibold text-gray-700">
+                        {booking.userId?.address} 
+                      </p>
+                      <p className="text-sm font-semibold text-gray-700">
+                        {booking.userId?.phone}
+                      </p>
                     </div>
                   </div>
 

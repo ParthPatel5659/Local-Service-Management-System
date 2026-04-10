@@ -37,13 +37,34 @@ const getUserNotifications = async (req, res) => {
 };
 
 
-//get provider notification
+// //get provider notification
+// const getProviderNotification = async (req, res) => {
+//   try {
+//     const providerId = req.params.id;
+
+//     const notifications = await NotificationSchema.find({
+//       userId: providerId   // ✅ provider receives notification
+//     }).sort({ createdAt: -1 });
+
+//     res.status(200).json({
+//       message: "Notifications fetched",
+//       data: notifications
+//     });
+
+//   } catch (error) {
+//     console.log(error);
+    
+//     res.status(500).json({
+//       message: error.message
+//     });
+//   }
+// };
 const getProviderNotification = async (req, res) => {
   try {
     const providerId = req.params.id;
 
     const notifications = await NotificationSchema.find({
-      userId: providerId   // ✅ provider receives notification
+      providerId: providerId   // ✅ FIXED
     }).sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -52,12 +73,13 @@ const getProviderNotification = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({
       message: error.message
     });
   }
 };
-
 //make as read
 const markAsRead = async (req, res) => {
   try {
