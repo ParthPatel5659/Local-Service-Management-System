@@ -157,7 +157,7 @@ const getProviderPayments = async (req, res) => {
     const providerId = req.params.id;
 
     const payments = await Payment.find({ providerId })
-      .populate("userId", "Firstname")
+      .populate("userId", "Firstname Lastname")
       .populate("bookingId");
 
     res.status(200).json({

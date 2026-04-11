@@ -15,4 +15,52 @@ const createSupport = async (req, res) => {
   }
 }
 
-module.exports = { createSupport }
+const getAllSupport = async (req, res) => {
+  try {
+    const data = await Support.find()
+      .populate("userId", "Firstname Lastname email")
+      .sort({ createdAt: -1 });
+
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getUserSupport = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const data = await Support.find({ userId });
+
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const replySupport = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reply } = req.body;
+
+    const support = await Support.findByIdAndUpdate(
+      id,
+      {
+        reply,
+        status: "Resolved"
+      },
+      { new: true }
+    );
+
+    res.json({
+      message: "Reply sent",
+      data: support
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createSupport,getAllSupport,getUserSupport,replySupport }

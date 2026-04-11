@@ -125,6 +125,8 @@ import ServiceByCategory from "../components/user/ServiceByCategory";
 import Settings from "../components/pages/Settings";
 import Support from "../components/pages/Support";
 import UserActivity from "../components/pages/UserActivity";
+import AdminSupport from "../components/admin/AdminSupport";
+import ActivityLog from "../components/admin/ActivityLog";
 
 const router = createBrowserRouter([
 
@@ -145,7 +147,7 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      {index:true,element:<Navigate to="dashboard" replace />},
+      {index:true,element:<Navigate to="home" replace />},
       { path: "home", element: <UserDashboard/> },
       { path: "services/:categoryId",element: <ServiceByCategory/>},
       { path: "profile/:id", element: <Profile /> },
@@ -177,7 +179,8 @@ const router = createBrowserRouter([
       {path:"reviwes/:id",element:<ProviderReviews/>},
       {path:"profile/:id", element: <Profile /> },
       {path:"notifications",element:<ProviderNotifications/>},
-      {path:"activity-log",element:<UserActivity/>}
+      {path:"activity-log",element:<UserActivity/>},
+      {path:"support", element: <Support/>},
     ],
   },
 
@@ -200,6 +203,8 @@ const router = createBrowserRouter([
       { path: "reviews", element: <AllReview /> },
       { path: "payments", element: <AllPayment /> },
       { path: "services", element: <AllServicesshow /> },
+      { path:"support", element:<AdminSupport/>},
+      { path:"activity", element:<ActivityLog/>}
     ],
   },
 

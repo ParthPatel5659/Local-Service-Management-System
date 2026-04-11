@@ -13,6 +13,8 @@ const UserActivity = () => {
     try {
       setLoading(true);
       const res = await axios.get(`/activity/user/${userId}`);
+      console.log(res.data.data);
+      
       setActivities(res.data.data || []);
     } catch (error) {
       console.log("Error fetching activity:", error);

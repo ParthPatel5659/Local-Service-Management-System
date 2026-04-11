@@ -40,20 +40,20 @@ const ProviderDashboard = () => {
     }
   }
 
-  // ================= NOTIFICATIONS =================
-  const getNotifications = async () => {
-    try {
-      const res = await axios.get(`/notifications/provider/${userId}`);
-      setNotifications(res.data?.data || []);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // // ================= NOTIFICATIONS =================
+  // const getNotifications = async () => {
+  //   try {
+  //     const res = await axios.get(`/notifications/provider/${userId}`);
+  //     setNotifications(res.data?.data || []);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     if (userId) {
       fetchBookings();
-      getNotifications();
+      // getNotifications();
       getRevenue()
     }
   }, [userId]);

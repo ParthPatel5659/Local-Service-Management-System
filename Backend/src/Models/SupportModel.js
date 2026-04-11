@@ -18,9 +18,12 @@ const SupportSchema = new Schema({
   subject:{
     type:String
   },
+  reply: {
+  type: String
+  },
   message: {
     type:String
-},
+  },
   status: {
     type: String,
     default: "Pending"

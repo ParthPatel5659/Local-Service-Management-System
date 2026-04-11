@@ -220,13 +220,17 @@ const ProviderPayments = () => {
   };
 
   useEffect(() => {
-    if (userId) {
+  if (userId) {
+    const fetchData = async () => {
       setLoading(true);
-      getPayments();
-      getSummary();
+      await getPayments();
+      await getSummary();
       setLoading(false);
-    }
-  }, [userId]);
+    };
+
+    fetchData();
+  }
+}, [userId]);
 
   // ================= UPDATE STATUS =================
   const updateStatus = async (id) => {
@@ -309,11 +313,11 @@ const ProviderPayments = () => {
                     <td className="px-6 py-3 font-bold">₹{p.amount}</td>
 
                     <td className="px-6 py-3 text-green-600">
-                      ₹{p.providerEarning || 0}
+                     ₹{p.bookingId?.providerEarning || 0}
                     </td>
 
                     <td className="px-6 py-3 text-red-500">
-                      ₹{p.commission || 0}
+                      ₹{p.bookingId?.commission || 0}
                     </td>
 
                     <td className="px-6 py-3">

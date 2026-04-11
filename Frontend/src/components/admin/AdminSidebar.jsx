@@ -25,6 +25,8 @@ const menu = [
   { name: "Payments",   path: "/admin/payments",    icon: <FaMoneyBill /> },
   { name: "Reviews",    path: "/admin/reviews",     icon: <FaStar /> },
   { name: "Categories", path: "/admin/category",  icon: <FaList /> },
+  { name: "Supports", path: "/admin/support",  icon: <FaList /> },
+  { name: "Activity",    path:"/admin/activity",     icon: <FaStar /> },
   // { name: "Reports",    path: "/admin/reports",     icon: <FaChartBar /> },
   // { name: "Admin Logs", path: "/admin/logs",        icon: <FaClipboardList /> },
 ];
