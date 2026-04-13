@@ -166,7 +166,11 @@ const router = createBrowserRouter([
   // 🧑‍🔧 Provider Routes ✅ FIXED
   {
     path: "/provider",
-    element: <Servicesidebar />,
+    element: (
+      <ProtectedRoutes userRoles={["provider"]}>
+        <Servicesidebar />
+      </ProtectedRoutes>
+    ),
     children: [
       // ✅ NO :id here
       {index:true,element:<Navigate to="dashboard" replace />},
@@ -187,7 +191,11 @@ const router = createBrowserRouter([
   // 🛠️ Admin Routes
   {
     path: "/admin",
-    element: <AdminSidebar />,
+    element: (
+      <ProtectedRoutes userRoles={["admin"]}>
+        <AdminSidebar />
+      </ProtectedRoutes>
+    ),
     children: [
       {index:true,element:<Navigate to="dashboard" replace />},
       {path:"dashboard",element:<AdminDashboard/>},
