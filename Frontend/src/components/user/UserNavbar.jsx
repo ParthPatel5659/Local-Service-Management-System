@@ -125,7 +125,7 @@ export const UserNavbar = () => {
   const [notificationOpen, setNotificationOpen] = useState(false)
    const navigate = useNavigate();
 
-  const { userId } = useContext(AuthContext)
+  const { userId ,logout } = useContext(AuthContext)
 
   const profileRef = useRef()
   const notificationRef = useRef()
@@ -185,6 +185,11 @@ export const UserNavbar = () => {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  const handleLogout = () => {
+  logout();
+};
+
 
   const navLinks = [
     { to: `/user/home`, label: 'Home' },
@@ -326,9 +331,10 @@ export const UserNavbar = () => {
                       
                     </div>
 
-                    <div className="border-t">
+                   <div className="border-t">
                       <Link
-                        to="/"
+                        to="/login"
+                        onClick={handleLogout}
                         className="block px-4 py-3 text-red-500 hover:bg-gray-100"
                       >
                         Logout
@@ -368,11 +374,12 @@ export const UserNavbar = () => {
             ))}
 
             <Link
-              to="/"
-              className="block px-4 py-2 text-white bg-indigo-600 text-center"
-            >
-              Logout
-            </Link>
+                        to="/login"
+                        onClick={handleLogout}
+                        className="block px-4 py-3 text-red-500 hover:bg-gray-100"
+                      >
+                        Logout
+                      </Link>
           </div>
         )}
       </nav>

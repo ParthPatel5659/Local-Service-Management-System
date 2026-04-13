@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   FaTachometerAlt,
   FaUsers,
@@ -15,6 +15,7 @@ import {
   FaSignOutAlt,
   FaBars,
 } from "react-icons/fa";
+import { AuthContext } from "../../AuthProvider";
 
 const menu = [
   { name: "Dashboard",  path: "/admin/dashboard",  icon: <FaTachometerAlt /> },
@@ -35,6 +36,12 @@ const AdminSidebar = () => {
   const location = useLocation();
   const [search, setSearch] = useState("");
 
+  const {logout}=useContext(AuthContext)
+  const navigate = useNavigate();
+  const handleLogout = () => {
+  logout(); // ✅ use your context function
+  navigate("/login"); 
+};
   const filtered = menu.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -164,9 +171,12 @@ const AdminSidebar = () => {
           <p className="text-xs truncate text-slate-400">Administrator</p>
         </div>
 
-        <button className="text-slate-400 hover:text-red-400 transition-colors duration-150 flex-shrink-0">
-          <FaSignOutAlt className="text-sm" />
-        </button>
+       <button
+  onClick={handleLogout}
+  className="text-slate-400 hover:text-red-400 transition-colors duration-150 flex-shrink-0"
+>
+  <FaSignOutAlt className="text-sm" />
+</button>
       </div>
       
     </div>
