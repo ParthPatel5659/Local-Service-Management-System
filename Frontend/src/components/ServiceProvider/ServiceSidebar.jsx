@@ -170,19 +170,215 @@
 
 // export default ServiceSidebar
 
-import React, { useContext } from "react";
+// import React, { useContext, useEffect, useState } from "react";
+// import { Link, useLocation, Outlet } from "react-router-dom";
+// import { AuthContext } from "../../AuthProvider";
+// import axios from "axios";
+
+// const ServiceSidebar = () => {
+//   const location = useLocation();
+//   const { userId,logout } = useContext(AuthContext)
+//   console.log(userId)
+
+//   const [user, setUser] = useState({})
+
+//   const getUser = async () => {
+//     try {
+//       const res = await axios.get(`/user/profile/${userId}`)
+//       console.log(res.data.data);
+      
+//       // setUser(res.data.data || {})
+//     } catch (error) {
+//       console.log(error)
+//     }
+//   }
+
+//    useEffect(() => {
+//       if (userId) {
+//         getUser()
+//       }
+//     }, [userId])
+ 
+
+//   // ✅ NAVIGATION ITEMS (NO ID USED ❗)
+//   const navItems = [
+//      {
+//       to: "/provider/dashboard",
+//       label: "Deshbord",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <rect x="3" y="4" width="18" height="18" rx="2" />
+//           <line x1="3" y1="10" x2="21" y2="10" />
+//         </svg>
+//       ),
+//     },
+//     {
+//       to: `/provider/services/${userId}`,
+//       label: "Services",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+//         </svg>
+//       ),
+//     },
+//     {
+//       to: "/provider/bookings",
+//       label: "Bookings",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <rect x="3" y="4" width="18" height="18" rx="2" />
+//           <line x1="3" y1="10" x2="21" y2="10" />
+//         </svg>
+//       ),
+//     },
+//     {
+//       to: "/provider/payment",
+//       label: "Payments",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <rect x="3" y="4" width="18" height="18" rx="2" />
+//           <line x1="3" y1="10" x2="21" y2="10" />
+//         </svg>
+//       ),
+//     },
+//      {
+//       to: `/provider/reviwes/${userId}`,
+//       label: "Reviwes",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <rect x="3" y="4" width="18" height="18" rx="2" />
+//           <line x1="3" y1="10" x2="21" y2="10" />
+//         </svg>
+//       ),
+//     },
+//      {
+//       to: `/provider/profile/${userId}`,
+//       label: "Profile",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <rect x="3" y="4" width="18" height="18" rx="2" />
+//           <line x1="3" y1="10" x2="21" y2="10" />
+//         </svg>
+//       ),
+//     },
+//      {
+//       to: `/provider/activity-log`,
+//       label: "Activity",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+//         </svg>
+//       ),
+//     },
+//     {
+//       to: `/provider/support`,
+//       label: "Support",
+//       icon: (
+//         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+//           <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+//         </svg>
+//       ),
+//     },
+//   ];
+
+//   // ✅ NAV LINK COMPONENT
+//   const NavLink = ({ item }) => {
+//     const isActive = location.pathname === item.to;
+
+//     return (
+//       <Link
+//         to={item.to}
+//         className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
+//         ${
+//           isActive
+//             ? "bg-indigo-600 text-white"
+//             : "text-gray-400 hover:text-white hover:bg-gray-800"
+//         }`}
+//       >
+//         {item.icon}
+//         {item.label}
+//       </Link>
+//     );
+//   };
+
+//   return (
+//     <div className="flex min-h-screen">
+
+//       {/* Sidebar */}
+//       <aside className="w-64 bg-gray-900 text-white p-4">
+//         <h2 className="text-lg font-bold mb-6">Provider Panel</h2>
+
+//         <nav className="space-y-2">
+//           {navItems.map((item) => (
+//             <NavLink key={item.to} item={item} />
+
+            
+//           ))}
+//         </nav>
+
+//         {/* Provider Info */}
+//         <div className="mt-10 text-sm text-gray-400">
+//           <p>Provider ID:</p>
+//           <p className="text-white break-all">{userId}</p>
+//         </div>
+//                         <Link
+//                        to="/"
+//                        className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200"
+//                        onChange={logout}
+//                      >
+//                        Logout
+//                      </Link>
+                   
+//       </aside>
+      
+
+    
+      
+
+//       {/* Main Content */}
+//       <main className="flex-1 p-6 bg-gray-100">
+//         <Outlet />
+//       </main>
+//     </div>
+//   );
+// };
+
+// export default ServiceSidebar;
+
+
+
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { AuthContext } from "../../AuthProvider";
+import axios from "axios";
 
 const ServiceSidebar = () => {
   const location = useLocation();
-  const { userId,logout } = useContext(AuthContext)
-  console.log(userId)
- 
+  const { userId, logout } = useContext(AuthContext);
+  console.log(userId);
 
-  // ✅ NAVIGATION ITEMS (NO ID USED ❗)
+  const [user, setUser] = useState({});
+
+  const getUser = async () => {
+    try {
+      const res = await axios.get(`/user/profile/${userId}`);
+      console.log(res.data.data);
+
+      setUser(res.data.data || {}); // ✅ FIXED
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getUser();
+    }
+  }, [userId]);
+
+  // ✅ NAVIGATION ITEMS
   const navItems = [
-     {
+    {
       to: "/provider/dashboard",
       label: "Deshbord",
       icon: (
@@ -221,7 +417,7 @@ const ServiceSidebar = () => {
         </svg>
       ),
     },
-     {
+    {
       to: `/provider/reviwes/${userId}`,
       label: "Reviwes",
       icon: (
@@ -231,7 +427,7 @@ const ServiceSidebar = () => {
         </svg>
       ),
     },
-     {
+    {
       to: `/provider/profile/${userId}`,
       label: "Profile",
       icon: (
@@ -241,7 +437,7 @@ const ServiceSidebar = () => {
         </svg>
       ),
     },
-     {
+    {
       to: `/provider/activity-log`,
       label: "Activity",
       icon: (
@@ -261,15 +457,13 @@ const ServiceSidebar = () => {
     },
   ];
 
-  // ✅ NAV LINK COMPONENT
   const NavLink = ({ item }) => {
     const isActive = location.pathname === item.to;
 
     return (
       <Link
         to={item.to}
-        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm
-        ${
+        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${
           isActive
             ? "bg-indigo-600 text-white"
             : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -286,34 +480,48 @@ const ServiceSidebar = () => {
 
       {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white p-4">
-        <h2 className="text-lg font-bold mb-6">Provider Panel</h2>
 
+        {/* ✅ PROFILE SECTION */}
+        <div className="mb-6 p-3 bg-gray-800 rounded-xl flex items-center gap-3">
+          <img
+            src={user?.profilePicture || "https://i.pravatar.cc/100"}
+            alt="profile"
+            className="w-12 h-12 rounded-full object-cover border-2 border-indigo-500"
+          />
+
+          <div>
+            <p className="text-white font-semibold text-sm">
+              {user?.Firstname} {user?.Lastname}
+            </p>
+            <p className="text-gray-400 text-xs capitalize">
+              {user?.role}
+            </p>
+          </div>
+        </div>
+
+        {/* NAV */}
         <nav className="space-y-2">
           {navItems.map((item) => (
             <NavLink key={item.to} item={item} />
-
-            
           ))}
         </nav>
 
-        {/* Provider Info */}
+        {/* Provider Info
         <div className="mt-10 text-sm text-gray-400">
           <p>Provider ID:</p>
           <p className="text-white break-all">{userId}</p>
-        </div>
-                        <Link
-                       to="/"
-                       className="ml-4 px-4 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200"
-                       onChange={logout}
-                     >
-                       Logout
-                     </Link>
-                   
-      </aside>
-      
+        </div> */}
 
-    
-      
+        {/* ✅ LOGOUT */}
+        <Link
+          to="/login"
+          className="ml-4 mt-4 inline-block px-4 py-2 rounded-md text-sm font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-200"
+          onClick={logout}
+        >
+          Logout
+        </Link>
+
+      </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100">
