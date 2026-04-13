@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [providers, setProviders] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [revenues,setRevenus]=useState([])
+  const [revenues,setRevenus]=useState(0)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   const totalUsers = users.length;
   const totalProviders = providers.length;
   const totalBookings = bookings.length;
-  const totalRevenues= revenues.length;
+  const totalRevenues = revenues;
 
   const chartData = [
     { name: "Users", value: totalUsers, color: "#6366f1" },

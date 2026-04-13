@@ -1,4 +1,5 @@
 const Support = require("../Models/SupportModel")
+const mailSend = require('../Utils/MaliUtils');
 
 // Create request
 const createSupport = async (req, res) => {
@@ -39,23 +40,59 @@ const getUserSupport = async (req, res) => {
   }
 };
 
+// const replySupport = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { reply } = req.body;
+
+//     const support = await Support.findByIdAndUpdate(
+//       id,
+//       {
+//         reply,
+//         status: "Resolved"
+//       },
+//       { new: true }
+//     );
+
+//     res.json({
+//       message: "Reply sent",
+//       data: support
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 const replySupport = async (req, res) => {
   try {
     const { id } = req.params;
     const { reply } = req.body;
 
+    // ✅ update support
     const support = await Support.findByIdAndUpdate(
       id,
       {
         reply,
-        status: "Resolved"
+        status: "Resolved",
       },
       { new: true }
+    ).populate("userId");
+
+    // ✅ send email
+    await mailSend(
+      support.userId.email,
+      "Support Reply",
+      "supportReply.html",
+      {
+        name: support.userId.Firstname,
+        message: reply,
+      }
     );
 
     res.json({
-      message: "Reply sent",
-      data: support
+      message: "Reply sent + email sent",
+      data: support,
     });
 
   } catch (error) {
