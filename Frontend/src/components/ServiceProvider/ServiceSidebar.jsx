@@ -12,7 +12,8 @@ import {
   FiActivity, 
   FiHelpCircle, 
   FiLogOut,
-  FiChevronRight
+  FiChevronRight,
+  FiBell
 } from "react-icons/fi";
 
 const ServiceSidebar = () => {
@@ -20,6 +21,8 @@ const ServiceSidebar = () => {
   const navigate = useNavigate();
   const { userId, logout } = useContext(AuthContext);
   const [user, setUser] = useState({});
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const getUser = async () => {
     try {
@@ -30,8 +33,20 @@ const ServiceSidebar = () => {
     }
   };
 
+  const getNotifications = async () => {
+    try {
+      const res = await axios.get(`/notification/provider/${userId}`);
+      setNotifications(res.data.data || []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    if (userId) getUser();
+    if (userId) {
+      getUser();
+      getNotifications();
+    }
   }, [userId]);
 
   const navItems = [
@@ -51,6 +66,14 @@ const ServiceSidebar = () => {
   };
 
   const isActive = (path) => location.pathname === path;
+
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path.includes('/services/')) return "My Services";
+    if (path.includes('/reviwes/')) return "Reviews";
+    if (path.includes('/profile/')) return "Account Profile";
+    return path.split("/").pop().replace(/-/g, ' ');
+  };
 
   return (
     <div className="flex min-h-screen bg-[#f9fafb] font-sans">
@@ -123,19 +146,44 @@ const ServiceSidebar = () => {
       <main className="flex-1 ml-72 min-h-screen">
         <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 sticky top-0 z-40 shadow-sm">
             <h2 className="text-xl font-black text-[#1a1f2e] capitalize">
-                {location.pathname.split("/").pop()}
+                {getPageTitle()}
             </h2>
             <div className="flex items-center gap-6">
-                <button className="text-gray-400 hover:text-[#F59E0B] transition-colors relative">
-                    <FiStar size={20} />
-                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-                <div className="h-8 w-px bg-gray-100"></div>
-                <div className="flex items-center gap-3">
-                    <p className="text-right hidden sm:block">
-                        <span className="block text-xs font-black text-[#1a1f2e]">{user?.Firstname}</span>
-                        <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Available</span>
-                    </p>
+                <div className="relative">
+                    <button 
+                        onClick={() => setShowNotifications(!showNotifications)}
+                        className="text-gray-400 hover:text-[#F59E0B] transition-colors relative flex items-center"
+                    >
+                        <FiBell size={20} />
+                        {notifications?.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                        )}
+                    </button>
+                    {showNotifications && (
+                        <div className="absolute right-0 mt-4 w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-4 z-50">
+                            <div className="flex justify-between items-center mb-2 border-b border-gray-100 pb-2">
+                                <h3 className="text-sm font-bold text-gray-800">Notifications</h3>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">{notifications?.length || 0} New</span>
+                                    <Link to='/provider/notifications' onClick={() => setShowNotifications(false)} className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider hover:underline">View All</Link>
+                                </div>
+                            </div>
+                            <div className="max-h-64 overflow-y-auto custom-scrollbar flex flex-col gap-2">
+                                {notifications?.length > 0 ? (
+                                    notifications.map((notif, index) => (
+                                        <div key={index} className="p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border-b border-gray-50 last:border-0">
+                                            <p className="text-xs font-bold text-gray-800">{notif?.title || 'New Notification'}</p>
+                                            <p className="text-[10px] text-gray-500 mt-1 line-clamp-2">{notif?.message || notif?.notification || 'Check your provider dashboard for details.'}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-xs text-gray-500 text-center py-6 font-medium">
+                                        No new notifications
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </header>

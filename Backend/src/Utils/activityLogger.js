@@ -4,6 +4,7 @@ const logActivity = async ({ userId, role, action, message, meta }) => {
   try {
     await ActivityLog.create({
       userId,
+      
       role,
       action,
       message,

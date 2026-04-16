@@ -116,7 +116,7 @@ export const UserNavbar = () => {
                   <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl shadow-gray-200 border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                     <div className="p-4 border-b border-gray-50 flex items-center justify-between">
                       <h3 className="font-bold text-gray-900">Notifications</h3>
-                      <Link to="/user/notifications" className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider hover:underline">View All</Link>
+                      <Link to='/user/notifications' onClick={() => setNotificationOpen(false)} className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider hover:underline">View All</Link>
                     </div>
                     <div className="max-h-80 overflow-y-auto">
                       {notifications.length === 0 ? (
@@ -161,13 +161,13 @@ export const UserNavbar = () => {
                       <p className="text-xs text-gray-500 mt-0.5 truncate">{user?.email}</p>
                     </div>
                     <div className="p-2 mt-1">
-                      <Link to={`/user/profile/${userId}`} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
+                      <Link to={`/user/profile/${userId}`} onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
                         <FiUser size={18} /> Profile
                       </Link>
-                      <Link to="/user/settings" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
+                      <Link to="/user/settings" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
                         <FiSettings size={18} /> Settings
                       </Link>
-                      <Link to="/user/support" className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
+                      <Link to="/user/support" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-orange-50 hover:text-[#F59E0B] rounded-xl transition-all">
                         <FiHelpCircle size={18} /> Support
                       </Link>
                     </div>
@@ -186,7 +186,7 @@ export const UserNavbar = () => {
 
             {/* Mobile Menu Toggle */}
             <div className="md:hidden flex items-center gap-3">
-               <div className="relative" ref={notificationRef}>
+               <div className="relative">
                   <button onClick={() => navigate("/user/notifications")} className="p-2 text-gray-500"><FiBell size={22} /></button>
                </div>
               <button
