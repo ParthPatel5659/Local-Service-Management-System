@@ -152,11 +152,13 @@ const ServiceSidebar = () => {
                 <div className="relative">
                     <button 
                         onClick={() => setShowNotifications(!showNotifications)}
-                        className="text-gray-400 hover:text-[#F59E0B] transition-colors relative flex items-center"
+                        className="text-gray-400 hover:text-[#F59E0B] transition-colors relative flex items-center p-1"
                     >
                         <FiBell size={20} />
-                        {notifications?.length > 0 && (
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                        {notifications?.filter(n => !n.isRead)?.length > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-red-500 border border-white rounded-full flex items-center justify-center text-[9px] font-black text-white">
+                                {notifications.filter(n => !n.isRead).length}
+                            </span>
                         )}
                     </button>
                     {showNotifications && (
@@ -164,7 +166,9 @@ const ServiceSidebar = () => {
                             <div className="flex justify-between items-center mb-2 border-b border-gray-100 pb-2">
                                 <h3 className="text-sm font-bold text-gray-800">Notifications</h3>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">{notifications?.length || 0} New</span>
+                                    <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">
+                                        {notifications?.filter(n => !n.isRead)?.length || 0} New
+                                    </span>
                                     <Link to='/provider/notifications' onClick={() => setShowNotifications(false)} className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider hover:underline">View All</Link>
                                 </div>
                             </div>

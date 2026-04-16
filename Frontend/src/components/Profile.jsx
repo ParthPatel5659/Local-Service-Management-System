@@ -112,9 +112,9 @@ export const Profile = () => {
                             <input type="file" {...register("profilePicture")} className="hidden" />
                         </label>
                     </div>
-                    <div className="mb-6 pb-2">
-                        <h2 className="text-2xl font-black text-[#1a1f2e]">{watch('Firstname')} {watch('Lastname')}</h2>
-                        <span className="text-[10px] font-black uppercase text-[#F59E0B] tracking-widest bg-orange-50 px-3 py-1 rounded-lg border border-orange-100">Verified Identity</span>
+                    <div className="mb-20 pb-2">
+                        <h2 className="text-3xl font-black text-white drop-shadow-lg">{watch('Firstname')} {watch('Lastname')}</h2>
+                        <span className="text-[10px] font-black uppercase text-[#F59E0B] tracking-widest bg-white/10 px-3 py-1 rounded-lg border border-white/20 backdrop-blur-sm mt-1 inline-block">Verified Identity</span>
                     </div>
                 </div>
             </div>
