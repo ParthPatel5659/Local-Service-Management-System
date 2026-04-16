@@ -3,7 +3,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { FiMail, FiArrowLeft, FiLock } from 'react-icons/fi'
+import { FiMail, FiArrowLeft } from 'react-icons/fi'
 
 export const ForgotPassword = () => {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -14,17 +14,16 @@ export const ForgotPassword = () => {
       const res = await axios.post("/user/forgotpassword", data)
       if (res.status === 200) {
         toast.success("Reset password link sent to your email")
-        navigate("/")
+        navigate("/login")
       }
     } catch (error) {
-      console.log(error)
       toast.error("Something went wrong. Please try again.")
     }
   }
 
   const validationSchema = {
     emailValidater: {
-      required: { value: true, message: "Email is required" },
+      required: "Email is required",
       pattern: {
         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         message: "Invalid email address",
@@ -33,91 +32,66 @@ export const ForgotPassword = () => {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-6"
-      style={{
-        background: "linear-gradient(160deg, #f0f4ff 0%, #f8fafc 60%, #fff 100%)",
-        fontFamily: "'Plus Jakarta Sans', 'Nunito', sans-serif",
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6 font-sans">
       <div className="w-full max-w-md">
-
-        {/* Card */}
-        <div
-          className="bg-white rounded-2xl shadow-xl shadow-indigo-100/60 overflow-hidden"
-          style={{ border: "1px solid #e8edf5" }}
-        >
-          {/* Header */}
-          <div
-            className="px-8 py-7 flex flex-col items-center text-center"
-            style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)" }}
-          >
-            <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-3">
-              <FiLock className="text-white" size={26} />
+        {/* Brand Logo */}
+        <div className="text-center mb-8">
+            <div className="text-3xl font-black tracking-tighter">
+                <span className="text-[#1a1f2e]">Local</span>
+                <span className="text-[#F59E0B]">Serv</span>
             </div>
-            <h1 className="text-xl font-bold text-white tracking-tight">Forgot Password?</h1>
-            <p className="text-indigo-200 text-sm mt-1.5 max-w-xs leading-relaxed">
-              No worries! Enter your email and we'll send you a reset link.
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit(submitHandler)} className="px-8 py-7 space-y-5">
-
-            {/* Email Field */}
-            <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
-                <FiMail className="text-indigo-400" size={13} />
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="john@example.com"
-                {...register("email", validationSchema.emailValidater)}
-                className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                  errors.email
-                    ? "ring-2 ring-red-300 bg-red-50"
-                    : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                }`}
-                style={{ border: "1px solid #dde3f0" }}
-              />
-              {errors.email && (
-                <p className="text-xs text-red-400 flex items-center gap-1">
-                  <span className="inline-block w-1 h-1 rounded-full bg-red-400" />
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="h-px bg-slate-100" />
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
-              style={{
-                background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-                boxShadow: "0 4px 15px rgba(99,102,241,0.35)",
-              }}
-            >
-              <FiMail size={15} />
-              Send Reset Link
-            </button>
-
-            {/* Back to Login */}
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-indigo-500 transition-colors duration-150 pt-1"
-            >
-              <FiArrowLeft size={13} />
-              Back to Login
-            </button>
-
-          </form>
         </div>
 
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+          <div className="p-8 pb-10">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Forgot Password?</h1>
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              No worries! Enter your email address below and we'll send you a link to reset your password.
+            </p>
+
+            <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
+              {/* Email Field */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-widest">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <FiMail className="text-gray-400" size={16} />
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="name@example.com"
+                    {...register("email", validationSchema.emailValidater)}
+                    className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F59E0B]/20 focus:border-[#F59E0B] outline-none transition-all text-sm"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1 font-medium">{errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3.5 rounded-lg shadow-lg shadow-orange-100 transition-all active:scale-[0.98]"
+              >
+                Send Reset Link
+              </button>
+
+              {/* Back to Login */}
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="w-full flex items-center justify-center gap-2 text-sm font-bold text-gray-400 hover:text-[#F59E0B] transition-colors pt-2"
+              >
+                <FiArrowLeft size={16} />
+                Back to Login
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   )

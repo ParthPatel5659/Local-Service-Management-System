@@ -2,10 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthProvider";
+import { FiSearch, FiArrowRight } from "react-icons/fi";
 
 const UserDashboard = () => {
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const { userId } = useContext(AuthContext);
 
@@ -18,92 +20,73 @@ const UserDashboard = () => {
     }
   };
 
+  const getUser = async () => {
+    try {
+        const res = await axios.get(`/user/profile/${userId}`);
+        setUser(res.data.data);
+    } catch (error) {
+        console.log(error);
+    }
+  };
+
   useEffect(() => {
     getCategories();
-  }, []);
+    if(userId) getUser();
+  }, [userId]);
 
   return (
-    <div className="bg-slate-50 min-h-screen font-sans selection:bg-indigo-100">
+    <div className="bg-[#f9fafb] min-h-screen">
       
-      {/* ================= HERO SECTION ================= */}
-      <div className="relative bg-indigo-700 text-white pt-20 pb-32 px-6 rounded-b-[3rem] overflow-hidden shadow-2xl">
-        {/* Decorative Background Circles */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-indigo-600 rounded-full opacity-50 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-blue-500 rounded-full opacity-30 blur-3xl"></div>
+      {/* ── Welcome Header ── */}
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-4xl font-black text-[#1a1f2e] tracking-tight">
+          Welcome back, <span className="text-[#F59E0B]">{user?.Firstname || "Friend"}!</span>
+        </h1>
+        <p className="text-gray-500 mt-2 font-medium">What can we help you with today?</p>
+      </div>
 
-        <div className="relative max-w-5xl mx-auto text-center">
-          <div className="inline-block bg-indigo-600/50 backdrop-blur-sm border border-indigo-400 px-4 py-1 rounded-full text-sm mb-6 animate-pulse">
-            ❤️ Loved by 50,000+ happy customers
+      {/* ── Search Section ── */}
+      <div className="relative mb-16">
+        <div className="flex bg-white rounded-2xl p-2 shadow-xl shadow-gray-200/50 border border-gray-100 items-center max-w-3xl focus-within:ring-2 focus-within:ring-[#F59E0B]/20 transition-all">
+          <div className="pl-5 text-gray-400">
+            <FiSearch size={22} />
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-            Your Neighborhood Helpers, <br/>
-            <span className="text-blue-200">Just a Tap Away</span>
-          </h1>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search for plumbing, cleaning, or any service..."
+            className="flex-1 px-4 py-5 text-gray-700 outline-none text-lg bg-transparent font-medium placeholder-gray-400"
+          />
+          <button 
+            onClick={() => navigate(`/user/services?search=${search}`)}
+            className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-10 py-5 rounded-2xl font-bold transition-all shadow-lg shadow-orange-100 flex items-center gap-2"
+          >
+            Search
+          </button>
+        </div>
+      </div>
 
-          <p className="text-lg text-indigo-100 mb-10 max-w-2xl mx-auto">
-            Book trusted professionals for your home—electricians, plumbers, cleaners, and more.
-          </p>
-
-          {/* Search Bar */}
-          <div className="flex bg-white rounded-2xl p-2 shadow-2xl max-w-2xl mx-auto items-center group transition-all focus-within:ring-4 ring-indigo-300">
-            <div className="pl-4 text-gray-400">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </div>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="What do you need help with?"
-              className="flex-1 px-4 py-4 text-gray-800 outline-none text-lg bg-transparent"
-            />
-            <button 
-              onClick={() => navigate(`/user/services?search=${search}`)}
-              className="bg-indigo-600 hover:bg-indigo-800 px-8 py-4 rounded-xl text-white font-bold transition-all active:scale-95 shadow-lg"
-            >
-              Search
+      {/* ── Categories Grid ── */}
+      <div className="mb-20">
+        <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-bold text-[#1a1f2e]">Our Services</h2>
+            <button onClick={() => navigate("/user/services")} className="text-[#F59E0B] font-bold text-sm flex items-center gap-1 hover:underline">
+                View All <FiArrowRight />
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ================= STATS (Floating Card) ================= */}
-      <div className="max-w-5xl mx-auto -mt-16 px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-8 rounded-3xl shadow-xl border border-gray-100">
-          {[
-            { label: "Providers", val: "5000+" },
-            { label: "Customers", val: "50K+" },
-            { label: "Services", val: "20+" },
-            { label: "Rating", val: "4.8⭐" }
-          ].map((stat, i) => (
-            <div key={i} className="text-center border-r last:border-0 border-gray-100">
-              <h2 className="text-2xl md:text-3xl font-black text-indigo-600">{stat.val}</h2>
-              <p className="text-gray-500 text-sm font-medium uppercase tracking-wider">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ================= CATEGORY SECTION ================= */}
-      <div className="max-w-6xl mx-auto py-24 px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
-            How can we help you today?
-          </h2>
-          <div className="h-1.5 w-24 bg-indigo-600 mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {categories.map((cat) => (
             <div
               key={cat._id}
-              onClick={() => navigate("/user/services")}
-              className="group bg-white p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl border border-gray-100 cursor-pointer text-center transition-all duration-500 hover:-translate-y-3"
+              onClick={() => navigate(`/user/services/${cat._id}`)}
+              className="group bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-orange-100 cursor-pointer transition-all duration-300 flex flex-col items-center text-center"
             >
-              <div className="text-5xl mb-6 transform group-hover:scale-125 transition-transform duration-500 inline-block">
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 text-gray-700 flex items-center justify-center text-3xl mb-4 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
                 {cat.icon || "🛠️"}
               </div>
-              <h3 className="font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">
+              <h3 className="font-bold text-gray-800 text-sm group-hover:text-orange-600 transition-colors">
                 {cat.categoryName}
               </h3>
             </div>
@@ -111,72 +94,36 @@ const UserDashboard = () => {
         </div>
       </div>
 
-      {/* ================= HOW IT WORKS ================= */}
-      <div className="bg-indigo-900 text-white py-24 rounded-[4rem] mx-4 mb-24 px-6 shadow-inner">
-        <h2 className="text-3xl font-black text-center mb-16 underline decoration-indigo-400 underline-offset-8">
-          Simple as 1, 2, 3
-        </h2>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-12 text-center">
-          {[
-            { title: "Search", desc: "Find vetted pros instantly", icon: "🔍" },
-            { title: "Book", desc: "Schedule at your convenience", icon: "📅" },
-            { title: "Relax", desc: "Sit back and enjoy the result", icon: "✅" }
-          ].map((step, i) => (
-            <div key={i} className="relative p-8 rounded-3xl bg-indigo-800/50 border border-indigo-700">
-              <div className="text-4xl mb-4">{step.icon}</div>
-              <h3 className="font-black text-xl mb-2">{step.title}</h3>
-              <p className="text-indigo-200">{step.desc}</p>
+      {/* ── Feature Cards ── */}
+      <div className="grid md:grid-cols-3 gap-8 mb-20">
+        {[
+            { title: "Verified Professionals", desc: "Every pro on LocalServ is background checked and verified for your safety.", icon: "🛡️" },
+            { title: "Upfront Pricing", desc: "No hidden costs. See prices clearly and pay securely through the platform.", icon: "💳" },
+            { title: "Satisfaction Guarantee", desc: "Your happiness is our priority. Not satisfied? We'll make it right.", icon: "✨" }
+        ].map((item, i) => (
+            <div key={i} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="text-3xl mb-4">{item.icon}</div>
+                <h3 className="font-black text-[#1a1f2e] text-lg mb-2">{item.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
             </div>
-          ))}
-        </div>
+        ))}
       </div>
 
-      {/* ================= TESTIMONIAL ================= */}
-      <div className="max-w-6xl mx-auto px-6 mb-24">
-        <h2 className="text-3xl font-black text-center mb-12">What our community says ❤️</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { text: "Great service, very fast! The electrician was super polite.", author: "Priya S." },
-            { text: "Professional and affordable. Booking took less than a minute.", author: "Rahul M." },
-            { text: "Highly recommended for home cleaning. Spotless work!", author: "Sonia K." }
-          ].map((t, i) => (
-            <div key={i} className="bg-white p-8 rounded-3xl shadow-sm border-l-8 border-indigo-500 italic text-gray-600">
-              <p className="text-lg">"{t.text}"</p>
-              <h4 className="mt-4 font-black text-gray-900 not-italic">— {t.author}</h4>
-            </div>
-          ))}
+      {/* ── Promotion UI ── */}
+      <div className="relative rounded-3xl overflow-hidden bg-[#1a1f2e] p-12 md:p-16 text-white min-h-[400px] flex flex-col justify-center">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-[#F59E0B]/10 blur-[100px]"></div>
+        <div className="relative z-10 max-w-xl">
+            <span className="text-[#F59E0B] font-black text-xs uppercase tracking-[3px] mb-4 block">Limited Offer</span>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Get 20% off your first <br /><span className="text-[#F59E0B]">Cleaning Service</span></h2>
+            <p className="text-gray-400 text-lg mb-10 leading-relaxed font-medium">Use code <span className="text-white border-b-2 border-dashed border-[#F59E0B] px-1">FIRST20</span> at checkout to claim your professional home cleaning discount.</p>
+            <button 
+                onClick={() => navigate("/user/services")}
+                className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-10 py-4 rounded-xl font-bold transition-all shadow-lg"
+            >
+                Book a Cleaning
+            </button>
         </div>
       </div>
-
-      {/* ================= CTA CARDS ================= */}
-      <div className="max-w-6xl mx-auto px-6 pb-24 grid md:grid-cols-2 gap-8">
-        <div className="bg-gradient-to-br from-amber-400 to-orange-500 p-10 rounded-[3rem] text-white shadow-xl flex flex-col justify-between items-start hover:rotate-1 transition-transform">
-          <div>
-            <h3 className="text-3xl font-black mb-4">Need help right now?</h3>
-            <p className="mb-8 opacity-90 text-lg font-medium">Browse our expert services and get things done today.</p>
-          </div>
-          <button
-            onClick={() => navigate("/user/services")}
-            className="bg-white text-orange-600 font-black px-8 py-3 rounded-2xl hover:bg-gray-100 transition shadow-lg"
-          >
-            Find Service
-          </button>
-        </div>
-
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-10 rounded-[3rem] text-white shadow-xl flex flex-col justify-between items-start hover:-rotate-1 transition-transform">
-          <div>
-            <h3 className="text-3xl font-black mb-4">Want to earn more?</h3>
-            <p className="mb-8 opacity-90 text-lg font-medium">Join our network of professionals and grow your business.</p>
-          </div>
-          <button
-            onClick={() => navigate("/signup")}
-            className="bg-white text-emerald-700 font-black px-8 py-3 rounded-2xl hover:bg-gray-100 transition shadow-lg"
-          >
-            Join as Provider
-          </button>
-        </div>
-      </div>
-
     </div>
   );
 };

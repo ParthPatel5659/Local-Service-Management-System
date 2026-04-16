@@ -1,147 +1,15 @@
-// import axios from "axios";
-// import React from "react";
-// import { useForm } from "react-hook-form";
-// import { Link, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-
-// const Login1 = () => {
-//   const navigate = useNavigate();
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm();
-
-//   const validationSchema = {
-//     emailValidation: {
-//       required: {
-//         value: true,
-//         message: "Email is required",
-//       },
-//       pattern: {
-//         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-//         message: "Invalid email address",
-//       },
-//     },
-//     passwordValidation: {
-//       required: {
-//         value: true,
-//         message: "Password is required",
-//       },
-//       minLength: {
-//         value: 6,
-//         message: "Minimum 6 characters",
-//       },
-//       pattern: {
-//         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-//         message: "Password must contain at least one letter and one number",
-//       },
-//     },
-//   };
-
-//   const submitHandler = async (data) => {
-//     try {
-//       const res = await axios.post("/user/login", data);
-    
-//       if (res.status === 201) {
-//         toast.success("Login successful ");
-
-//         switch (res.data.role) {
-//           case "admin": navigate("/admin"); break;
-//           case "ServiceProvider":  navigate("/serviceprovider"); break;
-//          case "user": navigate("/user"); break;
-//           default:
-//             toast.error("invalid role")
-//             navigate("/")
-//             break;
-//         }
-       
-//       }
-//     } catch (err) {
-//       toast.error(err.response?.data?.message || "Login Failed")
-//     }
-//   }
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-//       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-//         <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
-//           Login
-//         </h1>
-//         <form
-//           onSubmit={handleSubmit(submitHandler)}
-//           className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
-//         >
-//           <input
-//             type="email"
-//             placeholder="Email"
-//             {...register("email", validationSchema.emailValidation)}
-//             className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-//           />
-//           {errors.email && (
-//             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-//           )}
-//           <br />
-//           <input
-//             type="password"
-//             placeholder="Password"
-//             {...register("password", validationSchema.passwordValidation)}
-//             className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-//           />
-//           {errors.password && (
-//             <p className="text-red-500 text-sm mt-1">
-//               {errors.password.message}
-//             </p>
-//           )}
-//           <br />
-//           <div className="flex items-center justify-between text-sm">
-//             <label className="flex items-center gap-2">
-//               <input type="checkbox" {...register("rememberMe")} />
-//               Remember Me
-//             </label>
-
-//             <Link
-//               to="/forgot-password"
-//               className="text-blue-500 hover:underline"
-//             >
-//               Forgot Password?
-//             </Link>
-//           </div>
-
-//           <div className="mt-6">
-//           <button
-//             type="submit"
-//             className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-//           >
-//             Login
-//           </button>
-//           </div>
-
-//           <p className="text-center text-sm text-gray-600 mt-4">
-//             Don't have an account?{" "}
-//            <Link to="/signup" className="text-blue-500 hover:underline">
-//               Sign Up
-//             </Link>
-//           </p>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login1;
-
-
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { AuthContext } from "../AuthProvider"
+import { AuthContext } from "../AuthProvider";
 
 const Login1 = () => {
-  const { login } = useContext(AuthContext)
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState("Customer");
 
   const {
     register,
@@ -151,27 +19,17 @@ const Login1 = () => {
 
   const validationSchema = {
     emailValidation: {
-      required: {
-        value: true,
-        message: "Email is required",
-      },
+      required: "Email is required",
       pattern: {
         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
         message: "Invalid email address",
       },
     },
     passwordValidation: {
-      required: {
-        value: true,
-        message: "Password is required",
-      },
+      required: "Password is required",
       minLength: {
         value: 6,
         message: "Minimum 6 characters",
-      },
-      pattern: {
-        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-        message: "Password must contain at least one letter and one number",
       },
     },
   };
@@ -181,128 +39,131 @@ const Login1 = () => {
       const res = await axios.post("/user/login", data);
 
       if (res.status === 201) {
-        login(res.data.token)
-        toast.success("Login successful");
+        login(res.data.token);
+        toast.success("Welcome back!");
         switch (res.data.role) {
-          case "admin":
-            navigate("/admin");
-            console.log("admin");
-            break;
-          case "provider":
-            navigate("/provider");
-            break;
-          case "user":
-            navigate("/user");
-            break;
+          case "admin": navigate("/admin"); break;
+          case "provider": navigate("/provider"); break;
+          case "user": navigate("/user"); break;
           default:
-            toast.error("Invalid role");
+            toast.error("Invalid role assigned");
             navigate("/");
             break;
         }
       }
     } catch (err) {
-      console.log(err)
       toast.error(err.response?.data?.message || "Login Failed");
     }
   };
 
-  const inputClass =
-    "w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200 text-sm sm:text-base bg-white";
-
-  const errorClass = "text-red-500 text-xs sm:text-sm mt-1";
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-8">
-      <div className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md">
+    <div className="flex min-h-screen bg-white font-sans">
+      {/* ── Left Panel (Brand/Welcome) ── */}
+      <div className="hidden lg:flex flex-col justify-center items-center w-1/2 bg-[#F59E0B] p-20 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-black/5 rounded-full -ml-48 -mb-48"></div>
 
-        {/* Header */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-            Welcome Back
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">Login to your account</p>
-        </div>
-
-        <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              placeholder="john@example.com"
-              {...register("email", validationSchema.emailValidation)}
-              className={inputClass}
-            />
-            {errors.email && (
-              <p className={errorClass}>{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                {...register("password", validationSchema.passwordValidation)}
-                className={`${inputClass} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-medium select-none"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
+        <div className="relative z-10 text-center">
+            <div className="text-4xl font-black mb-8 tracking-tighter">
+                <span className="text-gray-900">Local</span>
+                <span className="text-white">Serv</span>
             </div>
-            {errors.password && (
-              <p className={errorClass}>{errors.password.message}</p>
-            )}
+            <h1 className="text-5xl font-extrabold mb-6 leading-tight">Welcome Back</h1>
+            <p className="text-xl text-white/90 max-w-md mx-auto leading-relaxed">
+                Connect with local experts or manage your services with ease. Your community and tools, all in one place.
+            </p>
+        </div>
+      </div>
+
+      {/* ── Right Panel (Form) ── */}
+      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 p-8 sm:p-12 md:p-20">
+        <div className="w-full max-w-md">
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
+            <p className="text-gray-500 text-sm font-medium">Access your LocalServ account</p>
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between text-sm flex-wrap gap-2">
-            <label className="flex items-center gap-2 cursor-pointer text-gray-600">
+          {/* Role Tab Switcher */}
+          <div className="flex p-1 bg-gray-100 rounded-xl mb-8">
+            {["Customer", "Provider", "Admin"].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                  activeTab === tab
+                    ? "bg-white text-[#F59E0B] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">
+                Email Address
+              </label>
               <input
-                type="checkbox"
-                {...register("rememberMe")}
-                className="w-4 h-4 accent-blue-500 cursor-pointer"
+                type="email"
+                placeholder="name@example.com"
+                {...register("email", validationSchema.emailValidation)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F59E0B]/20 focus:border-[#F59E0B] outline-none transition-all text-gray-800 text-sm"
               />
-              Remember Me
-            </label>
-            <Link
-              to="/forgot-password"
-              className="text-blue-500 hover:text-blue-700 hover:underline transition duration-200"
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1 font-medium">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-xs font-bold text-[#F59E0B] hover:underline transition-all"
+                >
+                  Forgot?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  {...register("password", validationSchema.passwordValidation)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#F59E0B]/20 focus:border-[#F59E0B] outline-none transition-all text-gray-800 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1 font-medium">{errors.password.message}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white font-bold py-3.5 rounded-lg shadow-lg shadow-orange-100 transition-all active:scale-[0.98] mt-6"
             >
-              Forgot Password?
-            </Link>
-          </div>
+              Sign In
+            </button>
+          </form>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2.5 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition duration-300 font-semibold text-sm sm:text-base mt-2 shadow-md hover:shadow-lg"
-          >
-            Login
-          </button>
-
-          {/* Sign Up Link */}
-          <p className="text-center text-sm text-gray-600 pt-2">
+          <p className="text-center text-sm text-gray-600 mt-10">
             Don't have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-blue-500 hover:text-blue-700 hover:underline font-medium transition duration-200"
-            >
+            <Link to="/signup" className="text-[#F59E0B] font-bold hover:underline transition-all">
               Sign Up
             </Link>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -96,14 +96,14 @@ import Servicesidebar from "../components/ServiceProvider/ServiceSidebar";
 
 // Admin
 import AdminSidebar from "../components/admin/AdminSidebar";
-import { AllUser } from "../components/admin/AllUser";
+import AllUser from "../components/admin/AllUser";
 import { AddUser } from "../components/user/AddUser";
-import { AllProvider } from "../components/admin/AllProvider";
+import AllProvider from "../components/admin/AllProvider";
 import AllBookings from "../components/admin/AllBookings";
-import { AllCategory } from "../components/admin/AllCategory";
-import { AddCategory } from "../components/admin/AddCategory";
+import AllCategory from "../components/admin/AllCategory";
+import AddCategory from "../components/admin/AddCategory";
 import AllReview from "../components/admin/AllReview";
-import { AllPayment } from "../components/admin/AllPayment";
+import AllPayment from "../components/admin/AllPayment";
 import AllServicesshow from "../components/admin/AllServicesshow";
 import { AllServicesofprovider } from "../components/ServiceProvider/AllServicesofprovider";
 import { AddService } from "../components/ServiceProvider/AddService";
@@ -111,7 +111,7 @@ import ProviderBookings from "../components/ServiceProvider/ProviderBookings";
 import ProviderPayments from "../components/ServiceProvider/ProviderPayments";
 import ProviderReviews from "../components/ServiceProvider/ProviderReviews";
 import MyBookings from "../components/user/MyBooking";
-import { AddReview } from "../components/user/AddReview";
+import AddReview from "../components/user/AddReview";
 import UserNotifications from "../components/user/UserNotifications";
 import ProviderNotifications from "../components/ServiceProvider/ProviderNotifications";
 import ServiceDetails from "../components/ServiceDetails";

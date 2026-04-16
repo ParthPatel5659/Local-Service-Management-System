@@ -1,118 +1,119 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Login1 from '../Login1'
 import Footer from '../Footer'
+import heroImage from '../../assets/hero_worker.png'
 
 export const HomePage = () => {
-  const features = [
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      title: 'Comprehensive Platform',
-      desc: 'All-in-one service management for providers and users.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-      ),
-      title: 'Easy to Use',
-      desc: 'Intuitive interface designed for everyone.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c0-1.657-1.343-3-3-3S6 9.343 6 11s1.343 3 3 3 3-1.343 3-3zm6 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3z" />
-        </svg>
-      ),
-      title: 'Secure Bookings',
-      desc: 'Reliable and encrypted booking system.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728M15.536 8.464a5 5 0 010 7.072M6.343 6.343a9 9 0 000 12.728M9.172 9.172a5 5 0 000 7.072" />
-        </svg>
-      ),
-      title: '24/7 Support',
-      desc: 'Round-the-clock customer assistance.',
-    },
-  ]
-
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-white">
+      {/* ── Navigation ── */}
+      <nav className="absolute top-0 right-0 left-0 z-50 flex items-center justify-between px-6 py-4 md:px-12">
+        <div className="text-2xl font-bold tracking-tight">
+          <span className="text-navy">Local</span>
+          <span className="text-primary">Serv</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <Link to="/login" className="text-sm font-semibold text-navy hover:text-primary transition-colors">
+            Log In
+          </Link>
+          <Link 
+            to="/signup" 
+            className="btn-primary py-2 px-6 rounded-lg text-sm"
+          >
+            Get Started
+          </Link>
+        </div>
+      </nav>
 
-      {/* ── Hero Banner ── */}
-      <section className="bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
+      <main className="flex flex-col lg:flex-row min-h-screen">
+        
+        {/* ── Left Panel (Hero Content) ── */}
+        <div className="relative flex flex-col justify-center w-full lg:w-1/2 p-8 md:p-12 lg:p-20 overflow-hidden bg-gradient-to-br from-[#F59E0B] to-[#10b981]">
+          {/* Subtle overlay for better text contrast */}
+          <div className="absolute inset-0 bg-black/10"></div>
+          
+          <div className="relative z-10 max-w-xl">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+              Expert Local Services, <br /> 
+              <span className="text-navy/90">Delivered to You</span>
+            </h1>
+            
+            <p className="text-lg text-white/90 mb-10 leading-relaxed max-w-md">
+              Find and book top-rated professionals for all your home needs. Verified, secure, and hassle-free.
+            </p>
 
-          {/* Badge */}
-          <span className="inline-block mb-4 px-4 py-1 text-xs sm:text-sm font-semibold tracking-widest text-indigo-300 bg-indigo-900/60 border border-indigo-700 rounded-full uppercase">
-            Local Service Management
-          </span>
+            {/* Service + Location Search */}
+            <div className="flex flex-col sm:flex-row bg-white p-2 rounded-xl shadow-lg mb-10 gap-2">
+              <div className="flex-1 relative flex items-center border-b sm:border-b-0 sm:border-r border-gray-100 px-4 py-3">
+                <span className="text-gray-400 mr-2">🔍</span>
+                <input 
+                  type="text" 
+                  placeholder="What service do you need?" 
+                  className="w-full bg-transparent border-none outline-none text-sm font-medium focus:ring-0"
+                />
+              </div>
+              <div className="flex-1 relative flex items-center px-4 py-3">
+                <span className="text-gray-400 mr-2">📍</span>
+                <input 
+                  type="text" 
+                  placeholder="Your Location" 
+                  className="w-full bg-transparent border-none outline-none text-sm font-medium focus:ring-0"
+                />
+              </div>
+              <button className="btn-primary py-3 px-8 text-sm whitespace-nowrap">
+                Search
+              </button>
+            </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
-            Welcome to{' '}
-            <span className="text-indigo-400">Local Service</span>{' '}
-            Management System
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-gray-300 mb-10">
-            Your one-stop solution for managing local services efficiently —
-            fast, secure, and built for everyone.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            {/* <button className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200">
-              Get Started
-            </button> */}
-            <Link to="/login" className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200">
-              Get Started
-            </Link>
-            <button className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg border border-white/20 transition-colors duration-200">
-              Learn More
-            </button>
+            {/* Trust Badges */}
+            <div className="flex flex-wrap gap-6 mt-8">
+              <div className="flex items-center gap-2 text-white/90 text-xs font-semibold uppercase tracking-wider">
+                <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-[10px]">✓</div>
+                Verified Pros
+              </div>
+              <div className="flex items-center gap-2 text-white/90 text-xs font-semibold uppercase tracking-wider">
+                <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-[10px]">🔒</div>
+                Secure Payments
+              </div>
+              <div className="flex items-center gap-2 text-white/90 text-xs font-semibold uppercase tracking-wider">
+                <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center text-[10px]">★</div>
+                Satisfaction Guaranteed
+              </div>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* ── Why Choose Us ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-            Why Choose Us?
-          </h2>
-          <p className="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">
-            Everything you need to manage services in one place.
-          </p>
+        {/* ── Right Panel (Visual Area) ── */}
+        <div className="hidden lg:flex w-1/2 bg-gray-50 items-center justify-center p-12">
+          <div className="relative w-full max-w-lg aspect-square">
+            {/* Background design element */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-white rounded-full shadow-2xl opacity-50 blur-3xl"></div>
+            
+            <img 
+              src={heroImage}
+              alt="Professional Service Provider" 
+              className="relative z-10 w-full h-full object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+            />
+          </div>
         </div>
 
-        {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-center text-center p-6 bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
-            >
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 mb-4">
-                {feature.icon}
-              </div>
-              <h3 className="text-base font-semibold text-gray-900 mb-1">
-                {feature.title}
-              </h3>
-              <p className="text-sm text-gray-500">{feature.desc}</p>
+      </main>
+
+      {/* ── Secondary Content (Optionally kept or simplified) ── */}
+      <section className="bg-white py-20 px-8">
+        <div className="max-w-7xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-navy mb-12">Popular Services</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                {['Plumbing', 'Electrical', 'Cleaning', 'Salon', 'Painting', 'Pest Control'].map((service) => (
+                    <Link key={service} to="/login" className="p-6 rounded-xl bg-gray-50 hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 transition-all text-sm font-bold text-gray-700">
+                        {service}
+                    </Link>
+                ))}
             </div>
-          ))}
         </div>
-
       </section>
+
       <Footer />
     </div>
-    
   )
-}
+}

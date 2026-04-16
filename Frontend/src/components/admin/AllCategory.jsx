@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiPlus, FiGrid, FiCheckCircle, FiXCircle, FiEdit2, FiTrash2 } from 'react-icons/fi'
+import { FiSearch, FiPlus, FiGrid, FiCheckCircle, FiXCircle, FiEdit3, FiTrash2, FiLayers } from 'react-icons/fi'
 
 export const AllCategory = () => {
   const navigate = useNavigate()
@@ -21,6 +21,7 @@ export const AllCategory = () => {
   useEffect(() => { getAll() }, [])
 
   const handleDelete = async (id) => {
+    if(!window.confirm("Are you sure you want to delete this category? This might affect listed services.")) return;
     setDeletingId(id)
     try {
       await axios.delete(`/category/delete/${id}`)
@@ -38,196 +39,103 @@ export const AllCategory = () => {
     c.categoryName?.toLowerCase().includes(search.toLowerCase())
   )
 
-  const iconColors = [
-    "linear-gradient(135deg, #6366f1, #8b5cf6)",
-    "linear-gradient(135deg, #f59e0b, #ef4444)",
-    "linear-gradient(135deg, #10b981, #06b6d4)",
-    "linear-gradient(135deg, #f43f5e, #ec4899)",
-    "linear-gradient(135deg, #3b82f6, #6366f1)",
-    "linear-gradient(135deg, #14b8a6, #22c55e)",
-  ]
-  const getColor = (name = "") => iconColors[name.charCodeAt(0) % iconColors.length]
-
   return (
-    <div
-      className="min-h-screen p-6"
-      style={{
-        background: "linear-gradient(160deg, #f0f4ff 0%, #f8fafc 60%, #fff 100%)",
-        fontFamily: "'Plus Jakarta Sans', 'Nunito', sans-serif",
-      }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-10">
+      
+      {/* ── Page Header ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
-            >
-              <FiGrid className="text-white" size={15} />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight" style={{ color: "#1e293b" }}>
-              All Categories
-            </h1>
-          </div>
-          <p className="text-sm text-slate-400 ml-10">
-            {categorys.length} categor{categorys.length !== 1 ? "ies" : "y"} total
-          </p>
+          <h1 className="text-3xl font-black text-[#1a1f2e] tracking-tight">Service Categories</h1>
+          <p className="text-gray-500 mt-1 font-medium">Classifying the marketplace for better accessibility.</p>
         </div>
-
         <Link
           to="/admin/addcategory"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95"
-          style={{
-            background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-            boxShadow: "0 4px 15px rgba(99,102,241,0.35)",
-          }}
+          className="flex items-center gap-3 px-8 py-4 bg-[#F59E0B] text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-orange-100 hover:bg-[#D97706] transition-all"
         >
-          <FiPlus size={15} />
-          Add Category
+          <FiPlus size={18} /> New Category
         </Link>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6 max-w-sm">
-        <FiSearch
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-          size={14}
-        />
+      {/* ── Search Area ── */}
+      <div className="relative max-w-xl">
+        <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         <input
           type="text"
-          placeholder="Search categories..."
+          placeholder="Search categories by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-300 transition-all duration-150"
-          style={{
-            background: "#fff",
-            border: "1px solid #dde3f0",
-            color: "#334155",
-            boxShadow: "0 1px 4px rgba(99,102,241,0.06)",
-          }}
+          className="w-full pl-14 pr-6 py-5 rounded-2xl bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-orange-50 focus:border-[#F59E0B] outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300"
         />
       </div>
 
-      {/* Empty State */}
-      {filtered.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div
-            className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
-            style={{ background: "#eef1f8" }}
-          >
-            <FiGrid className="text-indigo-300" size={26} />
-          </div>
-          <p className="text-slate-500 font-medium text-sm">No categories found</p>
-          <p className="text-slate-400 text-xs mt-1">Try a different search term</p>
+      {/* ── Categories Grid ── */}
+      {filtered.length === 0 ? (
+        <div className="bg-white rounded-[3rem] p-24 text-center border border-dashed border-gray-200">
+          <div className="w-24 h-24 bg-gray-50 flex items-center justify-center rounded-full text-gray-200 text-5xl mx-auto mb-8 shadow-inner">🧩</div>
+          <h3 className="text-2xl font-black text-[#1a1f2e]">No Categories Found</h3>
+          <p className="text-gray-500 max-w-sm mx-auto mt-2 font-medium">Start adding categories to organize your professional network.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          {filtered.map((category) => {
+            const isActive = category.isActive !== false;
+            const isDeleting = deletingId === category._id;
+
+            return (
+              <div
+                key={category._id}
+                className="group bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative"
+              >
+                {/* Visual Accent */}
+                <div className="w-16 h-16 rounded-[1.5rem] bg-gray-50 flex items-center justify-center text-3xl mb-6 group-hover:bg-orange-50 group-hover:text-[#F59E0B] transition-all border border-gray-50 shadow-inner">
+                    {category.icon || "🛠️"}
+                </div>
+
+                <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xl font-black text-[#1a1f2e] group-hover:text-[#F59E0B] transition-colors">{category.categoryName}</h3>
+                        <div className={`p-1 rounded-full border ${isActive ? "bg-green-50 border-green-100 text-green-500" : "bg-red-50 border-red-100 text-red-500"}`} title={isActive ? "Active" : "Disabled"}>
+                            {isActive ? <FiCheckCircle size={14} /> : <FiXCircle size={14} />}
+                        </div>
+                    </div>
+                    <p className="text-gray-500 text-sm font-medium line-clamp-2 leading-relaxed">
+                        {category.description || "Browse top-rated professional services in this category."}
+                    </p>
+                </div>
+
+                {/* Meta Info */}
+                <div className="flex items-center gap-2 mt-6 pt-6 border-t border-gray-50">
+                    <div className="flex -space-x-2">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[8px] font-black text-gray-400">
+                                {i}
+                            </div>
+                        ))}
+                    </div>
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">+12 Services</span>
+                </div>
+
+                {/* Actions Overlay / Bottom */}
+                <div className="flex gap-2 mt-6">
+                    <button
+                        onClick={() => handleEdit(category._id)}
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-50 hover:bg-[#1a1f2e] text-gray-400 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-gray-50 hover:border-[#1a1f2e]"
+                    >
+                        <FiEdit3 size={14} /> Edit
+                    </button>
+                    <button
+                        onClick={() => handleDelete(category._id)}
+                        disabled={isDeleting}
+                        className="p-3 bg-gray-50 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border border-gray-100"
+                    >
+                        <FiTrash2 size={16} />
+                    </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filtered.map((category) => {
-          const isActive = category.isActive !== false
-          const isDeleting = deletingId === category._id
-
-          return (
-            <div
-              key={category._id}
-              className="bg-white rounded-2xl p-5 flex flex-col transition-all duration-200 hover:-translate-y-0.5"
-              style={{
-                border: "1px solid #e8edf5",
-                boxShadow: "0 2px 8px rgba(99,102,241,0.06)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 8px 28px rgba(99,102,241,0.14)"
-                e.currentTarget.style.borderColor = "#c7d2fe"
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(99,102,241,0.06)"
-                e.currentTarget.style.borderColor = "#e8edf5"
-              }}
-            >
-              {/* Top Row */}
-              <div className="flex items-start justify-between mb-4">
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white text-base font-bold flex-shrink-0"
-                  style={{ background: getColor(category.categoryName) }}
-                >
-                  {category.categoryName?.charAt(0)?.toUpperCase()}
-                </div>
-
-                {/* Active Badge */}
-                <div
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-full"
-                  style={{ background: isActive ? "#f0fdf4" : "#fef2f2" }}
-                >
-                  {isActive
-                    ? <FiCheckCircle size={11} style={{ color: "#22c55e" }} />
-                    : <FiXCircle size={11} style={{ color: "#ef4444" }} />
-                  }
-                  <span
-                    className="text-xs font-medium"
-                    style={{ color: isActive ? "#16a34a" : "#dc2626" }}
-                  >
-                    {isActive ? "Active" : "Inactive"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Name */}
-              <h2 className="font-semibold text-sm truncate" style={{ color: "#1e293b" }}>
-                {category.categoryName}
-              </h2>
-
-              {/* Description */}
-              <p
-                className="text-xs mt-1.5 leading-relaxed flex-1"
-                style={{
-                  color: "#94a3b8",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {category.description || "No description provided."}
-              </p>
-
-              {/* Divider */}
-              <div className="my-3 h-px" style={{ background: "#f1f5f9" }} />
-
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(category._id)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
-                  style={{
-                    background: "#eef1f8",
-                    color: "#6366f1",
-                    border: "1px solid #dde3f0",
-                  }}
-                >
-                  <FiEdit2 size={12} />
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => handleDelete(category._id)}
-                  disabled={isDeleting}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 hover:opacity-90 active:scale-95 disabled:opacity-50"
-                  style={{
-                    background: "#fef2f2",
-                    color: "#dc2626",
-                    border: "1px solid #fecaca",
-                  }}
-                >
-                  <FiTrash2 size={12} />
-                  {isDeleting ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            </div>
-          )
-        })}
-      </div>
     </div>
   )
 }

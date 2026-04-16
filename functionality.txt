@@ -1,0 +1,96 @@
+LOCAL SERVICE MANAGEMENT SYSTEM - PROJECT DOCUMENTATION (functionality.txt)
+==========================================================================
+
+This file contains the core logic, naming conventions, file structure, and feature 
+breakdown of the Local Service Management System.
+
+--------------------------------------------------------------------------
+1. PROJECT STRUCTURE & PATHS
+--------------------------------------------------------------------------
+
+BACKEND REPOSITORY (/Backend)
+- /src/Models        : Mongoose schemas for MongoDB collections.
+- /src/Controllers   : core business logic and API request handling.
+- /src/Routes        : Express router definitions for all entities.
+- /src/Middleware    : Authentication (JWT) and File Upload (Multer) logic.
+- /src/Utils         : Helper functions (Email, Activity Logger, Cloudinary).
+- /src/templets      : HTML templates for automated emails.
+- /uploads           : Local storage for profile and service images.
+
+FRONTEND REPOSITORY (/Frontend)
+- /src/components    : React UI components organized by role (admin, user, provider).
+- /src/router        : Centralized routing logic (AppRouter.jsx) with RBAC.
+- /src/AuthProvider  : Context-based authentication state management.
+- /public            : Static assets (icons, images).
+
+--------------------------------------------------------------------------
+2. NAMING CONVENTIONS
+--------------------------------------------------------------------------
+
+DATABASE/MODELS (Backend)
+- Files: PascalCase + "Model" suffix (e.g., UserModel.js, BookingModel.js).
+- Schema Fields: camelCase (e.g., firstName, providerId, totalAmount).
+- Collections: Singular or plural as per Mongoose default (e.g., 'user', 'services').
+
+LOGIC & ROUTING (Backend)
+- Controllers: PascalCase + "Controller" suffix (e.g., PaymentController.js).
+- Routes: PascalCase + "Routes" suffix (e.g., ServiceRoutes.js).
+- Middleware: PascalCase (e.g., AuthMiddelwear.js).
+
+COMPONENTS & PAGES (Frontend)
+- Files: PascalCase with .jsx extension (e.g. Login1.jsx, UserNavbar.jsx).
+- Folders: mixed (PascalCase for ServiceProvider, lowercase for user/admin).
+
+--------------------------------------------------------------------------
+3. SYSTEM ROLES & ACCESS CONTROL
+--------------------------------------------------------------------------
+
+The system enforces three distinct roles via JWT 'role' field:
+
+ADMIN:
+- Dashboard with platform-wide revenue and activity stats.
+- Full CRUD on Users, Service Providers, and Service Categories.
+- Oversight on all Bookings, Reviews, and Payments.
+- Support ticket resolution.
+
+SERVICE PROVIDER:
+- Manage their own profile and service portfolio (Add/Edit Services).
+- View, Accept, and Mark "Completed" for received bookings.
+- Track Earnings (90% per booking) and platform commission (10%).
+- View Reviews and Notifications.
+
+USER (CUSTOMER):
+- Browse and search services by Category and Location.
+- Book multiple services with Date/Time selection.
+- Complete payments via Razorpay integration.
+- Track booking status and leave ratings/reviews.
+
+--------------------------------------------------------------------------
+4. CORE FUNCTIONALITY & LOGIC
+--------------------------------------------------------------------------
+
+AUTHENTICATION:
+- JWT-based authentication.
+- Verification code logic during signup (OTP).
+- Forgot/Reset Password via email templates.
+
+BOOKING & REVENUE:
+- Every booking calculates a 10% Administration Commission and 90% Provider Earning.
+- Booking Status Flow: Pending -> Accepted -> Completed.
+- Payment Status Flow: Unpaid -> Paid (via Razorpay verify).
+
+PAYMENT INTEGRATION (Razorpay):
+- Order creation on server -> Checkout on Client -> Signature Verification on server.
+- Handles razorpay_order_id, razorpay_payment_id, and razorpay_signature.
+
+REPORTING & LOGGING:
+- ActivityLog tracks every major system action (Login, Book, Pay).
+- Notification system sends real-time alerts for role actions.
+
+--------------------------------------------------------------------------
+5. KNOWN TYPOS (Preserved for compatibility)
+--------------------------------------------------------------------------
+- CatrogrieModel.js (should be CategoryModel)
+- ReviweModel.js (should be ReviewModel)
+- AuthMiddelwear.js (should be AuthMiddleware)
+- templets/ (should be templates/)

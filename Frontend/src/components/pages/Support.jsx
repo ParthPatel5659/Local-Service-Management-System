@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AuthContext } from '../../AuthProvider'
 import { toast } from 'react-toastify'
-import { Phone, Mail, ChevronDown, Send, HelpCircle } from 'lucide-react' // Optional: npm install lucide-react
+import { FiPhone, FiMail, FiChevronDown, FiSend, FiHelpCircle, FiActivity, FiGlobe } from 'react-icons/fi'
 
 export const Support = () => {
   const { userId } = useContext(AuthContext)
@@ -11,155 +11,178 @@ export const Support = () => {
   const [openIndex, setOpenIndex] = useState(null)
 
   const faqs = [
-    { question: "How do I book a service?", answer: "Go to services page → select service → choose date & time → confirm booking." },
-    { question: "How can I cancel or reschedule a booking?", answer: "Go to My Bookings → click cancel or reschedule option." },
-    { question: "What payment methods are accepted?", answer: "We support UPI, Card, and Net Banking." },
-    { question: "How do I become a service provider?", answer: "Click on 'Join as Provider' and complete registration." },
-    { question: "What if I'm not satisfied?", answer: "Contact support within 48 hours. Refund or re-service will be provided." },
-    { question: "How are providers verified?", answer: "All providers go through ID verification and background checks." }
+    { question: "How do I book a service?", answer: "Navigate to the marketplace, select your desired professional service, choose a convenient date and time slot, and confirm your request." },
+    { question: "How can I cancel or reschedule a booking?", answer: "Visit 'My Bookings' in your dashboard. You can modify or cancel any pending or accepted requests from there." },
+    { question: "What payment methods are accepted?", answer: "We support all major payment gateways including UPI, Credit/Debit cards, and Net Banking for secure transactions." },
+    { question: "How do I become a service provider?", answer: "Click 'Register as Pro' in the navigational menu, complete your business profile, and wait for our verification team to approve your credentials." },
+    { question: "What if I'm not satisfied with a service?", answer: "Our Satisfaction Guarantee ensures quality. If you have any issues, raise a ticket within 48 hours and we will facilitate a resolution." }
   ]
 
   const onSubmit = async (data) => {
     try {
       const res = await axios.post("/support/add", { ...data, userId })
       if (res.status === 201) {
-        toast.success("Support request sent successfully")
+        toast.success("Support ticket dispatched. We'll reach out shortly.");
         reset()
       }
     } catch (error) {
-      toast.error("Failed to send request")
+      toast.error("Failed to connect to support nodes. Please try again.")
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto py-12 px-6">
+      
+      {/* ── Page Header ── */}
+      <div className="text-center mb-20">
+          <h1 className="text-5xl font-black text-[#1a1f2e] tracking-tight mb-4">Resolution Center</h1>
+          <p className="text-gray-500 font-medium max-w-2xl mx-auto text-lg">Looking for answers? Our concierge team is standing by to assist your journey on LocalServ.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        {/* HEADER */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Help Center</h1>
-          <p className="mt-4 text-lg text-gray-600">Have questions? We're here to help you 24/7.</p>
+        {/* ── Left Side: Knowledge & Contacts ── */}
+        <div className="lg:col-span-7 space-y-12">
+            
+            {/* Quick Contacts */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <ContactCard 
+                    icon={<FiPhone size={24} />} 
+                    label="Voice Support" 
+                    value="+91 1800-419-0000" 
+                    theme="bg-blue-50 text-blue-600 border-blue-100"
+                />
+                <ContactCard 
+                    icon={<FiMail size={24} />} 
+                    label="Official Correspondence" 
+                    value="connect@localserv.com" 
+                    theme="bg-orange-50 text-[#F59E0B] border-orange-100"
+                />
+            </div>
+
+            {/* FAQ Accordion */}
+            <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+                <div className="p-10 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+                    <h2 className="text-2xl font-black text-[#1a1f2e] flex items-center gap-3">
+                        <FiHelpCircle className="text-[#F59E0B]" /> Standard Knowledge Base
+                    </h2>
+                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest bg-white px-4 py-1.5 rounded-xl border border-gray-100 shadow-sm">Updated Today</span>
+                </div>
+                <div className="divide-y divide-gray-50">
+                    {faqs.map((faq, index) => (
+                        <div key={index} className="group">
+                            <button
+                                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                                className="w-full flex items-center justify-between p-8 text-left hover:bg-gray-50/50 transition-all"
+                            >
+                                <span className={`text-lg font-bold transition-colors ${openIndex === index ? 'text-[#F59E0B]' : 'text-gray-700 hover:text-[#1a1f2e]'}`}>{faq.question}</span>
+                                <FiChevronDown 
+                                    size={20} 
+                                    className={`text-gray-300 transition-transform duration-500 ${openIndex === index ? 'rotate-180 text-[#F59E0B]' : 'group-hover:text-gray-500'}`} 
+                                />
+                            </button>
+                            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <p className="px-10 pb-10 text-gray-500 font-medium leading-relaxed italic border-l-4 border-[#F59E0B] ml-8 mb-4">
+                                    "{faq.answer}"
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Social Trust Line */}
+            <div className="flex items-center gap-6 p-8 bg-[#1a1f2e] rounded-[2.5rem] text-white overflow-hidden relative group">
+                <div className="absolute top-0 right-0 w-32 h-full bg-[#F59E0B]/10 skew-x-12 translate-x-10"></div>
+                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-[#F59E0B] text-2xl group-hover:scale-110 transition-transform">
+                    <FiGlobe />
+                </div>
+                <div>
+                    <h4 className="font-black text-xl mb-1">Join the LocalServ Ecosystem</h4>
+                    <p className="text-gray-400 text-sm font-medium">Connect with millions of verified professionals worldwide.</p>
+                </div>
+            </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* LEFT COLUMN: CONTACT & FAQ */}
-          <div className="lg:col-span-2 space-y-8">
-            
-            {/* CONTACT CARDS */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                <div className="bg-indigo-100 p-3 rounded-xl text-indigo-600">
-                  <Phone size={24} />
+        {/* ── Right Side: Discourse Form ── */}
+        <div className="lg:col-span-5">
+            <div className="bg-white p-10 rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 sticky top-10">
+                <div className="mb-10">
+                    <h2 className="text-3xl font-black text-[#1a1f2e] tracking-tight mb-2">Message Center</h2>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Direct line to management</p>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Call Us</p>
-                  <p className="text-base font-bold text-gray-900">+91 1800-123-4567</p>
-                </div>
-              </div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
-                <div className="bg-green-100 p-3 rounded-xl text-green-600">
-                  <Mail size={24} />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Email Us</p>
-                  <p className="text-base font-bold text-gray-900">support@localserve.com</p>
-                </div>
-              </div>
-            </div>
 
-            {/* FAQ SECTION */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-50">
-                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                  <HelpCircle className="text-indigo-500" size={20} />
-                  Frequently Asked Questions
-                </h2>
-              </div>
-              <div className="divide-y divide-gray-100">
-                {faqs.map((faq, index) => (
-                  <div key={index} className="transition-all">
-                    <button
-                      onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
-                    >
-                      <span className="font-semibold text-gray-700">{faq.question}</span>
-                      <ChevronDown 
-                        size={18} 
-                        className={`text-gray-400 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`} 
-                      />
-                    </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <p className="p-5 pt-0 text-gray-600 text-sm leading-relaxed">
-                        {faq.answer}
-                      </p>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1">Identity Label</label>
+                        <input
+                            {...register("name")}
+                            className="w-full px-6 py-4 rounded-2xl bg-[#f9fafb] border border-gray-100 focus:bg-white focus:border-[#F59E0B] outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300 shadow-inner"
+                            placeholder="Full Name"
+                            required
+                        />
                     </div>
-                  </div>
-                ))}
-              </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1">Digital Correspondence</label>
+                        <input
+                            {...register("email")}
+                            type="email"
+                            className="w-full px-6 py-4 rounded-2xl bg-[#f9fafb] border border-gray-100 focus:bg-white focus:border-[#F59E0B] outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300 shadow-inner"
+                            placeholder="Email Address"
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1">Context / Subject</label>
+                        <input
+                            {...register("subject")}
+                            className="w-full px-6 py-4 rounded-2xl bg-[#f9fafb] border border-gray-100 focus:bg-white focus:border-[#F59E0B] outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300 shadow-inner"
+                            placeholder="What can we solve?"
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1">Detail Narrative</label>
+                        <textarea
+                            {...register("message")}
+                            rows={5}
+                            className="w-full px-6 py-4 rounded-2xl bg-[#f9fafb] border border-gray-100 focus:bg-white focus:border-[#F59E0B] outline-none transition-all font-medium text-gray-600 leading-relaxed shadow-inner resize-none placeholder-gray-300"
+                            placeholder="Provide any relevant details..."
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-[#1a1f2e] hover:bg-[#F59E0B] text-white font-black py-5 rounded-2xl shadow-xl shadow-gray-100 transition-all flex items-center justify-center gap-3 active:scale-[0.98] uppercase tracking-widest text-xs"
+                    >
+                        Dispatch Ticket <FiSend />
+                    </button>
+                    
+                    <div className="flex items-center gap-3 justify-center text-gray-300 text-[10px] font-black uppercase tracking-widest pt-4">
+                        <FiActivity className="text-[#F59E0B]" /> Response within 4-6 hours
+                    </div>
+                </form>
             </div>
-          </div>
-
-          {/* RIGHT COLUMN: CONTACT FORM */}
-          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 h-fit sticky top-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Send a Message</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
-                <input
-                  {...register("name")}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                  placeholder="John Doe"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
-                <input
-                  {...register("email")}
-                  type="email"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                  placeholder="john@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
-                <input
-                  {...register("subject")}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                  placeholder="Booking Issue"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Message</label>
-                <textarea
-                  {...register("message")}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
-                  placeholder="How can we help?"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2 group"
-              >
-                <span>Send Request</span>
-                <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </button>
-            </form>
-          </div>
-
         </div>
       </div>
     </div>
   )
 }
+
+const ContactCard = ({ icon, label, value, theme }) => (
+    <div className={`p-8 rounded-[2.5rem] border flex items-center gap-6 shadow-sm hover:shadow-xl transition-all group ${theme}`}>
+        <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+            {icon}
+        </div>
+        <div>
+            <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">{label}</p>
+            <p className="text-sm font-black tracking-tight">{value}</p>
+        </div>
+    </div>
+)
 
 export default Support

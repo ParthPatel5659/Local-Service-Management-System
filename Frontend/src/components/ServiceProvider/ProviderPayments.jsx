@@ -1,182 +1,9 @@
-// import axios from "axios";
-// import React, { useContext, useEffect, useState } from "react";
-// import { AuthContext } from "../../AuthProvider";
-// import { toast } from "react-toastify";
-
-// const ProviderPayments = () => {
-//   const { userId } = useContext(AuthContext);
-//   const [payments, setPayments] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const getPayments = async () => {
-//     if (!userId) return;
-//     try {
-//       setLoading(true);
-//       const res = await axios.get(`/payments/provider/${userId}`);
-//       setPayments(res.data.data);
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to fetch payments");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getPayments();
-//   }, [userId]);
-
-//   const updateStatus = async (id) => {
-//     try {
-//       const res = await axios.put(`/payments/update/${id}`, {
-//         paymentStatus: "Completed",
-//       });
-//       if (res.status === 200) {
-//         toast.success("Payment marked as completed");
-//         getPayments();
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Status update failed");
-//     }
-//   };
-
-//   // Calculate totals
-//   const totalEarnings = payments
-//     .filter((p) => p.paymentStatus === "Completed")
-//     .reduce((sum, p) => sum + Number(p.amount), 0);
-
-//   const pendingAmount = payments
-//     .filter((p) => p.paymentStatus === "Pending")
-//     .reduce((sum, p) => sum + Number(p.amount), 0);
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-//       <div className="max-w-6xl mx-auto">
-        
-//         {/* Header & Stats Summary */}
-//         <div className="mb-8">
-//           <h1 className="text-3xl font-bold text-gray-900 mb-6">Payment History</h1>
-          
-//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-//             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
-//               <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">Total Earned</p>
-//               <p className="text-2xl font-black text-gray-800">₹{totalEarnings}</p>
-//             </div>
-//             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-yellow-500">
-//               <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">Pending</p>
-//               <p className="text-2xl font-black text-gray-800">₹{pendingAmount}</p>
-//             </div>
-//             <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
-//               <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">Transactions</p>
-//               <p className="text-2xl font-black text-gray-800">{payments.length}</p>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Desktop Table / Mobile Cards */}
-//         {loading ? (
-//           <div className="text-center py-10 text-gray-500">Loading payments...</div>
-//         ) : payments.length > 0 ? (
-//           <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-//             {/* Table for Desktop */}
-//             <div className="hidden md:block overflow-x-auto">
-//               <table className="w-full text-left">
-//                 <thead className="bg-gray-50 border-b border-gray-100">
-//                   <tr>
-//                     <th className="px-6 py-4 text-sm font-semibold text-gray-600">Client</th>
-//                     <th className="px-6 py-4 text-sm font-semibold text-gray-600">Amount</th>
-//                     <th className="px-6 py-4 text-sm font-semibold text-gray-600">Method</th>
-//                     <th className="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
-//                     <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-right">Action</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody className="divide-y divide-gray-100">
-//                   {payments.map((payment) => (
-//                     <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
-//                       <td className="px-6 py-4 font-medium text-gray-800">
-//                         {payment.userId?.Firstname} {payment.userId?.Lastname}
-//                       </td>
-//                       <td className="px-6 py-4 text-gray-700 font-bold">₹{payment.amount}</td>
-//                       <td className="px-6 py-4 text-gray-500 text-sm">{payment.paymentMethod}</td>
-//                       <td className="px-6 py-4">
-//                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-//                           payment.paymentStatus === "Pending" 
-//                             ? "bg-yellow-100 text-yellow-700" 
-//                             : "bg-green-100 text-green-700"
-//                         }`}>
-//                           {payment.paymentStatus}
-//                         </span>
-//                       </td>
-//                       <td className="px-6 py-4 text-right">
-//                         {payment.paymentStatus === "Pending" && (
-//                           <button
-//                             onClick={() => updateStatus(payment._id)}
-//                             className="bg-green-600 hover:bg-green-700 text-white text-xs px-4 py-2 rounded-lg transition shadow-sm"
-//                           >
-//                             Mark as Paid
-//                           </button>
-//                         )}
-//                       </td>
-//                     </tr>
-//                   ))}
-//                 </tbody>
-//               </table>
-//             </div>
-
-//             {/* Grid for Mobile */}
-//             <div className="md:hidden grid grid-cols-1 gap-4 p-4 bg-gray-50">
-//               {payments.map((payment) => (
-//                 <div key={payment._id} className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
-//                   <div className="flex justify-between items-start mb-3">
-//                     <div>
-//                       <p className="text-xs text-gray-400 uppercase font-bold">Client</p>
-//                       <p className="font-bold text-gray-800">{payment.userId?.Firstname} {payment.userId?.Lastname}</p>
-//                     </div>
-//                     <span className={`px-2 py-1 rounded text-[10px] font-black uppercase ${
-//                       payment.paymentStatus === "Pending" ? "bg-yellow-100 text-yellow-600" : "bg-green-100 text-green-600"
-//                     }`}>
-//                       {payment.paymentStatus}
-//                     </span>
-//                   </div>
-//                   <div className="grid grid-cols-2 gap-4 mb-4">
-//                     <div>
-//                       <p className="text-xs text-gray-400 uppercase font-bold">Amount</p>
-//                       <p className="text-lg font-black text-blue-600">₹{payment.amount}</p>
-//                     </div>
-//                     <div>
-//                       <p className="text-xs text-gray-400 uppercase font-bold">Method</p>
-//                       <p className="text-sm text-gray-600">{payment.paymentMethod}</p>
-//                     </div>
-//                   </div>
-//                   {payment.paymentStatus === "Pending" && (
-//                     <button
-//                       onClick={() => updateStatus(payment._id)}
-//                       className="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-sm active:scale-95 transition-transform"
-//                     >
-//                       Mark as Paid
-//                     </button>
-//                   )}
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         ) : (
-//           <div className="bg-white p-12 text-center rounded-xl shadow-sm border border-dashed border-gray-300">
-//             <p className="text-gray-400 text-lg">No payment records found.</p>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProviderPayments;
-
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../AuthProvider";
 import { toast } from "react-toastify";
+import { FiDollarSign, FiClock, FiPercent, FiActivity, FiCheckCircle } from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa";
 
 const ProviderPayments = () => {
   const { userId } = useContext(AuthContext);
@@ -184,24 +11,21 @@ const ProviderPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ NEW STATES (API based)
   const [earnings, setEarnings] = useState(0);
   const [pending, setPending] = useState(0);
   const [commission, setCommission] = useState(0);
 
-  // ================= GET PAYMENTS =================
   const getPayments = async () => {
     if (!userId) return;
     try {
       const res = await axios.get(`/payments/provider/${userId}`);
-      setPayments(res.data.data);
+      setPayments(res.data.data || []);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch payments");
     }
   };
 
-  // ================= GET SUMMARY =================
   const getSummary = async () => {
     try {
       const [earnRes, pendRes, commRes] = await Promise.all([
@@ -213,26 +37,23 @@ const ProviderPayments = () => {
       setEarnings(earnRes.data.totalEarnings || 0);
       setPending(pendRes.data.totalPending || 0);
       setCommission(commRes.data.totalCommission || 0);
-
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-  if (userId) {
-    const fetchData = async () => {
-      setLoading(true);
-      await getPayments();
-      await getSummary();
-      setLoading(false);
-    };
+    if (userId) {
+      const fetchData = async () => {
+        setLoading(true);
+        await getPayments();
+        await getSummary();
+        setLoading(false);
+      };
+      fetchData();
+    }
+  }, [userId]);
 
-    fetchData();
-  }
-}, [userId]);
-
-  // ================= UPDATE STATUS =================
   const updateStatus = async (id) => {
     try {
       const res = await axios.put(`/payments/update/${id}`, {
@@ -240,9 +61,9 @@ const ProviderPayments = () => {
       });
 
       if (res.status === 200) {
-        toast.success("Payment marked as completed");
+        toast.success("Transaction marked as completed");
         getPayments();
-        getSummary(); // ✅ refresh stats
+        getSummary(); 
       }
     } catch (error) {
       console.error(error);
@@ -251,87 +72,132 @@ const ProviderPayments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-
-        {/* HEADER */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-6">Payment Dashboard</h1>
-
-          {/* ✅ SUMMARY CARDS FROM BACKEND */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-            <div className="bg-white p-6 rounded-xl shadow border-l-4 border-green-500">
-              <p className="text-sm text-gray-500 font-bold">Total Earnings</p>
-              <p className="text-2xl font-black">₹{earnings}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow border-l-4 border-yellow-500">
-              <p className="text-sm text-gray-500 font-bold">Pending</p>
-              <p className="text-2xl font-black">₹{pending}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow border-l-4 border-red-500">
-              <p className="text-sm text-gray-500 font-bold">Commission</p>
-              <p className="text-2xl font-black">₹{commission}</p>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow border-l-4 border-blue-500">
-              <p className="text-sm text-gray-500 font-bold">Transactions</p>
-              <p className="text-2xl font-black">{payments.length}</p>
-            </div>
-
-          </div>
+    <div className="space-y-10">
+      
+      {/* ── Page Header ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-black text-[#1a1f2e] tracking-tight">Financial Ledger</h1>
+          <p className="text-gray-500 mt-1 font-medium">Track transactions, pending balances, and total disbursements.</p>
         </div>
+        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm text-[10px] font-black uppercase tracking-widest text-[#1a1f2e]">
+            <span className="text-gray-400">Total Entries:</span> 
+            <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md border border-blue-100">
+                {payments.length}
+            </span>
+        </div>
+      </div>
 
-        {/* TABLE */}
-        {loading ? (
-          <div className="text-center py-10">Loading...</div>
-        ) : payments.length > 0 ? (
-          <div className="bg-white rounded-xl shadow overflow-hidden">
+      {/* ── Summary Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard 
+            title="Total Revenue" 
+            value={earnings} 
+            icon={<FiDollarSign />} 
+            colorTheme="bg-green-50 text-green-600 border-green-100 shadow-green-100/30" 
+        />
+        <StatCard 
+            title="Pending Disbursement" 
+            value={pending} 
+            icon={<FiClock />} 
+            colorTheme="bg-orange-50 text-[#F59E0B] border-orange-100 shadow-orange-100/30" 
+        />
+        <StatCard 
+            title="Platform Commission" 
+            value={commission} 
+            icon={<FiPercent />} 
+            colorTheme="bg-red-50 text-red-600 border-red-100 shadow-red-100/30" 
+        />
+        <StatCard 
+            title="Transactions" 
+            value={payments.length} 
+            icon={<FiActivity />} 
+            colorTheme="bg-blue-50 text-blue-600 border-blue-100 shadow-blue-100/30"
+            isCount={true} 
+        />
+      </div>
 
+      {/* ── Ledger Data ── */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#F59E0B] border-t-transparent shadow-lg"></div>
+        </div>
+      ) : payments.length > 0 ? (
+        <div className="bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-8 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+              <h2 className="text-xl font-black text-[#1a1f2e]">Transaction History</h2>
+              <div className="text-[10px] font-black uppercase text-gray-400 tracking-widest px-4 py-2 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center gap-2">
+                  <FiClock className="text-[#F59E0B]" /> Live Sync
+              </div>
+          </div>
+          
+          <div className="overflow-x-auto">
             <table className="w-full text-left">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3">Client</th>
-                  <th className="px-6 py-3">Amount</th>
-                  <th className="px-6 py-3">Earning</th>
-                  <th className="px-6 py-3">Commission</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Action</th>
+              <thead className="bg-white">
+                <tr className="border-b border-gray-50">
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Client / Sender</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Gross Amount</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Net Earning</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Platform Fee</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                  <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Action</th>
                 </tr>
               </thead>
-
-              <tbody>
+              <tbody className="divide-y divide-gray-50">
                 {payments.map((p) => (
-                  <tr key={p._id} className="border-t">
-
-                    <td className="px-6 py-3">
-                      {p.userId?.Firstname} {p.userId?.Lastname}
+                  <tr key={p._id} className="group hover:bg-gray-50/30 transition-colors">
+                    
+                    <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center font-black text-[#1a1f2e] text-xs">
+                                {p.userId?.Firstname?.charAt(0)}{p.userId?.Lastname?.charAt(0)}
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm text-[#1a1f2e] line-clamp-1">{p.userId?.Firstname} {p.userId?.Lastname}</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">#{p._id.slice(-6)}</p>
+                            </div>
+                        </div>
                     </td>
 
-                    <td className="px-6 py-3 font-bold">₹{p.amount}</td>
-
-                    <td className="px-6 py-3 text-green-600">
-                     ₹{p.bookingId?.providerEarning || 0}
+                    <td className="px-8 py-6">
+                        <div className="flex items-center gap-1 font-black text-[#1a1f2e] text-lg">
+                            <FaRupeeSign className="text-gray-300 text-sm" />{p.amount?.toLocaleString()}
+                        </div>
                     </td>
 
-                    <td className="px-6 py-3 text-red-500">
-                      ₹{p.bookingId?.commission || 0}
+                    <td className="px-8 py-6">
+                        <div className="flex items-center gap-1 font-black text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100 w-fit">
+                            <FaRupeeSign className="text-green-400 text-xs" />{(p.bookingId?.providerEarning || 0).toLocaleString()}
+                        </div>
                     </td>
 
-                    <td className="px-6 py-3">
-                      {p.paymentStatus}
+                    <td className="px-8 py-6">
+                        <div className="flex items-center gap-1 font-bold text-red-500 text-sm">
+                            <FaRupeeSign size={10} className="text-red-300" />{(p.bookingId?.commission || 0).toLocaleString()}
+                        </div>
                     </td>
 
-                    <td className="px-6 py-3">
-                      {p.paymentStatus === "Pending" && (
+                    <td className="px-8 py-6">
+                        <span className={`text-[9px] font-black uppercase tracking-[2px] px-3 py-1.5 rounded-lg border flex items-center gap-1.5 w-fit ${
+                            p.paymentStatus === 'Completed' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-orange-50 text-orange-600 border-orange-100'
+                        }`}>
+                            {p.paymentStatus === 'Completed' && <FiCheckCircle />}
+                            {p.paymentStatus}
+                        </span>
+                    </td>
+
+                    <td className="px-8 py-6">
+                      {p.paymentStatus === "Pending" ? (
                         <button
                           onClick={() => updateStatus(p._id)}
-                          className="bg-green-600 text-white px-3 py-1 rounded"
+                          className="bg-[#1a1f2e] hover:bg-[#F59E0B] text-white px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-md flex items-center gap-2 whitespace-nowrap"
                         >
                           Mark Paid
                         </button>
+                      ) : (
+                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
+                            Processed
+                        </span>
                       )}
                     </td>
 
@@ -339,14 +205,35 @@ const ProviderPayments = () => {
                 ))}
               </tbody>
             </table>
-
           </div>
-        ) : (
-          <p className="text-center py-10">No payments found</p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bg-white p-24 rounded-[3rem] text-center border border-dashed border-gray-200 shadow-sm">
+          <div className="w-20 h-20 bg-gray-50 flex items-center justify-center rounded-2xl text-gray-300 mx-auto mb-6 shadow-inner">
+              <FiDollarSign size={32} />
+          </div>
+          <h3 className="text-2xl font-black text-[#1a1f2e] mb-2">No Transactions Detected</h3>
+          <p className="text-gray-500 max-w-sm mx-auto font-medium">Financial records will be generated here once you complete services.</p>
+        </div>
+      )}
     </div>
   );
 };
+
+// Internal StatCard Component
+const StatCard = ({ title, value, icon, colorTheme, isCount }) => (
+    <div className={`p-8 rounded-[2.5rem] border bg-white shadow-lg ${colorTheme} hover:-translate-y-1 transition-transform duration-300`}>
+        <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-xl border border-current/10">
+                {icon}
+            </div>
+        </div>
+        <p className="text-[10px] font-black uppercase tracking-[2px] opacity-70 mb-1">{title}</p>
+        <div className="flex items-center gap-1">
+            {!isCount && <FaRupeeSign className="text-lg opacity-50" />}
+            <h2 className="text-4xl font-black tracking-tighter opacity-90">{isCount ? value : value?.toLocaleString()}</h2>
+        </div>
+    </div>
+)
 
 export default ProviderPayments;

@@ -1,254 +1,188 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FiSearch, FiEye, FiList } from "react-icons/fi";
-
-const statusStyles = {
-  pending:   { bg: "#fffbeb", text: "#b45309",  dot: "#f59e0b" },
-  confirmed: { bg: "#eff6ff", text: "#1d4ed8",  dot: "#3b82f6" },
-  completed: { bg: "#f0fdf4", text: "#16a34a",  dot: "#22c55e" },
-  cancelled: { bg: "#fef2f2", text: "#dc2626",  dot: "#ef4444" },
-};
-
-const paymentStyles = {
-  paid:     { bg: "#f0fdf4", text: "#16a34a" },
-  unpaid:   { bg: "#fef2f2", text: "#dc2626" },
-  pending:  { bg: "#fffbeb", text: "#b45309" },
-  refunded: { bg: "#f5f3ff", text: "#7c3aed" },
-};
-
-const FILTERS = ["All", "Pending", "Confirmed", "Completed", "Cancelled"];
-
-const Badge = ({ label, styleMap }) => {
-  const key = label?.toLowerCase();
-  const s = styleMap[key] || { bg: "#f1f5f9", text: "#64748b", dot: "#94a3b8" };
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap"
-      style={{ background: s.bg, color: s.text }}
-    >
-      {s.dot && <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.dot }} />}
-      {label || "—"}
-    </span>
-  );
-};
+import { FiSearch, FiEye, FiActivity, FiFilter, FiCalendar, FiClock } from "react-icons/fi";
+import { FaRupeeSign } from "react-icons/fa";
 
 const AllBookings = () => {
   const [search, setSearch]   = useState("");
   const [filter, setFilter]   = useState("All");
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getAllBooking = async () => {
     try {
+      setLoading(true);
       const res = await axios.get("/bookings/all");
-      console.log(res.data.data);
-      
       setBookings(res.data.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => { getAllBooking(); }, []);
 
-  // Flatten booking + service into rows
+  const FILTERS = ["All", "Pending", "Accepted", "Completed", "Cancelled"];
+
+  const statusThemes = {
+    Pending: "bg-orange-50 text-orange-600 border-orange-100",
+    Accepted: "bg-blue-50 text-blue-600 border-blue-100",
+    Completed: "bg-green-50 text-green-600 border-green-100",
+    Cancelled: "bg-red-50 text-red-600 border-red-100",
+  };
+
+  const paymentThemes = {
+    Paid: "bg-green-50 text-green-600 border-green-100",
+    Unpaid: "bg-red-50 text-red-600 border-red-100",
+  };
+
   const rows = bookings.flatMap((booking, bIdx) =>
     (booking.serviceId || []).map((service, sIdx) => ({
-      bookingId: `BK${String(bIdx + 1).padStart(3, "0")}`,
-      _bookingRef: booking._id,
-      customer: booking.userId
-        ? `${booking.userId.Firstname || ""} ${booking.userId.Lastname || ""}`.trim()
-        : "—",
-      provider: service.providerId
-        ? `${service.providerId.Firstname || ""} ${service.providerId.Lastname || ""}`.trim()
-        : "—",
+      _id: booking._id,
+      displayId: booking._id.slice(-6).toUpperCase(),
+      customer: `${booking.userId?.Firstname || ""} ${booking.userId?.Lastname || ""}`.trim(),
+      customerEmail: booking.userId?.email,
+      provider: `${service.providerId?.Firstname || ""} ${service.providerId?.Lastname || ""}`.trim(),
       serviceName: service.serviceName || "—",
-      date: booking.bookingDate
-        ? new Date(booking.bookingDate).toLocaleDateString("en-CA")
-        : "—",
+      date: booking.bookingDate || "—",
       time: booking.bookingTime || "—",
-      amount: service.price ? `₹${service.price}` : "—",
-      status: booking.status || "pending",
-      paymentStatus: booking.paymentStatus || "pending",
+      amount: booking.totalAmount || 0,
+      status: booking.status || "Pending",
+      paymentStatus: booking.paymentStatus || "Unpaid",
     }))
   );
 
   const filtered = rows.filter((r) => {
     const matchFilter = filter === "All" || r.status.toLowerCase() === filter.toLowerCase();
     const q = search.toLowerCase();
-    const matchSearch =
-      !q ||
-      r.bookingId.toLowerCase().includes(q) ||
-      r.customer.toLowerCase().includes(q) ||
-      r.provider.toLowerCase().includes(q) ||
-      r.serviceName.toLowerCase().includes(q);
-    return matchFilter && matchSearch;
+    return matchFilter && (
+        r.displayId.toLowerCase().includes(q) ||
+        r.customer.toLowerCase().includes(q) ||
+        r.serviceName.toLowerCase().includes(q)
+    );
   });
 
   return (
-    <div
-      className="min-h-screen p-6"
-      style={{
-        background: "linear-gradient(160deg, #f0f4ff 0%, #f8fafc 60%, #fff 100%)",
-        fontFamily: "'Plus Jakarta Sans', 'Nunito', sans-serif",
-      }}
-    >
-      {/* Page Header */}
-      <div className="flex items-center gap-2 mb-6">
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center"
-          style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)" }}
-        >
-          <FiList className="text-white" size={15} />
-        </div>
+    <div className="space-y-10">
+      
+      {/* ── Page Header ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-xl font-bold tracking-tight leading-none" style={{ color: "#1e293b" }}>
-            All Bookings
-          </h1>
-          <p className="text-xs text-slate-400 mt-0.5">{bookings.length} total bookings</p>
+          <h1 className="text-3xl font-black text-[#1a1f2e] tracking-tight">Booking Inventory</h1>
+          <p className="text-gray-500 mt-1 font-medium">Global tracking of all service appointments and revenue flow.</p>
+        </div>
+        <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-[10px] font-black uppercase text-blue-600 tracking-widest border border-blue-100">
+                <FiActivity /> Live Ledger
+            </div>
         </div>
       </div>
 
-      {/* Toolbar: Search + Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        {/* Search */}
-        <div className="relative">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
-          <input
-            type="text"
-            placeholder="Search bookings..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2.5 rounded-xl text-sm placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-300 transition-all duration-150 w-64"
-            style={{ background: "#fff", border: "1px solid #dde3f0", color: "#334155", boxShadow: "0 1px 4px rgba(99,102,241,0.06)" }}
-          />
+      {/* ── Toolbar ── */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="relative flex-1 max-w-xl">
+            <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <input
+                type="text"
+                placeholder="Search by ID, customer or service..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white border border-gray-100 shadow-sm focus:ring-4 focus:ring-orange-50 focus:border-[#F59E0B] outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300"
+            />
         </div>
-
-        {/* Filter Pills */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {FILTERS.map((f) => {
-            const active = filter === f;
-            return (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-150"
-                style={
-                  active
-                    ? { background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#fff", boxShadow: "0 4px 12px rgba(99,102,241,0.30)" }
-                    : { background: "#fff", color: "#64748b", border: "1px solid #dde3f0" }
-                }
-              >
-                {f}
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0">
+            {FILTERS.map((f) => (
+                <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={`px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap border ${
+                        filter === f ? "bg-[#F59E0B] text-white border-[#F59E0B] shadow-lg shadow-orange-100" : "bg-white text-gray-400 border-gray-100 hover:border-orange-200 hover:text-orange-500"
+                    }`}
+                >
+                    {f}
+                </button>
+            ))}
         </div>
       </div>
 
-      {/* Table Card */}
-      <div
-        className="bg-white rounded-2xl overflow-hidden"
-        style={{ border: "1px solid #e8edf5", boxShadow: "0 2px 12px rgba(99,102,241,0.07)" }}
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[820px]">
-            {/* Head */}
+      {/* ── Bookings Table ── */}
+      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr style={{ borderBottom: "1px solid #eef1f8", background: "#f8fafc" }}>
-                {["Booking ID", "Customer", "Provider", "Service", "Date & Time", "Amount", "Status", "Payment", "Actions"].map((h) => (
-                  <th
-                    key={h}
-                    className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "#64748b" }}
-                  >
-                    {h}
-                  </th>
-                ))}
+              <tr className="bg-gray-50/50 border-b border-gray-50">
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">ID</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Client / Service</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Provider</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Schedule</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Revenue</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Status</th>
+                <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[2px] text-center">Actions</th>
               </tr>
             </thead>
-
-            {/* Body */}
-            <tbody>
-              {filtered.length === 0 ? (
+            <tbody className="divide-y divide-gray-50">
+              {loading ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-16">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: "#eef1f8" }}>
-                        <FiList className="text-indigo-300" size={22} />
-                      </div>
-                      <p className="text-sm text-slate-400 font-medium">No bookings found</p>
-                    </div>
-                  </td>
+                    <td colSpan={7} className="py-20 text-center">
+                        <div className="animate-spin h-8 w-8 border-4 border-[#F59E0B] border-t-transparent rounded-full mx-auto"></div>
+                    </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr>
+                    <td colSpan={7} className="py-20 text-center">
+                        <p className="text-gray-400 font-bold">No matching records found.</p>
+                    </td>
                 </tr>
               ) : (
-                filtered.map((row, i) => (
-                  <tr
-                    key={`${row._bookingRef}-${i}`}
-                    className="transition-colors duration-150"
-                    style={{ borderBottom: "1px solid #f1f5f9" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#f8f9ff")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                  >
-                    {/* Booking ID */}
-                    <td className="px-5 py-4">
-                      <span className="text-sm font-bold" style={{ color: "#6366f1" }}>
-                        {row.bookingId}
-                      </span>
+                filtered.map((row) => (
+                  <tr key={row._id + row.serviceName} className="group hover:bg-gray-50/30 transition-all">
+                    <td className="px-8 py-6">
+                      <span className="text-xs font-black text-[#1a1f2e] bg-[#f9fafb] px-3 py-1.5 rounded-lg border border-gray-100">#{row.displayId}</span>
                     </td>
-
-                    {/* Customer */}
-                    <td className="px-5 py-4">
-                      <span className="text-sm font-semibold" style={{ color: "#1e293b" }}>
-                        {row.customer}
-                      </span>
+                    <td className="px-8 py-6">
+                      <div>
+                        <p className="text-sm font-black text-[#1a1f2e]">{row.customer}</p>
+                        <p className="text-[11px] font-bold text-[#F59E0B] uppercase tracking-wider mt-1">{row.serviceName}</p>
+                      </div>
                     </td>
-
-                    {/* Provider */}
-                    <td className="px-5 py-4">
-                      <span className="text-sm" style={{ color: "#475569" }}>
-                        {row.provider}
-                      </span>
+                    <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                            <img 
+                                src={`https://ui-avatars.com/api/?name=${row.provider}&background=f9fafb&color=1a1f2e&bold=true`} 
+                                alt="pro" 
+                                className="w-8 h-8 rounded-lg shadow-sm"
+                            />
+                            <span className="text-xs font-bold text-gray-500">{row.provider}</span>
+                        </div>
                     </td>
-
-                    {/* Service */}
-                    <td className="px-5 py-4">
-                      <span className="text-sm" style={{ color: "#94a3b8" }}>
-                        {row.serviceName}
-                      </span>
+                    <td className="px-8 py-6">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2 text-xs font-bold text-[#1a1f2e]">
+                                <FiCalendar className="text-gray-300" /> {row.date}
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400">
+                                <FiClock className="text-gray-300" /> {row.time}
+                            </div>
+                        </div>
                     </td>
-
-                    {/* Date & Time */}
-                    <td className="px-5 py-4">
-                      <p className="text-sm" style={{ color: "#334155" }}>{row.date}</p>
-                      <p className="text-xs text-slate-400">{row.time}</p>
+                    <td className="px-8 py-6">
+                        <div className="flex flex-col gap-1">
+                            <p className="text-sm font-black text-[#1a1f2e] flex items-center"><FaRupeeSign size={13} className="mr-0.5" />{row.amount?.toLocaleString()}</p>
+                            <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md border self-start ${paymentThemes[row.paymentStatus] || "bg-gray-100 text-gray-400"}`}>
+                                {row.paymentStatus}
+                            </span>
+                        </div>
                     </td>
-
-                    {/* Amount */}
-                    <td className="px-5 py-4">
-                      <span className="text-sm font-bold" style={{ color: "#1e293b" }}>
-                        {row.amount}
-                      </span>
+                    <td className="px-8 py-6">
+                        <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-lg border ${statusThemes[row.status] || "bg-gray-100"}`}>
+                            {row.status}
+                        </span>
                     </td>
-
-                    {/* Status */}
-                    <td className="px-5 py-4">
-                      <Badge label={row.status} styleMap={statusStyles} />
-                    </td>
-
-                    {/* Payment */}
-                    <td className="px-5 py-4">
-                      <Badge label={row.paymentStatus} styleMap={paymentStyles} />
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-5 py-4">
-                      <button
-                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150 hover:scale-110"
-                        style={{ background: "#eef1f8", color: "#6366f1" }}
-                        title="View Details"
-                      >
-                        <FiEye size={14} />
-                      </button>
+                    <td className="px-8 py-6 text-center">
+                        <button className="p-3 bg-gray-50 text-gray-400 hover:bg-[#1a1f2e] hover:text-white rounded-xl transition-all shadow-sm border border-gray-100">
+                            <FiEye size={16} />
+                        </button>
                     </td>
                   </tr>
                 ))
@@ -256,19 +190,17 @@ const AllBookings = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Footer count */}
-        {filtered.length > 0 && (
-          <div
-            className="px-5 py-3 flex items-center justify-between"
-            style={{ borderTop: "1px solid #eef1f8", background: "#f8fafc" }}
-          >
-            <p className="text-xs text-slate-400">
-              Showing <span className="font-semibold text-slate-600">{filtered.length}</span> of{" "}
-              <span className="font-semibold text-slate-600">{rows.length}</span> bookings
+        
+        {/* Table Footer */}
+        <div className="px-8 py-6 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                Showing <span className="text-[#1a1f2e]">{filtered.length}</span> results out of total <span className="text-[#1a1f2e]">{rows.length}</span>
             </p>
-          </div>
-        )}
+            <div className="flex gap-2">
+                <button className="px-4 py-2 bg-white border border-gray-100 rounded-lg text-xs font-black text-gray-400 disabled:opacity-50" disabled tabIndex="-1">PREV</button>
+                <button className="px-4 py-2 bg-white border border-gray-100 rounded-lg text-xs font-black text-gray-400 disabled:opacity-50" disabled tabIndex="-1">NEXT</button>
+            </div>
+        </div>
       </div>
     </div>
   );

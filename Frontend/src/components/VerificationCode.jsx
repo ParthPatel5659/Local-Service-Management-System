@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FiShield, FiArrowLeft, FiClock, FiRefreshCw, FiCheck } from "react-icons/fi";
 
 export const VerificationCode = () => {
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
     setFocus,
-   
   } = useForm();
 
   const [generatedOtp, setGeneratedOtp] = useState("");
@@ -20,9 +20,7 @@ export const VerificationCode = () => {
   const generateCode = () => {
     const newCode = Math.floor(1000 + Math.random() * 9000).toString();
     setGeneratedOtp(newCode);
-    // console.log("Generated OTP:", newCode);
-
-    alert(`Otp ${newCode}`)
+    alert(`LocalServ Verification Code: ${newCode}`);
   };
 
   // Timer
@@ -31,7 +29,6 @@ export const VerificationCode = () => {
       const interval = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
-
       return () => clearInterval(interval);
     }
   }, [timer]);
@@ -51,113 +48,102 @@ export const VerificationCode = () => {
     }
   };
 
-  // Submit
   const submithandler = (data) => {
-
     const userOtp = data.code.join("");
-
     if (userOtp === generatedOtp) {
-     toast.success("OTP verified successfully!");
+      toast.success("Identity verified successfully!");
+      navigate("/user/home"); // Or wherever appropriate
     } else {
-     toast.error("Invalid OTP. Please try again.");
+      toast.error("Invalid verification code. Please check again.");
     }
-
-    console.log("User OTP:", userOtp);
   };
 
   const handleResend = () => {
     generateCode();
     setTimer(60);
-    toast.info("A new OTP has been sent to your email.");
+    toast.info("A new security code has been dispatched.");
     setFocus("code.0");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+      <div className="w-full max-w-sm">
+        
+        {/* Brand Header */}
+        <div className="text-center mb-8">
+            <div className="text-3xl font-black tracking-tighter">
+                <span className="text-[#1a1f2e]">Local</span>
+                <span className="text-[#F59E0B]">Serv</span>
+            </div>
+        </div>
 
-      <div className="bg-white shadow-lg rounded-xl p-8 w-[400px]">
+        {/* Verification Card */}
+        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+          <div className="p-10 text-center">
+            
+            <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-[#F59E0B] mx-auto mb-6 shadow-inner border border-orange-100">
+                <FiShield size={32} />
+            </div>
 
-        <h1 className="text-2xl font-bold text-center mb-2">
-          Verification Code
-        </h1>
-
-        <p className="text-gray-500 text-center mb-6 text-sm">
-          We just sent you a verification code. Check your inbox.
-        </p>
-
-        <form onSubmit={handleSubmit(submithandler)} className="space-y-4">
-
-          {/* OTP INPUTS */}
-
-          <div className="flex justify-center gap-3">
-
-            {[0,1,2,3].map((index) => (
-              <input
-                key={index}
-                type="text"
-                maxLength="1"
-                className="w-12 h-12 text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                {...register(`code.${index}`, {
-                  required: "Required",
-                  pattern: {
-                    value: /^[0-9]$/,
-                    message: "Only numbers"
-                  }
-                })}
-                onChange={(e) =>
-                  handleInputChange(index, e.target.value)
-                }
-              />
-            ))}
-
-          </div>
-
-          {errors.code && (
-            <p className="text-red-500 text-sm text-center">
-              Please enter all 4 digits
+            <h1 className="text-2xl font-black text-[#1a1f2e] mb-2">Secure Verification</h1>
+            <p className="text-gray-500 font-medium text-sm leading-relaxed mb-10 px-4">
+                We've sent a 4-digit security code to your registered device.
             </p>
-          )}
 
-          {/* TIMER */}
+            <form onSubmit={handleSubmit(submithandler)} className="space-y-8">
+              
+              {/* Digit Inputs */}
+              <div className="flex justify-center gap-4">
+                {[0, 1, 2, 3].map((index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    autoComplete="off"
+                    className="w-14 h-16 text-center text-2xl font-black bg-[#f9fafb] border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-[#F59E0B] focus:ring-4 focus:ring-orange-50 transition-all text-[#1a1f2e] shadow-inner"
+                    {...register(`code.${index}`, {
+                      required: true,
+                      pattern: /^[0-9]$/
+                    })}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                  />
+                ))}
+              </div>
 
-          <div className="text-center text-sm text-gray-500">
-            {timer > 0 ? (
-              <p>Resend code in {timer}s</p>
-            ) : (
+              {/* Status/Timer */}
+              <div className="flex items-center justify-center gap-2">
+                {timer > 0 ? (
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">
+                    <FiClock className="text-[#F59E0B]" /> Resend in {timer}s
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    className="flex items-center gap-2 text-[10px] font-black uppercase text-[#F59E0B] tracking-widest hover:underline"
+                  >
+                    <FiRefreshCw /> Request New Code
+                  </button>
+                )}
+              </div>
+
+              {/* Action Button */}
               <button
-                type="button"
-                onClick={handleResend}
-                className="text-blue-600 hover:underline"
+                type="submit"
+                className="w-full bg-[#1a1f2e] hover:bg-[#F59E0B] text-white font-black py-5 rounded-2xl shadow-xl shadow-gray-100 transition-all flex items-center justify-center gap-3 active:scale-[0.98] uppercase tracking-widest text-xs"
               >
-                Resend Code
+                Verify Identity <FiCheck size={18} />
               </button>
-            )}
+
+              <Link to="/signup" className="flex items-center justify-center gap-2 text-[10px] font-black uppercase text-gray-400 hover:text-[#1a1f2e] tracking-widest transition-all">
+                <FiArrowLeft /> Edit Registration Email
+              </Link>
+            </form>
           </div>
-
-          {/* BUTTON */}
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-          >
-            Continue
-          </button>
-
-          {/* EDIT EMAIL */}
-
-          <div className="text-center text-sm">
-            Change your email?{" "}
-            <Link
-              to="/signup"
-              className="text-blue-600 hover:underline"
-            >
-              Edit
-            </Link>
-          </div>
-
-        </form>
-
+        </div>
       </div>
     </div>
   );
 };
+
+export default VerificationCode;

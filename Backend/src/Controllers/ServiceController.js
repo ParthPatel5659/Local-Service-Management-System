@@ -132,8 +132,8 @@ const addService = async (req, res) => {
         // const providerId = req.user.id; // ✅ from token
 
         const saveService = await ServiceSchema.create(req.body);
-           await logActivity({
-            userId: req.params.id,
+           await logActivity.create({
+           providerId: req.params.id,
             role: "provider",
             action: "SERVICE_ADDED",
             message: "Provider added new service"
@@ -209,12 +209,21 @@ const updateServiceById = async (req, res) => {
             { new: true }
         );
 
+         await logActivity.create({
+            providerId: req.user._id,
+            role: "provider",
+            action: "SERVICE_EDITED",
+            message: "Provider edit service"
+            });
+
         res.json({
             message: "Service updated successfully",
             data: updateService
         });
 
     } catch (error) {
+        console.log(error);
+        
         res.status(500).json({
             message: error.message
         });
@@ -225,6 +234,12 @@ const updateServiceById = async (req, res) => {
 const deleteServiceById = async (req, res) => {
     try {
         const deleteService = await ServiceSchema.findByIdAndDelete(req.params.id);
+         await logActivity.create({
+            providerId: req.params.id,
+            role: "provider",
+            action: "SERVICE_DELETED",
+            message: "Provider delete service"
+            });
 
         res.json({
             message: "Service deleted successfully",
