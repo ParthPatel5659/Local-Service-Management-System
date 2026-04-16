@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../AuthProvider";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const Login1 = () => {
   const { login } = useContext(AuthContext);
@@ -84,7 +85,7 @@ const Login1 = () => {
           </div>
 
           {/* Role Tab Switcher */}
-          <div className="flex p-1 bg-gray-100 rounded-xl mb-8">
+          {/* <div className="flex p-1 bg-gray-100 rounded-xl mb-8">
             {["Customer", "Provider", "Admin"].map((tab) => (
               <button
                 key={tab}
@@ -99,7 +100,7 @@ const Login1 = () => {
                 {tab}
               </button>
             ))}
-          </div>
+          </div> */}
 
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
@@ -141,7 +142,7 @@ const Login1 = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                 </button>
               </div>
               {errors.password && (

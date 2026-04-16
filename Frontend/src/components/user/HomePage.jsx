@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Footer from '../Footer'
-import heroImage from '../../assets/hero_worker.png'
+import heroImage from '../../assets/luxury_hero.png'
 
 export const HomePage = () => {
   return (
@@ -13,14 +13,19 @@ export const HomePage = () => {
           <span className="text-primary">Serv</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link to="/login" className="text-sm font-semibold text-navy hover:text-primary transition-colors">
-            Log In
+          <Link 
+            to="/login" 
+            className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white py-2.5 px-7 rounded-xl text-sm font-bold shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300 border border-white/10 relative overflow-hidden group"
+          >
+            <span className="relative z-10">Log In</span>
+            <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
           </Link>
           <Link 
             to="/signup" 
-            className="btn-primary py-2 px-6 rounded-lg text-sm"
+            className="bg-gradient-to-r from-navy to-[#1a1f2e] text-white py-2.5 px-7 rounded-xl text-sm font-bold shadow-lg shadow-navy/30 hover:shadow-xl hover:shadow-navy/40 hover:-translate-y-0.5 transition-all duration-300 border border-white/10 relative overflow-hidden group"
           >
-            Get Started
+            <span className="relative z-10">Get Started</span>
+            <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
           </Link>
         </div>
       </nav>

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const SignUp1 = () => {
   const {
@@ -148,7 +149,7 @@ const SignUp1 = () => {
               {errors.email && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.email.message}</p>}
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Phone Number</label>
               <input
                 type="tel"
@@ -157,27 +158,45 @@ const SignUp1 = () => {
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] outline-none transition-all text-gray-800 text-sm"
               />
               {errors.phone && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.phone.message}</p>}
-            </div>
+            </div> */}
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Password</label>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        {...register("password", validationSchema.passwordValidation)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] outline-none transition-all text-gray-800 text-sm"
-                    />
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...register("password", validationSchema.passwordValidation)}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] outline-none transition-all text-gray-800 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                        </button>
+                    </div>
                     {errors.password && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.password.message}</p>}
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wider">Confirm</label>
-                    <input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        {...register("confirmPassword", validationSchema.confirmPasswordValidation)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] outline-none transition-all text-gray-800 text-sm"
-                    />
+                    <div className="relative">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...register("confirmPassword", validationSchema.confirmPasswordValidation)}
+                            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#14b8a6]/20 focus:border-[#14b8a6] outline-none transition-all text-gray-800 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                          {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                        </button>
+                    </div>
                     {errors.confirmPassword && <p className="text-red-500 text-[10px] mt-1 font-medium">{errors.confirmPassword.message}</p>}
                 </div>
             </div>
