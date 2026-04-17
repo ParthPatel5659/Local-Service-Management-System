@@ -72,6 +72,7 @@ const ServiceSidebar = () => {
     if (path.includes('/services/')) return "My Services";
     if (path.includes('/reviwes/')) return "Reviews";
     if (path.includes('/profile/')) return "Account Profile";
+    if(path.includes('/edit-service/')) return "Update Service";
     return path.split("/").pop().replace(/-/g, ' ');
   };
 

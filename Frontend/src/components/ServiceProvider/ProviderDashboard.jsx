@@ -69,7 +69,7 @@ const ProviderDashboard = () => {
           <p className="text-gray-500 mt-1 font-medium">Monitoring your service performance and earnings.</p>
         </div>
         <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-3">Quick Actions</span>
+            {/* <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-3">Quick Actions</span> */}
             <button 
                 onClick={() => navigate("/provider/addservice")}
                 className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg shadow-orange-100 transition-all"

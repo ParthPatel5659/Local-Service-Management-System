@@ -49,6 +49,34 @@ const AdminSidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const getPageTitle = () => {
+    const path = location.pathname;
+    // Exact matches first
+    const exact = {
+      "/admin/dashboard":  "Dashboard",
+      "/admin/users":      "System Users",
+      "/admin/providers":  "Service Providers",
+      "/admin/services":   "All Services",
+      "/admin/bookings":   "All Bookings",
+      "/admin/payments":   "Payments",
+      "/admin/reviews":    "Reviews",
+      "/admin/category":   "Categories",
+      "/admin/addcategory":"Add Category",
+      "/admin/addUser":    "Add User",
+      "/admin/support":    "Support",
+      "/admin/activity":   "Activity Log",
+    };
+    if (exact[path]) return exact[path];
+    // Pattern matches for parameterized routes
+    if (path.match(/\/admin\/users\/update\//))   return "Edit User";
+    if (path.match(/\/admin\/users\/detail\//))   return "User Details";
+    if (path.match(/\/admin\/editcategory\//))     return "Edit Category";
+    // Fallback: clean up last segment
+    const last = path.split("/").pop();
+    return last ? last.replace(/-/g, " ") : "Control Center";
+  };
+
+
   return (
     <div className="flex h-screen bg-[#f9fafb] font-sans overflow-hidden">
       
@@ -143,7 +171,7 @@ const AdminSidebar = () => {
         {/* Top Header */}
         <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 shrink-0 shadow-sm z-10">
             <h2 className="text-xl font-black text-[#1a1f2e] capitalize">
-                {location.pathname.split("/").pop() || "Control Center"}
+                {getPageTitle()}
             </h2>
             <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100">

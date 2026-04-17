@@ -11,6 +11,7 @@ const MyBookings = () => {
   const { userId } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('All');
 
   const getBookings = async () => {
     try {
@@ -59,7 +60,15 @@ const MyBookings = () => {
         </div>
         <div className="flex bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
             {['All', 'Active', 'Completed'].map((tab) => (
-                <button key={tab} className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${tab === 'All' ? 'bg-[#F59E0B] text-white shadow-lg shadow-orange-100' : 'text-gray-500 hover:text-gray-700'}`}>
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
+                    tab === activeTab
+                      ? 'bg-[#F59E0B] text-white shadow-lg shadow-orange-100'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
                     {tab}
                 </button>
             ))}
@@ -72,7 +81,14 @@ const MyBookings = () => {
         </div>
       ) : bookings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {bookings.map((booking) => {
+          {bookings
+            .filter((booking) => {
+              if (activeTab === 'All') return true;
+              if (activeTab === 'Active') return booking.status === 'Pending' || booking.status === 'Accepted';
+              if (activeTab === 'Completed') return booking.status === 'Completed' || booking.status === 'Cancelled';
+              return true;
+            })
+            .map((booking) => {
             const service = booking.serviceId?.[0];
             return (
               <div key={booking._id} className="bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden">

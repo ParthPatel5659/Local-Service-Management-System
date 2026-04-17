@@ -3,10 +3,10 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { FiUser, FiMail, FiLock, FiUserPlus } from 'react-icons/fi'
+import { FiUser, FiMail, FiLock, FiUserPlus, FiX, FiCheck, FiShield } from 'react-icons/fi'
 
 export const AddUser = () => {
-  const { register, handleSubmit, formState: { errors }, } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
 
   const validationSchema = {
@@ -44,173 +44,167 @@ export const AddUser = () => {
         navigate(-1)
       }
     } catch (err) {
-      toast.error(err.response.data.message)
+      toast.error(err.response?.data?.message || "Something went wrong")
     }
   }
 
-  const InputField = ({ label, icon: Icon, error, children }) => (
-    <div className="space-y-1.5">
-      <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
-        <Icon className="text-indigo-400" size={13} />
+  /* ── Reusable Field Wrapper ── */
+  const Field = ({ label, icon: Icon, error, children }) => (
+    <div className="space-y-2">
+      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1 flex items-center gap-2">
+        <Icon size={11} />
         {label}
       </label>
       {children}
       {error && (
-        <p className="text-xs text-red-400 flex items-center gap-1">
-          <span className="inline-block w-1 h-1 rounded-full bg-red-400" />
-          {error}
+        <p className="text-[10px] text-red-500 font-black uppercase ml-1">
+          ⚠ {error}
         </p>
       )}
     </div>
   )
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-lg">
+  const inputCls = (hasError) =>
+    `w-full px-6 py-4 rounded-2xl bg-[#f9fafb] border outline-none transition-all font-bold text-[#1a1f2e] placeholder-gray-300 shadow-inner
+     ${hasError
+       ? 'border-red-300 bg-red-50 focus:border-red-400 focus:ring-4 focus:ring-red-50'
+       : 'border-gray-100 focus:bg-white focus:border-[#F59E0B] focus:ring-4 focus:ring-orange-50'
+     }`
 
-        {/* Card */}
-        <div
-          className="bg-white rounded-2xl shadow-xl shadow-indigo-100/60 overflow-hidden"
-          style={{ border: "1px solid #e8edf5" }}
-        >
-          {/* Header */}
-          <div
-            className="px-8 py-6 flex items-center gap-4"
-            style={{ background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)" }}
-          >
-            <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center">
-              <FiUserPlus className="text-white" size={22} />
+  return (
+    <div className="max-w-xl mx-auto py-12">
+
+      {/* ── Page Header ── */}
+      <div className="flex items-center gap-6 mb-12">
+        <div className="w-16 h-16 bg-white border border-gray-100 shadow-sm rounded-[1.5rem] flex items-center justify-center text-3xl">
+          👤
+        </div>
+        <div>
+          <h1 className="text-3xl font-black text-[#1a1f2e] tracking-tight">Add New User</h1>
+          <p className="text-gray-500 font-medium">Create a new account for the platform.</p>
+        </div>
+      </div>
+
+      {/* ── Form Card ── */}
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+
+        {/* Orange top accent */}
+        <div className="h-2 bg-[#F59E0B]" />
+
+        <form onSubmit={handleSubmit(submitHandler)} className="p-10 space-y-7">
+
+          {/* Name Row */}
+          <div className="grid grid-cols-2 gap-5">
+            <Field label="First Name" icon={FiUser} error={errors.Firstname?.message}>
+              <input
+                type="text"
+                placeholder="John"
+                {...register("Firstname", validationSchema.FirstnameValidation)}
+                className={inputCls(!!errors.Firstname)}
+              />
+            </Field>
+
+            <Field label="Last Name" icon={FiUser} error={errors.Lastname?.message}>
+              <input
+                type="text"
+                placeholder="Doe"
+                {...register("Lastname", validationSchema.LastnameValidation)}
+                className={inputCls(!!errors.Lastname)}
+              />
+            </Field>
+          </div>
+
+          {/* Email */}
+          <Field label="Email Address" icon={FiMail} error={errors.email?.message}>
+            <input
+              type="text"
+              placeholder="john@example.com"
+              {...register("email", validationSchema.emailValidation)}
+              className={inputCls(!!errors.email)}
+            />
+          </Field>
+
+          {/* Password */}
+          <Field label="Password" icon={FiLock} error={errors.password?.message}>
+            <input
+              type="password"
+              placeholder="Min. 6 characters — letters &amp; numbers"
+              {...register("password", validationSchema.passwordValidation)}
+              className={inputCls(!!errors.password)}
+            />
+          </Field>
+
+          {/* Role Selection */}
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1 flex items-center gap-2">
+              <FiShield size={11} /> Assign Role
+            </label>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { value: "user",     label: "User",     desc: "Standard platform access",  emoji: "👤" },
+                { value: "provider", label: "Provider", desc: "Service management access",  emoji: "🧑‍🔧" },
+              ].map(({ value, label, desc, emoji }) => (
+                <label
+                  key={value}
+                  className="relative flex items-center gap-4 p-5 bg-[#f9fafb] border border-gray-100 rounded-2xl cursor-pointer transition-all duration-200 has-[:checked]:border-[#F59E0B] has-[:checked]:bg-orange-50 has-[:checked]:shadow-md hover:border-gray-200 group"
+                >
+                  <input
+                    type="radio"
+                    value={value}
+                    {...register("role", validationSchema.roleValidation)}
+                    className="peer sr-only"
+                  />
+                  {/* Custom radio */}
+                  <span className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center peer-checked:border-[#F59E0B] group-has-[:checked]:border-[#F59E0B] transition-colors">
+                    <span className="w-2 h-2 rounded-full bg-[#F59E0B] scale-0 group-has-[:checked]:scale-100 transition-transform duration-150" />
+                  </span>
+                  <div>
+                    <p className="text-sm font-black text-[#1a1f2e]">{emoji} {label}</p>
+                    <p className="text-[10px] text-gray-400 font-bold">{desc}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {errors.role && (
+              <p className="text-[10px] text-red-500 font-black uppercase ml-1">
+                ⚠ {errors.role.message}
+              </p>
+            )}
+          </div>
+
+          {/* Info Banner */}
+          <div className="bg-[#1a1f2e] p-5 rounded-2xl flex items-center gap-4 border border-white/5">
+            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-[#F59E0B]">
+              <FiUserPlus size={18} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight">Add New User</h1>
-              <p className="text-indigo-200 text-sm mt-0.5">Fill in the details to create an account</p>
+              <p className="text-xs font-black text-white tracking-tight uppercase">Instant Access</p>
+              <p className="text-[10px] text-gray-500 font-bold">
+                A verification email will be sent to the new user upon creation.
+              </p>
             </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(submitHandler)} className="px-8 py-7 space-y-5">
+          {/* Actions */}
+          <div className="flex gap-4 pt-2">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="flex-1 px-8 py-5 text-gray-400 font-black uppercase tracking-widest text-xs hover:text-[#1a1f2e] transition-all flex items-center justify-center gap-2"
+            >
+              <FiX /> Discard
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-[#F59E0B] hover:bg-[#D97706] text-white font-black px-8 py-5 rounded-2xl shadow-xl shadow-orange-100 transition-all active:scale-[0.98] uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+            >
+              Create User <FiCheck size={16} />
+            </button>
+          </div>
 
-            {/* Name Row */}
-            <div className="grid grid-cols-2 gap-4">
-              <InputField label="First Name" icon={FiUser} error={errors.Firstname?.message}>
-                <input
-                  type="text"
-                  placeholder="John"
-                  {...register("Firstname", validationSchema.FirstnameValidation)}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                    errors.Firstname ? "ring-2 ring-red-300 bg-red-50" : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                  }`}
-                  style={{ border: "1px solid #dde3f0" }}
-                />
-              </InputField>
-
-              <InputField label="Last Name" icon={FiUser} error={errors.Lastname?.message}>
-                <input
-                  type="text"
-                  placeholder="Doe"
-                  {...register("Lastname", validationSchema.LastnameValidation)}
-                  className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                    errors.Lastname ? "ring-2 ring-red-300 bg-red-50" : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                  }`}
-                  style={{ border: "1px solid #dde3f0" }}
-                />
-              </InputField>
-            </div>
-
-            {/* Email */}
-            <InputField label="Email" icon={FiMail} error={errors.email?.message}>
-              <input
-                type="text"
-                placeholder="john@example.com"
-                {...register("email", validationSchema.emailValidation)}
-                className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                  errors.email ? "ring-2 ring-red-300 bg-red-50" : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                }`}
-                style={{ border: "1px solid #dde3f0" }}
-              />
-            </InputField>
-
-            {/* Role */}
-            <div className="space-y-1.5">
-              <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-slate-500">
-                <FiUser className="text-indigo-400" size={13} />
-                Select Role
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { value: "user", label: "User", desc: "Standard access" },
-                  { value: "provider", label: "Provider", desc: "Service access" },
-                ].map(({ value, label, desc }) => (
-                  <label
-                    key={value}
-                    className="relative flex items-center gap-3 p-3.5 rounded-xl cursor-pointer transition-all duration-150 group"
-                    style={{ border: "1px solid #dde3f0", background: "#f8fafc" }}
-                  >
-                    <input
-                      type="radio"
-                      value={value}
-                      {...register("role", validationSchema.roleValidation)}
-                      className="peer sr-only"
-                    />
-                    {/* Custom radio circle */}
-                    <span className="w-4 h-4 rounded-full border-2 border-slate-300 flex-shrink-0 flex items-center justify-center peer-checked:border-indigo-500 transition-colors duration-150 group-has-[input:checked]:border-indigo-500">
-                      <span className="w-2 h-2 rounded-full bg-indigo-500 scale-0 peer-checked:scale-100 transition-transform duration-150 group-has-[input:checked]:scale-100" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-700">{label}</p>
-                      <p className="text-xs text-slate-400">{desc}</p>
-                    </div>
-                    {/* Checked overlay border */}
-                    <span className="absolute inset-0 rounded-xl ring-2 ring-indigo-400 ring-offset-0 opacity-0 group-has-[input:checked]:opacity-100 transition-opacity duration-150 pointer-events-none" />
-                  </label>
-                ))}
-              </div>
-              {errors.role && (
-                <p className="text-xs text-red-400 flex items-center gap-1">
-                  <span className="inline-block w-1 h-1 rounded-full bg-red-400" />
-                  {errors.role.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <InputField label="Password" icon={FiLock} error={errors.password?.message}>
-              <input
-                type="password"
-                placeholder="Min. 6 characters"
-                {...register("password", validationSchema.passwordValidation)}
-                className={`w-full px-4 py-2.5 rounded-xl text-sm text-slate-700 placeholder-slate-300 outline-none transition-all duration-150 focus:ring-2 focus:ring-indigo-300 ${
-                  errors.password ? "ring-2 ring-red-300 bg-red-50" : "bg-slate-50 hover:bg-slate-100 focus:bg-white"
-                }`}
-                style={{ border: "1px solid #dde3f0" }}
-              />
-            </InputField>
-
-            {/* Divider */}
-            <div className="h-px bg-slate-100" />
-
-            {/* Actions */}
-            <div className="flex items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-all duration-150"
-                style={{ border: "1px solid #dde3f0" }}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
-                style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6)", boxShadow: "0 4px 15px rgba(99,102,241,0.35)" }}
-              >
-                <FiUserPlus size={15} />
-                Create User
-              </button>
-            </div>
-
-          </form>
-        </div>
+        </form>
       </div>
     </div>
   )

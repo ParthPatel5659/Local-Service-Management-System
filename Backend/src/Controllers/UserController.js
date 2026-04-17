@@ -78,11 +78,19 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const cloudinaryResponse = await uploadToCloudinary(req.file.path)
-    console.log("cloudinaryResponse",cloudinaryResponse) //secure_url
+    let updateData = { ...req.body };
+
+    // Only upload to Cloudinary if a file was actually provided
+    if (req.file && req.file.path) {
+      const cloudinaryResponse = await uploadToCloudinary(req.file.path);
+      console.log("cloudinaryResponse", cloudinaryResponse);
+      updateData.profilePicture = cloudinaryResponse.secure_url;
+    }
+
     const updatedUser = await userSchema.findByIdAndUpdate(
       req.params.id,
-      { ...req.body , profilePicture : cloudinaryResponse.secure_url, },{new : true}
+      updateData,
+      { new: true }
     ).select("-password");
 
     res.status(200).json({

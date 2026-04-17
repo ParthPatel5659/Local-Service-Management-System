@@ -79,6 +79,7 @@ export const AllUser = () => {
                     src={user.profilePicture || `https://ui-avatars.com/api/?name=${user.Firstname}+${user.Lastname}&background=f9fafb&color=F59E0B&bold=true&size=128`} 
                     alt="user" 
                     className="w-24 h-24 rounded-[2rem] border-4 border-white shadow-lg object-cover"
+                    onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${user.Firstname}+${user.Lastname}&background=f9fafb&color=F59E0B&bold=true&size=128`; }}
                 />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full shadow-sm"></div>
               </div>
