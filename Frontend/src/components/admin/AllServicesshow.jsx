@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { FiSearch, FiMapPin, FiPackage, FiCheckCircle, FiXCircle, FiTrendingUp, FiActivity, FiFilter } from 'react-icons/fi'
+import { FiSearch, FiMapPin, FiPackage, FiCheckCircle, FiXCircle, FiActivity, FiTrash2, FiToggleLeft, FiToggleRight, FiEye } from 'react-icons/fi'
 import { FaRupeeSign } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 const AllServicesshow = () => {
   const [search, setSearch] = useState("")
@@ -20,6 +21,29 @@ const AllServicesshow = () => {
       setLoading(false)
     }
   }
+
+  const toggleAvailability = async (service) => {
+    try {
+      await axios.put(`/services/avalbility/${service._id}`);
+      toast.success(`"${service.serviceName}" marked as ${service.availability ? 'Unavailable' : 'Available'}`);
+      getallSrvices();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to update availability.');
+    }
+  };
+
+  const deleteService = async (service) => {
+    if (!window.confirm(`Are you sure you want to delete "${service.serviceName}"?`)) return;
+    try {
+      await axios.delete(`/services/delete/${service._id}`);
+      toast.success(`"${service.serviceName}" deleted successfully.`);
+      getallSrvices();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete service.');
+    }
+  };
 
   useEffect(() => { getallSrvices() }, [])
 
@@ -176,9 +200,28 @@ const AllServicesshow = () => {
                         </span>
                       </td>
                       <td className="px-8 py-6 text-center">
-                        <button className="p-3 bg-gray-50 text-gray-400 hover:bg-[#1a1f2e] hover:text-white rounded-xl transition-all shadow-sm border border-gray-100">
-                            <FiActivity size={16} />
-                        </button>
+                        <div className="flex items-center justify-center gap-2">
+                          {/* Toggle Availability */}
+                          <button
+                            onClick={() => toggleAvailability(service)}
+                            title={service.availability ? 'Mark Unavailable' : 'Mark Available'}
+                            className={`p-2.5 rounded-xl transition-all border text-sm ${
+                              service.availability
+                                ? 'bg-green-50 text-green-600 border-green-100 hover:bg-green-100'
+                                : 'bg-red-50 text-red-500 border-red-100 hover:bg-red-100'
+                            }`}
+                          >
+                            {service.availability ? <FiToggleRight size={16} /> : <FiToggleLeft size={16} />}
+                          </button>
+                          {/* Delete */}
+                          <button
+                            onClick={() => deleteService(service)}
+                            title="Delete Service"
+                            className="p-2.5 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all border border-gray-100 hover:border-red-100"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )

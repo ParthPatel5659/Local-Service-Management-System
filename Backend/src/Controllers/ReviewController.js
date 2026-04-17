@@ -98,9 +98,20 @@ const getProviderReviews = async (req, res) => {
   }
 };
 
+//delete review
+const deleteReview = async (req, res) => {
+  try {
+    const deleted = await reviewSchema.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Review deleted successfully", data: deleted });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports={
     addReview,
     getAllreview,
     getServiceReviews,
-    getProviderReviews
+    getProviderReviews,
+    deleteReview
 }

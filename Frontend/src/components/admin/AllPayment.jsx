@@ -163,7 +163,7 @@ const AllPayment = () => {
                       </td>
                       <td className="px-8 py-6">
                         <span className="text-xs font-bold text-gray-500">
-                           {payment.patmentDate ? new Date(payment.patmentDate).toLocaleDateString("en-US", { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                           {payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString("en-US", { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                         </span>
                       </td>
                       <td className="px-8 py-6">

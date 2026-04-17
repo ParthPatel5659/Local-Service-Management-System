@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FiSearch, FiEye, FiActivity, FiFilter, FiCalendar, FiClock } from "react-icons/fi";
+import { FiSearch, FiEye, FiActivity, FiFilter, FiCalendar, FiClock, FiTrash2, FiXCircle } from "react-icons/fi";
 import { FaRupeeSign } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const AllBookings = () => {
   const [search, setSearch]   = useState("");
@@ -18,6 +19,30 @@ const AllBookings = () => {
       console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const cancelBooking = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+    try {
+      await axios.put(`/bookings/cancel/${id}`);
+      toast.success("Booking cancelled successfully.");
+      getAllBooking();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to cancel booking.");
+    }
+  };
+
+  const deleteBooking = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this booking entirely?")) return;
+    try {
+      await axios.delete(`/bookings/delete/${id}`);
+      toast.success("Booking deleted successfully.");
+      getAllBooking();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete booking.");
     }
   };
 
@@ -180,9 +205,24 @@ const AllBookings = () => {
                         </span>
                     </td>
                     <td className="px-8 py-6 text-center">
-                        <button className="p-3 bg-gray-50 text-gray-400 hover:bg-[#1a1f2e] hover:text-white rounded-xl transition-all shadow-sm border border-gray-100">
-                            <FiEye size={16} />
-                        </button>
+                        <div className="flex items-center justify-center gap-2">
+                             {row.status !== "Cancelled" && row.status !== "Completed" && (
+                                <button 
+                                  onClick={() => cancelBooking(row._id)}
+                                  title="Cancel Booking"
+                                  className="p-2.5 bg-orange-50 text-orange-400 hover:bg-orange-100 hover:text-orange-600 rounded-xl transition-all border border-orange-100"
+                                >
+                                    <FiXCircle size={16} />
+                                </button>
+                             )}
+                            <button 
+                              onClick={() => deleteBooking(row._id)}
+                              title="Delete Booking"
+                              className="p-2.5 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all border border-gray-100 hover:border-red-100"
+                            >
+                                <FiTrash2 size={16} />
+                            </button>
+                        </div>
                     </td>
                   </tr>
                 ))

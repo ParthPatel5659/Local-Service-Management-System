@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { FiStar, FiMessageSquare, FiActivity, FiSearch, FiTrendingUp } from 'react-icons/fi'
 import { FaStar, FaRegStar } from 'react-icons/fa'
+import { toast } from 'react-toastify'
 
 const AllReview = () => {
   const [reviews, setReviews] = useState([])
@@ -19,6 +20,18 @@ const AllReview = () => {
       setLoading(false)
     }
   }
+
+  const deleteReview = async (id) => {
+    if (!window.confirm("Are you sure you want to flag and remove this review?")) return;
+    try {
+      await axios.delete(`/reviews/delete/${id}`);
+      toast.success("Review flagged and removed.");
+      allReview();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to flag review.");
+    }
+  };
 
   useEffect(() => {
     allReview()
@@ -171,7 +184,7 @@ const AllReview = () => {
 
                 <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
                     <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Global Review</span>
-                    <button className="text-[10px] font-black text-[#F59E0B] uppercase tracking-widest hover:underline">Flag Content</button>
+                    <button onClick={() => deleteReview(review._id)} className="text-[10px] font-black text-[#F59E0B] uppercase tracking-widest hover:underline">Flag Content</button>
                 </div>
               </div>
             )
