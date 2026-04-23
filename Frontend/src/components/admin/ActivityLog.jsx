@@ -81,7 +81,7 @@ const ActivityLog = () => {
                             </div>
                             <div>
                                 <p className="text-sm font-black text-[#1a1f2e]">
-                                    {item.userId?.Firstname || "Anonymous"} {item.userId?.Lastname || ""}
+                                    {item.userId?.Firstname || item.providerId?.Firstname || "Anonymous"} {item.userId?.Lastname || item.providerId?.Lastname || ""}
                                 </p>
                                 <span className="text-[10px] font-black text-[#F59E0B] uppercase tracking-widest">{item.role || 'Member'}</span>
                             </div>

@@ -48,7 +48,7 @@ export const AddCategory = () => {
         res = await axios.put(`/category/update/${id}`, data)
         toast.success("Category updated successfully")
       } else {
-        res = await axios.post("/category/create", data)
+        res = await axios.post("/category/add", data)
         toast.success("Category added successfully")
       }
 

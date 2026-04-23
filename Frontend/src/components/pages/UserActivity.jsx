@@ -100,7 +100,7 @@ const UserActivity = () => {
                             <FiClock className="text-[#F59E0B]" /> {new Date(item.createdAt).toLocaleDateString()}
                         </div>
                     </div>
-                    <p className="font-bold text-[#1a1f2e] text-lg tracking-tight mb-1">{item.description}</p>
+                    <p className="font-bold text-[#1a1f2e] text-lg tracking-tight mb-1">{item.message}</p>
                     <p className="text-gray-400 text-sm font-medium italic opacity-70">Event signature confirmed by platform monitoring.</p>
                 </div>
 

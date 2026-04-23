@@ -4,34 +4,37 @@ const Notification = require("../Models/NotificationModel");
 
 
 const addReview= async(req,res)=>{
+    const { userId, providerId, rating } = req.body;
     try {
         const SaveReview= await reviewSchema.create(req.body)
 
-    // ===============================
-    // ✅ ACTIVITY LOG
-    // ===============================
-    await Activity.create({
-      userId,
-      action: "Review Added",
-      description: `You added a review with rating ${rating}⭐`,
-    });
+        // ===============================
+        // ✅ ACTIVITY LOG
+        // ===============================
+        await Activity.create({
+            userId,
+            action: "Review Added",
+            message: `You added a review with rating ${rating}⭐`,
+        });
 
-    // ===============================
-    // 🔔 NOTIFICATION (PROVIDER)
-    // ===============================
-    await Notification.create({
-      userId: userId, // ⚠️ required
-      providerId: providerId,
-      title: "New Review",
-      message: `You received a new review (${rating}⭐)`,
-      type: "system",
-    });
+        // ===============================
+        // 🔔 NOTIFICATION (PROVIDER)
+        // ===============================
+        await Notification.create({
+            userId: userId, // ⚠️ required
+            providerId: providerId,
+            title: "New Review",
+            message: `You received a new review (${rating}⭐)`,
+            type: "system",
+        });
         res.status(201).json({
-            message:"review add sucessfully",
-            data:SaveReview
+            message: "review add sucessfully",
+            data: SaveReview
         })
         
     } catch (error) {
+      console.log(error);
+      
         res.status(500).json({
             message:error.message
         })

@@ -19,11 +19,13 @@ const getAllLogs = async (req, res) => {
   }
 };
 
-// GET USER LOGS
+// GET USER/PROVIDER LOGS
 const getUserLogs = async (req, res) => {
   try {
-    const logs = await ActivityLog.find({ userId: req.params.id })
-      .sort({ createdAt: -1 });
+    const id = req.params.id;
+    const logs = await ActivityLog.find({ 
+      $or: [{ userId: id }, { providerId: id }] 
+    }).sort({ createdAt: -1 });
 
     res.json({
       message: "User logs",

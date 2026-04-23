@@ -174,35 +174,43 @@ const getByProvider=async(req,res)=>{
 }
 
 
-const forgotPassword=async(req,res)=>{
-    const{email}=req.body;
-    if(!email){
-        return res.status(400).json({
-            message:"email is not provide"
-        })
-    }
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({
+                message: "email is not provide"
+            })
+        }
 
-    const foundUserFromEmail= await userSchema.findOne({email:email})
-    if(foundUserFromEmail){
-        //token genrate
-        const token=jwt.sign(foundUserFromEmail.toObject(),jwtSecret,{expiresIn:60*10})
-        //reset link
-        const url=`${process.env.FRONTEND_URL}/resetpassword/${token}`
-        //send mail
-         const mailtext = `<html>
-            <a href ='${url}'>RESET PASSWORD</a>
-        </html>`
-         await mailSend(foundUserFromEmail.email,"Reset Password Link","forgotPassword.html", token)
-        res.status(200).json({
-            message:"reset link has been sent to your email"
-        })
+        const foundUserFromEmail = await userSchema.findOne({ email: email })
+        if (foundUserFromEmail) {
+            //token genrate - only ID and email for safety and size
+            const token = jwt.sign({ _id: foundUserFromEmail._id, email: foundUserFromEmail.email }, jwtSecret, { expiresIn: 60 * 10 })
+            
+            //reset link using environment variable
+            const url = `${process.env.FRONTEND_URL}/resetpassword/${token}`
+            
+            //send mail
+            await mailSend(foundUserFromEmail.email, "Reset Password Link", "forgotPassword.html", url)
+            
+            res.status(200).json({
+                message: "reset link has been sent to your email"
+            })
+        }
+        else {
+            res.status(404).json({
+                message: "user not found.."
+            })
+        }
+    } catch (error) {
+        console.error("Forgot Password Error:", error);
+        res.status(500).json({
+            message: "Internal server error during password reset request",
+            error: error.message
+        });
     }
-    else{
-        res.status(404).json({
-            message:"user not found.."
-        })
-    }
-    }
+}
 
 
 const resetPassword=async(req,res)=>{

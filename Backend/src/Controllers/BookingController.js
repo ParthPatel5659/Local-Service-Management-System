@@ -104,12 +104,13 @@ const CreateBooking = async (req, res) => {
       });
 
       await logActivity({
-  userId: req.params.id,
-  role: "user",
-  action: "BOOKING_CREATED",
-  message: "User created a booking",
-  meta: { bookingId: booking._id }
-});
+          userId: req.params.id,
+          providerId: service.providerId,
+          role: "user",
+          action: "BOOKING_CREATED",
+          message: "User created a booking",
+          meta: { bookingId: booking._id }
+      });
     res.status(201).json({
       message: "Booking successful",
       data: booking
@@ -367,12 +368,13 @@ const cancelBookingbyId=async(req,res)=>{
     });
 
      await logActivity({
-  userId: booking.userId,
-  role: "user",
-  action: "BOOKING_CANCELLED",
-  message: "User cancelled booking",
-  meta: { bookingId: booking._id }
-  });
+        userId: booking.userId,
+        providerId: booking.providerId,
+        role: "user",
+        action: "BOOKING_CANCELLED",
+        message: "User cancelled booking",
+        meta: { bookingId: booking._id }
+      });
   
     res.status(200).json({
       message: "Booking cancelled successfully",

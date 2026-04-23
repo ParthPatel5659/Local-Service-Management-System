@@ -134,7 +134,7 @@ const addService = async (req, res) => {
 
         const saveService = await ServiceSchema.create(req.body);
            await Activity.create({
-           userId: req.params.id,
+            providerId: req.params.id,
             role: "provider",
             action: "SERVICE_ADDED",
             message: "Provider added new service"
@@ -211,7 +211,7 @@ const updateServiceById = async (req, res) => {
         );
 
          await Activity.create({
-           userId: req.params.id,
+           providerId: req.params.id,
             role: "provider",
             action: "SERVICE_EDITED",
             message: "Provider edit service"
@@ -236,7 +236,7 @@ const deleteServiceById = async (req, res) => {
     try {
         const deleteService = await ServiceSchema.findByIdAndDelete(req.params.id);
          await Activity.create({
-            userId: req.params.id,
+            providerId: req.params.id,
             role: "provider",
             action: "SERVICE_DELETED",
             message: "Provider delete service"

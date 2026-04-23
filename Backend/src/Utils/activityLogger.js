@@ -1,10 +1,10 @@
 const ActivityLog = require("../Models/ActivityLogModel");
 
-const logActivity = async ({ userId, role, action, message, meta }) => {
+const logActivity = async ({ userId, providerId, role, action, message, meta }) => {
   try {
     await ActivityLog.create({
       userId,
-      
+      providerId,
       role,
       action,
       message,

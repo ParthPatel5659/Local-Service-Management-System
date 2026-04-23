@@ -8,6 +8,7 @@ const mailSend = async(to,subject,htmlFile,token)=> {
     let htmlContent = fs.readFileSync(htmlPath,"utf-8")
     if(token){
         htmlContent = htmlContent.replace(/\$\{token\}/g, token)
+        htmlContent = htmlContent.replace(/\$\{url\}/g, token) // token acts as the full URL in this context
     }
     const transporter = mailer.createTransport({
         service:"gmail",
