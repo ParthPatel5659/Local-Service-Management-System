@@ -14,6 +14,8 @@ export const AddService = () => {
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -32,15 +34,38 @@ export const AddService = () => {
     setValue("categoryId", id);
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const submitHandler = async (data) => {
     if (!userId) {
       toast.error("Provider session not found");
       return;
     }
+    
+    // Create FormData for file upload
+    const formData = new FormData();
+    formData.append("serviceName", data.serviceName);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("location", data.location);
+    formData.append("categoryId", data.categoryId);
+    formData.append("providerId", userId);
+    
+    if (imageFile) {
+      formData.append("serviceImage", imageFile);
+    }
+
     try {
-      const res = await axios.post("/services/add", {
-        ...data,
-        providerId: userId
+      const res = await axios.post("/services/add", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.status === 201) {
@@ -104,6 +129,47 @@ export const AddService = () => {
                         {...register("description")}
                         className="w-full pl-14 pr-6 py-5 rounded-2xl bg-[#f9fafb] border border-gray-100 focus:bg-white focus:border-[#F59E0B] focus:ring-4 focus:ring-orange-50 outline-none transition-all font-medium text-gray-600 leading-relaxed placeholder-gray-300 resize-none"
                     />
+                </div>
+            </div>
+
+            {/* ── Section: Service Image ── */}
+            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8">
+                <div className="flex items-center gap-3 pb-6 border-b border-gray-50 mb-4">
+                    <span className="w-2 h-6 bg-[#F59E0B] rounded-full"></span>
+                    <h3 className="text-xl font-black text-[#1a1f2e]">Media & Gallary</h3>
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                    <div className="w-full md:w-1/3 aspect-video md:aspect-square bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden group">
+                        {imagePreview ? (
+                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover rounded-[2.5rem]" />
+                        ) : (
+                            <div className="text-gray-300 flex flex-col items-center gap-3">
+                                <FiPlus size={40} />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Add Image</span>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 space-y-4 pt-4">
+                        <h4 className="text-lg font-black text-[#1a1f2e]">Service Cover Image</h4>
+                        <p className="text-sm text-gray-400 font-medium leading-relaxed">
+                            Upload a high-quality photo of your work or service area. This will be the first thing customers see.
+                        </p>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="block w-full text-sm text-gray-500
+                                file:mr-4 file:py-3 file:px-6
+                                file:rounded-xl file:border-0
+                                file:text-xs file:font-black
+                                file:bg-gray-50 file:text-[#1a1f2e]
+                                hover:file:bg-[#F59E0B] hover:file:text-white
+                                file:transition-all file:cursor-pointer
+                            "
+                        />
+                    </div>
                 </div>
             </div>
         </div>

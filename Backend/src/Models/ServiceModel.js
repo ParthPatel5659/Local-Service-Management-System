@@ -36,6 +36,10 @@ const ServiceSchema = new Schema({
   },
   
 
+  serviceImage: {
+    type: String
+  }
+
   // status: {
   //   type: String,
   //   enum: ["Pending", "Approved"],

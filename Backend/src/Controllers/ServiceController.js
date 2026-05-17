@@ -132,7 +132,11 @@ const addService = async (req, res) => {
 
         // const providerId = req.user.id; // ✅ from token
 
-        const saveService = await ServiceSchema.create(req.body);
+        const serviceData = { ...req.body };
+        if (req.file) {
+            serviceData.serviceImage = "uploads/" + req.file.filename;
+        }
+        const saveService = await ServiceSchema.create(serviceData);
            await Activity.create({
             providerId: req.params.id,
             role: "provider",
@@ -204,9 +208,14 @@ const getMyServices = async (req, res) => {
 // ✅ Update Service
 const updateServiceById = async (req, res) => {
     try {
+        const updateData = { ...req.body };
+        if (req.file) {
+            updateData.serviceImage = "uploads/" + req.file.filename;
+        }
+
         const updateService = await ServiceSchema.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true }
         );
 

@@ -12,6 +12,9 @@ const EditService = () => {
   const [loading, setLoading] = useState(true);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [existingImage, setExistingImage] = useState(null);
 
   useEffect(() => {
     const getService = async () => {
@@ -24,6 +27,12 @@ const EditService = () => {
         setValue("description", data.description);
         setValue("price", data.price);
         setValue("location", data.location);
+        if (data.serviceImage) {
+          setExistingImage(data.serviceImage);
+          setImagePreview(data.serviceImage.startsWith('uploads') 
+            ? `http://localhost:5000/${data.serviceImage}` 
+            : data.serviceImage);
+        }
       } catch (error) {
         console.error(error);
         toast.error("Failed to load service details");
@@ -35,9 +44,31 @@ const EditService = () => {
     getService();
   }, [id, setValue]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const submitHandler = async (data) => {
+    const formData = new FormData();
+    formData.append("serviceName", data.serviceName);
+    formData.append("description", data.description);
+    formData.append("price", data.price);
+    formData.append("location", data.location);
+    
+    if (imageFile) {
+      formData.append("serviceImage", imageFile);
+    }
+
     try {
-      await axios.put(`/services/update/${id}`, data);
+      await axios.put(`/services/update/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       toast.success("Service specifications updated successfully!");
       navigate(-1);
     } catch (error) {
@@ -134,6 +165,43 @@ const EditService = () => {
                 <div>
                     <p className="text-xs font-black text-white tracking-tight uppercase">Live Marketplace Sync</p>
                     <p className="text-[10px] text-gray-500 font-bold">Changes will be visible to potential clients immediately after saving.</p>
+                </div>
+            </div>
+
+            {/* Media Group */}
+            <div className="space-y-6 pt-6 border-t border-gray-50">
+                <label className="text-[10px] font-black uppercase text-gray-400 tracking-[2px] ml-1 flex items-center gap-2">
+                    <FiActivity /> Service Media
+                </label>
+                
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                    <div className="w-40 h-40 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+                        {imagePreview ? (
+                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="text-gray-300 flex flex-col items-center gap-2">
+                                <FiEdit3 size={32} />
+                                <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">Update Photo</span>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 space-y-3">
+                        <p className="text-xs text-gray-400 font-medium">Update the visual representation of your service.</p>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="block w-full text-[10px] text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-xl file:border-0
+                                file:text-[10px] file:font-black
+                                file:bg-gray-50 file:text-[#1a1f2e]
+                                hover:file:bg-[#F59E0B] hover:file:text-white
+                                file:transition-all file:cursor-pointer
+                            "
+                        />
+                    </div>
                 </div>
             </div>
 

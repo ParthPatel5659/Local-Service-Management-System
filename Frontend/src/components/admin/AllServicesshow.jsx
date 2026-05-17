@@ -166,8 +166,18 @@ const AllServicesshow = () => {
                     <tr key={service._id} className="group hover:bg-gray-50/30 transition-all">
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-2xl border border-gray-100 group-hover:bg-orange-50 group-hover:text-[#F59E0B] transition-colors shadow-inner font-bold">
-                                {service.serviceName?.charAt(0)}
+                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 group-hover:bg-orange-50 group-hover:text-[#F59E0B] transition-colors shadow-inner font-bold overflow-hidden">
+                                {service.serviceImage ? (
+                                    <img 
+                                        src={service.serviceImage.startsWith('uploads') 
+                                            ? `http://localhost:5000/${service.serviceImage}` 
+                                            : service.serviceImage} 
+                                        alt="thumb" 
+                                        className="w-full h-full object-cover" 
+                                    />
+                                ) : (
+                                    service.serviceName?.charAt(0)
+                                )}
                             </div>
                             <div>
                                 <p className="text-sm font-black text-[#1a1f2e] group-hover:text-[#F59E0B] transition-colors">{service.serviceName}</p>

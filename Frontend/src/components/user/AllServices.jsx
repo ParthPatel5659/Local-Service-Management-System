@@ -92,16 +92,25 @@ const AllServices = () => {
               key={service._id}
               className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
-              {/* Card Image Holder (Simulated with a gradient if no image) */}
-              <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 relative group-hover:scale-105 transition-transform duration-500">
+              {/* Card Image Holder */}
+              <div className="h-48 bg-gradient-to-br from-gray-50 to-gray-100 relative group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+                 {service.serviceImage ? (
+                   <img 
+                     src={service.serviceImage.startsWith('uploads') 
+                          ? `http://localhost:5000/${service.serviceImage}` 
+                          : service.serviceImage} 
+                     alt={service.serviceName} 
+                     className="w-full h-full object-cover" 
+                   />
+                 ) : (
+                   <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">
+                    {service.serviceName?.charAt(0)}
+                   </div>
+                 )}
                  <div className="absolute top-4 left-4">
                     <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-[10px] font-black uppercase text-[#F59E0B] tracking-wider shadow-sm">
                         {service.categoryId?.categoryName || "Service"}
                     </span>
-                 </div>
-                 {/* Placeholder for service image */}
-                 <div className="w-full h-full flex items-center justify-center text-4xl opacity-20">
-                    {service.serviceName?.charAt(0)}
                  </div>
               </div>
 

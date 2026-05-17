@@ -74,11 +74,21 @@ const ServiceByCategory = () => {
                     onClick={() => navigate(`/user/servicedetail/${s._id}`)}
                     className="group bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer p-8 flex flex-col h-full"
                 >
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-[#F59E0B] text-xl group-hover:bg-[#F59E0B] group-hover:text-white transition-all">
-                            <FiActivity />
-                        </div>
-                        <div className="flex items-center gap-1 bg-gray-50 px-3 py-1 rounded-lg border border-gray-100">
+                    <div className="h-44 bg-gray-50 rounded-2xl mb-6 overflow-hidden relative border border-gray-100">
+                        {s.serviceImage ? (
+                            <img 
+                                src={s.serviceImage.startsWith('uploads') 
+                                    ? `http://localhost:5000/${s.serviceImage}` 
+                                    : s.serviceImage} 
+                                alt={s.serviceName} 
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                            />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-[#F59E0B]/20">
+                                <FiActivity size={40} />
+                            </div>
+                        )}
+                        <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 backdrop-blur px-2 py-1 rounded-lg border border-gray-100 shadow-sm">
                             <FiStar size={10} className="text-yellow-400 fill-yellow-400" />
                             <span className="text-[10px] font-black text-[#1a1f2e]">4.9</span>
                         </div>

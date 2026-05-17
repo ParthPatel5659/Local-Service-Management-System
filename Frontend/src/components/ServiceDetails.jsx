@@ -63,6 +63,24 @@ const ServiceDetails = () => {
         {/* ── Left Content (Details & Reviews) ── */}
         <div className="lg:col-span-2 space-y-8">
           
+          {/* Service Image Segment */}
+          {service.serviceImage && (
+            <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden h-96 relative group">
+                <img 
+                    src={service.serviceImage.startsWith('uploads') 
+                        ? `http://localhost:5000/${service.serviceImage}` 
+                        : service.serviceImage} 
+                    alt={service.serviceName} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1f2e]/60 to-transparent"></div>
+                <div className="absolute bottom-10 left-10 text-white">
+                     <p className="text-[10px] font-black uppercase tracking-[3px] mb-2 text-[#F59E0B]">Verified Professional Listing</p>
+                     <h2 className="text-3xl font-black tracking-tight">{service.serviceName}</h2>
+                </div>
+            </div>
+          )}
+          
           {/* Main Hero Card */}
           <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border border-gray-100">
             <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">

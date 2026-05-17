@@ -112,13 +112,25 @@ export const AllServicesofprovider = () => {
                 </div>
               </div>
 
-              {/* Cover Art Placeholder */}
+              {/* Cover Art Image */}
               <div className="h-40 bg-[#1a1f2e] relative overflow-hidden">
-                 <div className="absolute top-0 right-0 w-32 h-full bg-[#F59E0B]/10 blur-[50px] rounded-full"></div>
-                 <div className="w-full h-full flex flex-col items-center justify-center text-[#F59E0B]/20">
-                     <FiBriefcase size={48} className="drop-shadow-lg" />
-                     <p className="text-[10px] font-black uppercase tracking-widest mt-2">Professional Listing</p>
-                 </div>
+                 {service.serviceImage ? (
+                   <img 
+                     src={service.serviceImage.startsWith('uploads') 
+                        ? `http://localhost:5000/${service.serviceImage}` 
+                        : service.serviceImage} 
+                     alt={service.serviceName} 
+                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                   />
+                 ) : (
+                   <>
+                     <div className="absolute top-0 right-0 w-32 h-full bg-[#F59E0B]/10 blur-[50px] rounded-full"></div>
+                     <div className="w-full h-full flex flex-col items-center justify-center text-[#F59E0B]/20">
+                         <FiBriefcase size={48} className="drop-shadow-lg" />
+                         <p className="text-[10px] font-black uppercase tracking-widest mt-2">Professional Listing</p>
+                     </div>
+                   </>
+                 )}
               </div>
 
               {/* Main Content */}
